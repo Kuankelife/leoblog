@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:  "陈天奇xgboost原理讲解幻灯片kj"
+title:  "陈天奇xgboost原理讲解幻灯片"
 subtitle:   ""
 date:       2019-11-17 12:00:00
 author:     "陈天奇"

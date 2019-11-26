@@ -15,7 +15,7 @@ tags:
 <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537012717707&di=93b200d1c628327cd3686e48bccae82e&imgtype=0&src=http%3A%2F%2Fimg.mp.sohu.com%2Fupload%2F20170625%2F1f1509fb3265468b895c0515c2c9de3b.png" width="400" height="400" />
 
 ---
-<center>本文版权归深圳大学混沌量化投资实验室 Chaos Quant Lab所有，只用于平时教学学习，未经得作者同意禁止直接转载或编辑后转载。</center>
+<center>本文只用于平时教学学习，未经得作者同意禁止直接转载或编辑后转载。</center>
 
 ---
 {:toc}
@@ -1039,6 +1039,6 @@ draw_distribution_2(start,end,pre,df)
 
 
 ---
-<center>本文版权归<font color=dark red>深圳大学混沌量化投资实验室 Chaos Quant Lab</font>所有，只用于平时教学学习，未经得作者同意禁止直接转载或编辑后转载。</center>
+<center>本文只用于平时教学学习，未经得作者同意禁止直接转载或编辑后转载。</center>
 
 ---

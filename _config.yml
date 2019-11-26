@@ -1,0 +1,145 @@
+# Site settings
+title: "俞"
+SEOTitle: YU Blog
+header-img: img/home-img/home-img.jpg
+email: 1115223619@qq.com
+description: "关于量化投资、机器学习 | 雨栋，Data science & Python Lover，Shenzhen University graduate | 这里是雨栋的个人博客，与你一起发现更大的世界。"
+keyword: "雨栋，量化投资，机器学习，数据分析，数据挖掘，运动，乒乓球，深圳大学"
+url: "https://ownyulife.top"              # your host, for absolute URL
+baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
+
+# Publish posts or collection documents with a future date.
+future: true
+
+# SNS settings
+RSS: false
+weibo_username: 2256575271
+qqmail_username: 
+zhihu_username:   yu-dong-99-52
+github_username:   marktext
+twitter_username:  Leo_Mosqi
+facebook_username: leo.franklin.5680
+#linkedin_username:  firstname-lastname-idxxxx
+
+
+
+# Build settings
+# from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
+highlighter: rouge
+permalink: pretty
+paginate: 10
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md"]
+anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+# If you have timezone issue (e.g. #68) in China, uncomment to use this:
+#timezone: CN  
+
+
+
+# Gems
+# from PR#40, to support local preview for Jekyll 3.0
+# make sure you have this gem installed
+# `$ gem install jekyll-paginate`
+plugins: [jekyll-paginate]
+
+
+# Markdown settings
+# replace redcarpet to kramdown,
+# although redcarpet can auto highlight code, the lack of header-id make the catalog impossible, so I switch to kramdown
+# document: http://jekyllrb.com/docs/configuration/#kramdown
+markdown: kramdown
+kramdown:
+  input: GFM                            # use Github Flavored Markdown !important
+  syntax_highlighter_opts:
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
+
+
+# Disqus settings
+disqus_username: Coolman
+laibili_username: True
+# Duoshuo settings
+duoshuo_username: YU
+# Share component is depend on Comment so we can NOT use share only.
+duoshuo_share: False                     # set to false if you want to use Comment without Sharing
+
+# Netease settings
+netease_comment: True
+
+
+
+# Analytics settings
+# Baidu Analytics 
+ba_track_id: 927150fc1b6489222920a91e18397752
+
+# Google Analytics
+ga_track_id: 'UA-126832429-1'            # Format: UA-xxxxxx-xx
+ga_domain: ownyulife.top
+
+
+
+
+# Sidebar settings
+sidebar: true                         # whether or not using Sidebar.
+sidebar-about-description: "大多数人都高估了他们一天能做的事情，但低估了他们一年能做的事情。"
+sidebar-avatar: /img/face.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+
+
+
+# Featured Tags
+featured-tags: true                     # whether or not using Feature-Tags
+featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
+
+leancloud:
+  enable: true
+  app_id   :  dm0hjRoU45xHEAJ82R1WLDCx-gzGzoHsz
+  app_key  :  IqwFcWmYDwjtgv9dCsqRzx9s
+
+
+# Progressive Web Apps
+chrome-tab-theme-color: "#000000"
+service-worker: true
+
+
+
+# MathJax rendering for layout:page (e.g. post preview)
+page-mathjax: false
+
+
+
+# Friends
+friends: [
+    {
+        title: "纪路",
+        href: "http://mrobot.me/"
+    },{
+        title: "JoinQuant",
+        href: "https://www.joinquant.com/"
+    },{
+        title: "清华大学数据科学研究院",
+        href: "http://www.ids.tsinghua.edu.cn/"
+    },{
+        title: "深圳大学",
+        href: "http://www1.szu.edu.cn/szu.asp"
+    },{
+        title: "MOOC",
+        href: "https://www.icourse163.org/university/view/all.htm#/"
+    },{
+        title: "Ebn's Blog",
+        href: "http://ebnbin.com/"
+    },{
+        title: "小刀量化",
+        href: "https://xueqiu.com/u/1639516124"
+    },{
+        title: "江涛",
+        href: "https://xueqiu.com/u/8417755168"
+    },{
+        title: "华泰证券研究所",
+        href: "https://xueqiu.com/u/7431839620"
+    },{
+        title: "优矿",
+        href: "https://uqer.io/"
+    }
+]

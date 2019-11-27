@@ -36,8 +36,9 @@ description: "一生想做浪漫宽客"
             {{ post.content | strip_html | truncate:100 }}
         </div>
     </a>
-        <p class="post-meta">
 
+    
+    <p class="post-meta">
     Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
 
     {% if site.leancloud.enable %}

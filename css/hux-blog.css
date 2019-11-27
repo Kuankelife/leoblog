@@ -1219,6 +1219,10 @@ samp {
   font-style: italic;
   color: #a3a3a3;
 }
+.leancloud-visitors-count{
+  font-size: $small-font-size;
+  color: $grey-color;
+}
 .post-content-preview:hover {
   color: #0085a1;
 }

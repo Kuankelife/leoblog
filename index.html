@@ -40,13 +40,14 @@ description: "一生想做浪漫宽客"
     <p class="post-meta">
     Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
 
-    {% if site.leancloud.enable %}
-     <span id="{{ post.url }}" class="post-link" data-flag-title="{{ post.title }}">
-     <span id="{{ post.url }}" class="leancloud_visitors" data-flag-title="{{ post.title }}">|View&nbsp<i class="fa fa-eye" title='访问量' aria-hidden="true">
-     <span class="leancloud-visitors-count"></span>
+   <span id="http://www.cloudchou.com" class="leancloud_visitors meta_data_item" data-flag-title="">
+     <span class="post-meta-item-icon">
+       <span class="octicon octicon-eye"></span> 
      </span>
-   </span>
-     {% endif %}   
+     <span class="old-visitors-count" style="display: none;"></span>
+     <span class="leancloud-visitors-count"></span>
+     <span class="post-meta-item-text">次浏览</span>
+</span>
         </p>
 
 

@@ -93,7 +93,6 @@ featured-tags: true                     # whether or not using Feature-Tags
 featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
 
 leancloud:
-  enable: true
   app_id   :  dm0hjRoU45xHEAJ82R1WLDCx-gzGzoHsz
   app_key  :  IqwFcWmYDwjtgv9dCsqRzx9s
 

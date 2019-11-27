@@ -33,7 +33,7 @@
     {% endif %}
     <div class="container">
         <div class="row">
-            <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
+            <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
                 <div class="post-heading">
                     <div class="tags">
                         {% for tag in page.tags %}
@@ -81,10 +81,17 @@
                     <h1>{{ page.title }}</h1>
                     {% comment %} always create a h2 for keeping the margin {% endcomment %}
                     <h2 class="subheading">{{ page.subtitle }}</h2>
-                    <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %}
-                        on {{ page.date | date: "%B %-d, %Y" }}</span>
-
-      
+                   
+                    
+                    <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} on {{ page.date | date: "%B %-d, %Y" }}  </span>
+                    <!-- leancloud -->
+                  {% if site.leancloud.enable %}
+                <span id="{{ page.url }}" class="leancloud_visitors" data-flag-title="{{ page.title }}">
+                <span class="post-meta-divider"></span>
+                <span class="post-meta-item-text"> View&nbsp<i class="fa fa-eye" title='访问量' aria-hidden="true"></i>  </span>
+                <span class="leancloud-visitors-count"></span>
+                </span>
+                    {% endif %}
                 </div>
             </div>
         </div>

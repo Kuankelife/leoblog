@@ -4,7 +4,7 @@ title: "Python数据可视化修炼之道-Chaos Quant Lab"
 author: "雨栋"
 header-img: "img/post-bg-css.jpg"
 header-mask: 0.4
-catalog: true
+catalog: false
 tags:
   -   Python
   - 数据科学

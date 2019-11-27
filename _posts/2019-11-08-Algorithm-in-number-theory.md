@@ -9,7 +9,7 @@ mathjax: true
 tags:
     - Math
 
-catalog: true
+catalog: false
 
 
 

@@ -14,7 +14,11 @@ catalog: false
 
 
 ---
+Still, she’s got a lot of spirit. I don’t know, what do you think? Hokey religions and ancient weapons are no match for a good blaster at your side, kid. I can’t get involved! I’ve got work to do! It’s not that I like the Empire, I hate it, but there’s nothing I can do about it right now. It’s such a long way from here.
 
+I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. You are a part of the Rebel Alliance and a traitor! Take her away! Your eyes can deceive you. Don’t trust them.
+
+Hokey religions and ancient weapons are no match for a good blaster at your side, kid. I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Don’t be too proud of this technological terror you’ve constructed. The ability to destroy a planet is insignificant next to the power of the Force.
 >算法，是彩色的。
 
 # Baby Step Giant Step

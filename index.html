@@ -39,7 +39,7 @@ description: "一生想做浪漫宽客"
         <p class="post-meta">
 
     Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
-
+浏览量:&nbsp;<span id="{{ post.url }}" class="leancloud_visitors" data-flag-title="{{ post.title }}"> - </span>次.
    <!--  {% if site.leancloud.enable %}
      <span id="{{ post.url }}" class="post-link" data-flag-title="{{ post.title }}">
      <span id="{{ post.url }}" class="leancloud_visitors" data-flag-title="{{ post.title }}">|View&nbsp<i class="fa fa-eye" title='访问量' aria-hidden="true"></i>

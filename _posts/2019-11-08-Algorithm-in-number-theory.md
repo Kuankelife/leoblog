@@ -10,10 +10,9 @@ tags:
     - Math
 
 catalog: false
-
-
-
 ---
+[](https://miro.medium.com/max/2981/1*qfA3TgrXngQ4-7bGwNH7Yw.jpeg)
+
 Still, she’s got a lot of spirit. I don’t know, what do you think? Hokey religions and ancient weapons are no match for a good blaster at your side, kid. I can’t get involved! I’ve got work to do! It’s not that I like the Empire, I hate it, but there’s nothing I can do about it right now. It’s such a long way from here.
 
 I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. You are a part of the Rebel Alliance and a traitor! Take her away! Your eyes can deceive you. Don’t trust them.

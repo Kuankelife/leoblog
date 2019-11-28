@@ -2,7 +2,7 @@
 > 我唔想畀人再嘥晒我啲时间。
 
 
-我是雨栋，单身族&amp; [深圳大学研究生](https://www1.szu.edu.cn/szu.asp)，深圳大学混沌量化实验室成员。多出没于[博客](https://ownyulife.top/)、[雪球](https://xueqiu.com/u/5490883430)、[知乎](https://www.zhihu.com/people/yu-dong-99-52/activities)、[聚宽](https://www.joinquant.com/community)、[Medium](https://towardsdatascience.com/questions-96667b06af5)[优矿](https://uqer.io/)等地带，绝招尚在开发中。
+我是雨栋，单身族&amp; [深圳大学研究生](https://www1.szu.edu.cn/szu.asp)，深圳大学混沌量化实验室成员。多出没于[博客](https://ownyulife.top/)、[雪球](https://xueqiu.com/u/5490883430)、[知乎](https://www.zhihu.com/people/yu-dong-99-52/activities)、[聚宽](https://www.joinquant.com/community)、[Medium](https://towardsdatascience.com/questions-96667b06af5)、[优矿](https://uqer.io/)等地带，绝招尚在开发中。
 
 欢迎你来到我的个人中文网站，英文网站因为写的东西太少所以暂时未开放。。。
 

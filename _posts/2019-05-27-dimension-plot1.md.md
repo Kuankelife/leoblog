@@ -6,19 +6,14 @@ date:       2019-05-27 12:00:00
 author:     "Leo"
 header-img: "img/yu-img/post-img/u=3455037329,48387545&fm=27&gp=0.jpg"
 tags:
-
     - 机器学习
     - 降维
 mathjax: false
-
 ---
-
-
 
 人类可以在二维和三维上甚至在第四维来思考。但是机器学习经常要求使用成千上万个维度！即使是非常简单的事情，当在非常高的维度上思考的时候，也会变得难以理解。 降维技术就必不可少，可视化降维结果将更符合人类的思考习惯。幸运的是，目前很多大神为此做了很多努力，有了很多成果。
 
 注意：此ipnb文件在python 3.7.3运行，注意不要一下子运行所有cell，否则cpu会跑不动
-
 
 ```python
 #导入相应的库
@@ -66,9 +61,6 @@ y_raw = mnist["target"]
 X_raw.shape
 ```
 
-
-
-
     (70000, 784)
 
 
@@ -80,20 +72,11 @@ MNIST是一种简单的计算机视觉数据集。它由28×28像素的手写数
 X_raw[0].shape
 ```
 
-
-
-
     (784,)
-
-
-
 
 ```python
 X_raw[0]
 ```
-
-
-
 
     array([  0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
              0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
@@ -216,16 +199,9 @@ plot_digits(X_recovered[::200])
 plt.title("压缩后数据集", fontsize=16)
 ```
 
-
-
-
     Text(0.5, 1.0, '压缩后数据集')
 
-
-
-
-![png](https://thumbsnap.com/i/97clJ5RI.png?0828)
-
+<img src='http://i.caigoubao.cc/627139/bgpc/ky/output_12_1.png'/>
 
 降维代码很容易写，有现成的工具，太幸福了，人生苦短，我用python, 耗时间的其实是可视化。
 
@@ -262,15 +238,11 @@ def plot_digits(X, y, min_distance=0.05, images=None, figsize=(13, 10)):
 
 ## Factor Analysis
 
-
 ```python
 from sklearn.decomposition import FactorAnalysis
 X_fa_reduced = FactorAnalysis(n_components = 2).fit_transform(X)
 plot_digits(X_fa_reduced, y)
 plt.show()
 ```
-
-
-![png](https://thumbsnap.com/s/EgBrrEyo.png?0828)
-
+<img src='http://i.caigoubao.cc/627139/bgpc/ky/output_16_0.png'/>
 

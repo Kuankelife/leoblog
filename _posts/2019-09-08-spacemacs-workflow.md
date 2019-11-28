@@ -8,6 +8,7 @@ tags:
   - Vim
   - Emacs
 ---
+<img src="http://img5.imgtn.bdimg.com/it/u=4183397226,287508567&fm=26&gp=0.jpg" width="100%" height="50%">
 
 Emacs tend to provide a good support for functional programming languages. Indeed, many FP language community exclusively use Emacs and give only first-party IDE supports to Emacs, such as Coq, Agda, Standard ML, Clojure, etc.
 

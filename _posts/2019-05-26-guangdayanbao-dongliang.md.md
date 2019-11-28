@@ -1365,13 +1365,7 @@ IC分析：
 far.plot_quantile_returns_bar(by_group=False, demeaned=0, group_adjust=False)
 ```
 
-
-    <Figure size 432x288 with 0 Axes>
-
-
-
-![png](https://thumbsnap.com/i/0YL44xaG.png?0828)
-
+<img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_21_1.png'/>
 
 分组收益分析：
 
@@ -1680,61 +1674,7 @@ far.create_full_tear_sheet(demeaned=False, group_adjust=False, by_group=False, t
 </div>
 
 
-![png](https://thumbsnap.com/s/0YL44xaG.png?0828)
-
-
-
-
-
-![png](https://thumbsnap.com/s/x2S7qMAZ.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/xGujALNH.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/9Vc3fUF2.png?0828)
-
-
-
-
-
-
-![png](https://thumbsnap.com/s/yNOx5RFG.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/seC5CYMA.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/MzW2VtXQ.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/R52M3Idd.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/7iPlHmMm.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/qsbKp9wv.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/N4zraHOp.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/4kq9YBhV.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/sAK8Rj2q.png?0828)
-
+<div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_5.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_7.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_8.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_9.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_11.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_12.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_13.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_15.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_16.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_17.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_19.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_20.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_21.png'/></div>
 
     
     -------------------------
@@ -1813,21 +1753,7 @@ far.create_full_tear_sheet(demeaned=False, group_adjust=False, by_group=False, t
 </table>
 </div>
 
-
-
-    <Figure size 432x288 with 0 Axes>
-
-
-
-![png](https://thumbsnap.com/s/c00tm1ZA.png?0828)
-
-
-![png](https://thumbsnap.com/s/oO6voIqo.png?0828)
-
-
-![png](https://thumbsnap.com/s/Dy9Wrd9J.png?0828)
-
-
+<div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_25.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_27.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_29.png'/></div>
     
     -------------------------
     
@@ -1929,37 +1855,12 @@ far.create_full_tear_sheet(demeaned=False, group_adjust=False, by_group=False, t
 </table>
 </div>
 
-
-
-![png](https://thumbsnap.com/s/iJvtm3V4.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/tEu5PsgO.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/0gFtJBjA.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/rCes56n0.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/5Igb2xYD.png?0828)
-
-
-
-![png](https://thumbsnap.com/s/IYQg5WMC.png?0828)
+<div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_34.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_35.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_36.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_38.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_39.png'/></div><div align="center"><img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_40.png'/></div>
 
 
     
     -------------------------
-   
-
-
-![png](https://thumbsnap.com/s/oykMeqa8.png?0828)
+   <img src='http://i.caigoubao.cc/627139/bgpc/20190526/output_29_43.png'/>
 
 
 错误提醒：

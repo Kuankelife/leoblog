@@ -12,8 +12,8 @@ tags:
   - 支持向量机
 mathjax: True
 ---
+<embed src="//music.163.com/style/swf/widget.swf?sid=133256642&type=2&auto=1&width=320&height=66" width="340" height="86"  allowNetworking="all"></embed>
 
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&amp;id=133256642&amp;auto=0&amp;height=66"></iframe>
 ![2401](http://up.desktx.net/pic/c9/3b/ef/c93bef6133d4348f9d9f1d9316865835.jpg)
 
 

@@ -13,7 +13,7 @@ tags:
 mathjax: True
 ---
 
-![2401](/img/yu-img/post-img/2401.jpg)
+![2401](http://pic.netbian.com/uploads/allimg/190305/212112-1551792072f791.jpg)
 
 
 # Abstract

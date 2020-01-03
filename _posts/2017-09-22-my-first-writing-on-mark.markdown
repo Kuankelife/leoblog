@@ -12,13 +12,13 @@ tags:
     - Python
     - 机器学习
 mathjax: true
-music-id-head: 1310361899
+
 music-id-foot: 477913475
 ---
 
 # <b>介绍篇</b>
 
-
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&amp;id=1310361899&amp;auto=0&amp;height=66"></iframe>
 不要奇怪为什么有音乐，我是一个重度音乐迷哈哈哈，我离开不它，希望你也能喜欢。
 
 接下来就说说自己的学习建议吧，一个小教程，也是自己走过的流程（但是下面的文字属于乱打哈哈），仅供参考哈，<strong>特别注意的是</strong>我用的很厉害的一款软件<strong>typora</strong>。不过似乎在版本1.0之后开始收费，so我开始转向Marktext，一款开源的正在不断更新的项目开发的编辑器。  

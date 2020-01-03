@@ -79,6 +79,7 @@ L=\frac{1}{2}\|w\|^{2}-\sum_{i=1}^{l} \alpha_{i} y_{i}\left(w \cdot x_{i}+b\righ
 \end{equation}
 $$\alpha_{i}\geqslant 0$$
 The optimal classification function obtained after solving the above problem is
+
 \begin{equation}
 f(x)=\operatorname{sgn}\left\{\left[\sum_{j=1}^{l} \alpha_{j}^{*} y_{j}\left(x_{j} \cdot x_{i}\right)\right]+b^{*}\right\}
 \end{equation}

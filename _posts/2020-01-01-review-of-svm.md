@@ -80,10 +80,9 @@ L=\frac{1}{2}\|w\|^{2}-\sum_{i=1}^{l} \alpha_{i} y_{i}\left(w \cdot x_{i}+b\righ
 $$\alpha_{i}\geqslant 0$$
 The optimal classification function obtained after solving the above problem is
 
-\begin{equation}
+$$
 f(x)=\operatorname{sgn}\left\{\left[\sum_{j=1}^{l} \alpha_{j}^{*} y_{j}\left(x_{j} \cdot x_{i}\right)\right]+b^{*}\right\}
-\end{equation}
-
+$$
 
 <div align = 'center'> <img src = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1575726033&di=a6755d93c25e47e870d3d5d35ba1dae0&imgtype=jpg&er=1&src=http%3A%2F%2Fblog.nsfocus.net%2Fwp-content%2Fuploads%2F2016%2F12%2FSVM%25E5%258E%259F%25E7%2590%2586.jpg'></div>
 

@@ -15,6 +15,5 @@ mathjax: True
 
 <iframe width="560" height="315" src="https://www.youtube.com/watch?v=3JQ3hYko51Y" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
-<iframe width="560" height="315" src="https://www.bilibili.com/video/av60034530?from=search&seid=7396421897882344872" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 

@@ -2,7 +2,7 @@
 layout: post
 title:  "Neural Network 3D Simulation"
 subtitle: ''
-date:   2019-11-30
+date:   2020-01-05
 author: "YU"
 <!-- header-style: text -->
 header-img: "img/yu-img/post-img/post_head/keyibukeyi1.jpg"

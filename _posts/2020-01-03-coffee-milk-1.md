@@ -11,10 +11,9 @@ mathjax: false
 music-id-foot: 477913475
 
 ---
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=400679753&auto=1&height=66"></iframe>
 
-<embed src="//music.163.com/style/swf/widget.swf?sid=400679753&type=2&auto=1&width=320&height=66" width="340" height="86"  allowNetworking="all"/>
 
-[也可以点此静静听](http://m10.music.126.net/20200103183039/061f4e1a5fde33c5ea4c77c8dd73368d/ymusic/2c02/0cc7/a29c/5bcaf1cce331b07f188a64f6b50a7405.mp3)
 
 
 <div align="center"><img src='https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578057133711&di=2d382080aebf6cf9c619c0c459ee6551&imgtype=0&src=http%3A%2F%2Fww1.sinaimg.cn%2Forj360%2Fbd77b406gw1f5fbojokh9j20dw0dwabg.jpg'/></div><div align="center">

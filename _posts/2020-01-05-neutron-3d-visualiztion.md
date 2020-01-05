@@ -13,7 +13,4 @@ tags:
 mathjax: True
 ---
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=3JQ3hYko51Y" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-
-
+<iframe width="640" height="360" src="https://www.youtube.com/embed/3JQ3hYko51Y" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

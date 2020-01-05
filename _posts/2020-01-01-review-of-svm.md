@@ -12,12 +12,12 @@ tags:
   - 支持向量机
 mathjax: True
 ---
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1332566421&auto=1&height=66"></iframe>
 
-<p>"//music.163.com/outchain/player?type=2&id=1332566421&auto=1&height=66"</p>
 
 ![2401](http://up.desktx.net/pic/c9/3b/ef/c93bef6133d4348f9d9f1d9316865835.jpg)
 
+
+<p>http://music.163.com/song/media/outer/url?id=281951.mp3</p>
 
 # Abstract
 

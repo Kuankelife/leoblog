@@ -12,7 +12,7 @@ music-id-foot: 477913475
 
 ---
 
-<embed src="//music.163.com/style/swf/widget.swf?sid=400679753&type=2&auto=1&width=320&height=66" width="340" height="86"  allowNetworking="all"></embed>
+<embed src="//music.163.com/style/swf/widget.swf?sid=400679753&type=2&auto=1&width=320&height=66" width="340" height="86"  allowNetworking="all"/>
 
 [也可以点此静静听](http://m10.music.126.net/20200103183039/061f4e1a5fde33c5ea4c77c8dd73368d/ymusic/2c02/0cc7/a29c/5bcaf1cce331b07f188a64f6b50a7405.mp3)
 

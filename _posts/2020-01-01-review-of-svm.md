@@ -12,7 +12,7 @@ tags:
   - 支持向量机
 mathjax: True
 ---
-<embed src="//music.163.com/style/swf/widget.swf?sid=409646271&type=2&auto=1&width=320&height=66" width="340" height="86"  allowNetworking="all"></embed>
+<embed src="//music.163.com/style/swf/widget.swf?sid=409646271&type=2&auto=1&width=320&height=66" width="340" height="86"  allowNetworking="all"/>
 
 
 ![2401](http://up.desktx.net/pic/c9/3b/ef/c93bef6133d4348f9d9f1d9316865835.jpg)

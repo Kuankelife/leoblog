@@ -6,7 +6,6 @@ date:   2020-06-06
 author: "YU"
 
 header-img: "img/yu-img/post-img/post_head/keyibukeyi1.jpg"
-header-mask: 0.4
 tags:
   - 量价分析
   - 量化投资

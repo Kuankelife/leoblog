@@ -4,9 +4,9 @@ title:  "量价分析面向对象框架"
 subtitle: ''
 date:   2020-06-06
 author: "YU"
-header-img: "https://img.51miz.com/Element/00/72/66/20/4610a2e0_E726620_95895754.jpg!/quality/90/unsharp/true/compress/true/format/jpg/fh/630"
-<!-- header-img: "img/yu-img/post-img/post_head/keyibukeyi1.jpg"
-header-mask: 0.4 -->
+
+header-img: "img/yu-img/post-img/post_head/keyibukeyi1.jpg"
+header-mask: 0.4
 tags:
   - 量价分析
   - 量化投资

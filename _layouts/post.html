@@ -8,6 +8,9 @@ layout: default
 <!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
 
 <!-- Post Header -->
+<!-- 添加打赏 -->
+<link href="/css/reward.css?v=6.2.0" rel="stylesheet" type="text/css"/>
+
 {% include intro-header.html type='post' %}
 
 <!-- Post Content -->
@@ -40,6 +43,30 @@ layout: default
                 </span>
                 </p>
 
+       
+<!-- 打赏功能 -->
+            <div>
+                <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+                <div>☛决定关注我了吗☚</div>
+                <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+                    <span>赞赏</span>
+                </button>
+                <div id="QR" style="display: none;">
+                     
+                <div id="wechat" style="display: inline-block">
+                <img id="wechat_qr" src="/img/payimg/weipayimg.png" alt="caojiele 微信支付"/>
+                <p>微信支付</p>
+                </div>
+                <div id="alipay" style="display: inline-block">
+                <img id="alipay_qr" src="/img/payimg/alipayimg.jpg" alt="caojiele 支付宝"/>
+                <p>支付宝</p>
+                </div>                        
+             </div>
+         </div>         
+     </div>
+    
+       
+
 
                 <hr style="visibility: hidden;">
                 <ul class="pager">
@@ -62,6 +89,11 @@ layout: default
                 </ul>
                 <hr style="visibility: hidden;">
 
+
+
+           
+
+
                 {% if site.disqus_username %}
                 <!-- disqus 评论框 start -->
                 <div class="comment">
@@ -77,8 +109,8 @@ layout: default
                 {% endif %}
             </div>  
 
-    <!-- Side Catalog Container -->
-       <!-- 
+   
+       
 
         
         {% if page.catalog %}
@@ -90,26 +122,24 @@ layout: default
                 <div class="side-catalog">
                     <hr class="hidden-sm hidden-xs">
                     <h5>
-                        <a class="catalog-toggle" href="#">CATALOG</a>
+                        <a class="catalog-toggle" href="#">目录</a>
                     </h5>
                     <ul class="catalog-body"></ul>
                 </div>
             </div>
         {% endif %} 
 
-         -->
-
     <!-- Sidebar Container -->
             <div class="
-                col-lg-12 col-lg-offset-1
-                col-md-12 col-md-offset-1
-                sidebar-container">
+                  col-lg-10 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                    sidebar-container">
 
-                <!-- Featured Tags -->
-                {% include featured-tags.html bottom=true %}
+                    <!-- Featured Tags -->
+                    {% include featured-tags.html bottom=true %}
 
-                <!-- Friends Blog -->
-                {% include friends.html %}
+                    <!-- Friends Blog -->
+                    {% include friends.html %}
             </div>
         </div>
     </div>

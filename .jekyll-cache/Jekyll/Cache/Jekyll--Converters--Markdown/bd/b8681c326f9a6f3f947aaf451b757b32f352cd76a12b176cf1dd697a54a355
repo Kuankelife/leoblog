@@ -1,0 +1,742 @@
+I"M<p>这是我最喜欢的一首钢琴曲，希望看到这篇文章的你也能喜欢。</p>
+
+<p>本文是为2019年秋季时间序列与随机过程课程的学生整理的教程，其中整理了2018年秋季课程同学的很多代码和文字，内容不全为本人所写。</p>
+
+<h1 id="时间序列及其拟合"><center>时间序列及其拟合</center></h1>
+
+<h1 id="什么是时间序列">什么是时间序列</h1>
+
+<p><strong>数据拟合的方法很多,每种方法各有特点，有自定义函数，可以调取相应的库，比如numpy, scipy，statsmodels等，也可以结合两种方法。</strong></p>
+
+<p>简而言之：<br />
+对某一个或者一组变量 x(t) 进行观察测量，将在一系列时刻 $t_1,t_2,⋯,t_n$ 所得到的离散数字组成的序列集合，称之为时间序列。</p>
+
+<p>例如: 某股票A从2015年6月1日到2018年6月1日之间各个交易日的收盘价，可以构成一个时间序列；某地每天的最高气温可以构成一个时间序列。</p>
+
+<p>一些特征:<br /></p>
+<ul>
+  <li>
+    <p><strong>趋势</strong>：是时间序列在长时期内呈现出来的持续向上或持续向下的变动。</p>
+  </li>
+  <li>
+    <p><strong>季节变动</strong>：是时间序列在一年内重复出现的周期性波动。它是诸如气候条件、生产条件、节假日或人们的风俗习惯等各种因素影响的结果。</p>
+  </li>
+  <li>
+    <p><strong>循环波动</strong>：是时间序列呈现出得非固定长度的周期性变动。循环波动的周期可能会持续一段时间，但与趋势不同，它不是朝着单一方向的持续变动，而是涨落相同的交替波动。</p>
+  </li>
+  <li>
+    <p><strong>不规则波动</strong>：是时间序列中除去趋势、季节变动和周期波动之后的随机波动。不规则波动通常总是夹杂在时间序列中，致使时间序列产生一种波浪形或震荡式的变动。只含有随机波动的序列也称为<strong>平稳序列</strong>。</p>
+  </li>
+</ul>
+
+<p>在开始之前，你需要知道拟合要达到大概什么样的效果，并可能得去拟合，并且在后续中体现泛化的能力。</p>
+
+<h1 id="数据的拟合"><strong>数据的拟合</strong></h1>
+<p>时间序列通常具有一定的趋势，其反映了序列总体的一个走势，而往往这个也是最宏观和最重要的。下面，我们首先解决趋势项，一个常用的方法就是拟合。</p>
+
+<h1 id="线性拟合"><strong>线性拟合</strong></h1>
+
+<h2 id="简单线性拟合"><strong>简单线性拟合</strong></h2>
+<p>单变量线性回归，又称简单线性回归（simple linear regression, SLR），是最简单但用途很广的回归模型。其回归式为：\(Y=\alpha+\beta X+\epsilon\)
+为了从一组样本$(y_{i},x_{i})$（其中$i=1,2,…,n$）之中估计最合适（误差最小）的$\alpha$和$\beta$，通常采用最小二乘法(OLS)，其中计算目标最小化残差平方和：
+\(\sum_{i=1}^{n}\epsilon_{i}^{2} = \sum_{i=1}^{n}\left(y_{i}-\alpha-\beta x_{i}\right)^2\)
+从中可以求解得$\hat{\alpha},\hat{\beta}$，并得到拟合方程：\(\hat{Y}=\hat{\alpha}+\hat{\beta} X\)
+其中$\hat{\alpha},\hat{\beta}$如下：</p>
+
+\[\hat{\beta}=\frac{\sum_{i=1}^{n}(x_{i}-\bar{x})(y_{i}-\bar{y})}{\sum_{i=1}^{n}(x_{i}-\bar{x})^2}\]
+
+\[\hat{\alpha} = \bar{y}-\bar{x}\hat{\beta}\]
+
+<p>评价模型拟合效果通常看回归系数$R^{2}$:
+\(R^{2}= \frac{\sum(\hat{Y_{i}}-\bar{Y_{i}})^2}{\sum(Y_{i}-\bar{Y_{i}})^2}.\)
+其取值范围为[0,1]，反映了拟合函数能够解释样本的程度，越接近1，解释程度越高。</p>
+
+<h3 id="方法一自定义函数拟合">方法一：自定义函数拟合</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+</pre></td><td class="rouge-code"><pre><span class="c1">#范例：下面用上述普通求解方法编写一个线性拟合实现的公式，并画图
+#导入库
+</span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="c1">#定义linefit函数
+</span><span class="k">def</span> <span class="nf">linefit</span><span class="p">(</span><span class="n">x</span> <span class="p">,</span> <span class="n">y</span><span class="p">):</span>   
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>   <span class="c1">#获取求和的上限N
+</span>    <span class="n">sx</span><span class="p">,</span><span class="n">sy</span><span class="p">,</span><span class="n">sxx</span><span class="p">,</span><span class="n">syy</span><span class="p">,</span><span class="n">sxy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>  <span class="c1">#定义求和初始值
+</span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">N</span><span class="p">)):</span>   <span class="c1">#循环求和  
+</span>        <span class="n">sx</span>  <span class="o">+=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> 
+        <span class="n">sy</span>  <span class="o">+=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">sxx</span> <span class="o">+=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">syy</span> <span class="o">+=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">sxy</span> <span class="o">+=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">sy</span><span class="o">*</span><span class="n">sx</span><span class="o">/</span><span class="n">N</span> <span class="o">-</span><span class="n">sxy</span><span class="p">)</span><span class="o">/</span><span class="p">(</span> <span class="n">sx</span><span class="o">*</span><span class="n">sx</span><span class="o">/</span><span class="n">N</span> <span class="o">-</span><span class="n">sxx</span><span class="p">)</span>  <span class="c1">#计算系数b的值
+</span>    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">sy</span> <span class="o">-</span> <span class="n">b</span><span class="o">*</span><span class="n">sx</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>                   <span class="c1">#计算系数a的值
+</span>    <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sy</span><span class="o">*</span><span class="n">sx</span><span class="o">/</span><span class="n">N</span><span class="o">-</span><span class="n">sxy</span><span class="p">)</span><span class="o">/</span><span class="n">math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">sxx</span><span class="o">-</span><span class="n">sx</span><span class="o">*</span><span class="n">sx</span><span class="o">/</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">syy</span><span class="o">-</span><span class="n">sy</span><span class="o">*</span><span class="n">sy</span><span class="o">/</span><span class="n">N</span><span class="p">))</span> 
+    <span class="k">return</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">r</span>   <span class="c1">#返回三个值
+</span> 
+
+<span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>                <span class="c1">#数据x
+</span><span class="n">Y</span><span class="o">=</span><span class="p">[</span> <span class="mf">2.5</span> <span class="p">,</span><span class="mi">4</span> <span class="p">,</span><span class="mf">3.5</span> <span class="p">,</span><span class="mf">6.6</span> <span class="p">,</span><span class="mf">6.47</span> <span class="p">,</span><span class="mf">7.51</span><span class="p">,</span><span class="mf">8.9</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span>     <span class="c1">#数据y
+</span><span class="n">Xsample</span><span class="o">=</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>                    <span class="c1">#样本内
+</span><span class="n">Ysample</span><span class="o">=</span><span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>                    
+<span class="n">Xoutsample</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>                 <span class="c1">#样本外，不计入拟合中
+</span><span class="n">Youtsample</span><span class="o">=</span><span class="n">Y</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>  
+<span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="n">linefit</span><span class="p">(</span><span class="n">Xsample</span><span class="p">,</span><span class="n">Ysample</span><span class="p">)</span>                <span class="c1">#调用linefit函数线性拟合
+</span><span class="k">print</span> <span class="s">"X="</span><span class="p">,</span><span class="n">Xsample</span>
+<span class="k">print</span> <span class="s">"Y="</span><span class="p">,</span><span class="n">Ysample</span>
+<span class="k">print</span> <span class="s">"拟合结果: y = %10.5f  + %10.5f x , r=%10.5f"</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+
+<span class="c1">#绘制拟合函数曲线
+</span><span class="n">x_fit</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Xsample</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">Xoutsample</span><span class="p">),</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">y_fit</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_fit</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xsample</span><span class="p">,</span><span class="n">Ysample</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'b'</span><span class="p">)</span> <span class="c1">#scatter为默认离散点的绘图程序
+</span><span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xoutsample</span><span class="p">,</span><span class="n">Youtsample</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_fit</span><span class="p">,</span><span class="n">y_fit</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'r'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<blockquote>
+  <p>X= [1, 2, 3, 4, 5, 6]
+Y= [2.5, 4, 3.5, 6.6, 6.47, 7.51]
+拟合结果: y =    1.54067  +    1.01600 x , r=   0.93952</p>
+</blockquote>
+
+<p><img src="/img/yu-img/post-img/20180926/output_10_2.png" alt="png" /></p>
+
+<h3 id="方法二调用numpy库拟合">方法二：调用numpy库拟合</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="rouge-code"><pre><span class="c1"># 线性拟合-使用numpy polyfit 函数
+</span><span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>            <span class="c1">#数据x
+</span><span class="n">Y</span><span class="o">=</span><span class="p">[</span> <span class="mf">2.5</span> <span class="p">,</span><span class="mi">4</span> <span class="p">,</span><span class="mf">3.5</span> <span class="p">,</span><span class="mf">6.6</span> <span class="p">,</span><span class="mf">6.47</span> <span class="p">,</span><span class="mf">7.51</span><span class="p">,</span><span class="mf">8.9</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span>     <span class="c1">#数据y
+</span><span class="n">Xsample</span><span class="o">=</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>                    <span class="c1">#样本内
+</span><span class="n">Ysample</span><span class="o">=</span><span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>                    
+<span class="n">Xoutsample</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>                 <span class="c1">#样本外
+</span><span class="n">Youtsample</span><span class="o">=</span><span class="n">Y</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>  
+<span class="n">z1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">Xsample</span><span class="p">,</span> <span class="n">Ysample</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1">#一次多项式拟合，相当于线性拟合，并获取系数值
+</span><span class="n">p1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span>     <span class="c1">#获取拟合的函数
+</span>
+<span class="k">print</span> <span class="n">z1</span>   
+<span class="k">print</span> <span class="n">p1</span>
+<span class="c1">#绘制拟合函数曲线
+</span><span class="n">x_fit</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Xsample</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">Xoutsample</span><span class="p">),</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">y_fit</span> <span class="o">=</span> <span class="n">p1</span><span class="p">(</span><span class="n">x_fit</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xsample</span><span class="p">,</span><span class="n">Ysample</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'b'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xoutsample</span><span class="p">,</span><span class="n">Youtsample</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_fit</span><span class="p">,</span><span class="n">y_fit</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'r'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<blockquote>
+  <p>[ 1.016       1.54066667]</p>
+
+  <p>1.016 x + 1.541</p>
+</blockquote>
+
+<p><img src="/img/yu-img/post-img/20180926/output_12_2.png" alt="png" /></p>
+
+<p>效果是一样的，为什么不用现成的工具呢？</p>
+
+<h2 id="多项式拟合"><strong>多项式拟合</strong></h2>
+<p>多项式回归原理与线性回归基本类似。如果我们有自变量$X$,$X^2$,$X^3$,…,$X^n$，和一个因变量$Y$，通过线性回归，我们能够确定最好解释数据的线性模型：$Y = \alpha + \beta_1 X + \beta_3 X^2 +…+  \beta_n X^n$ 。
+同样，对于多项式拟合，我们还是用numpy库的polyfit.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+</pre></td><td class="rouge-code"><pre><span class="c1">#二次多项式拟合--使用numpy polyfit 函数
+</span><span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>                <span class="c1">#数据x
+</span><span class="n">Y</span><span class="o">=</span><span class="p">[</span> <span class="mf">2.5</span> <span class="p">,</span><span class="mi">4</span> <span class="p">,</span><span class="mf">3.5</span> <span class="p">,</span><span class="mf">6.6</span> <span class="p">,</span><span class="mf">6.47</span> <span class="p">,</span><span class="mf">7.51</span><span class="p">,</span><span class="mf">8.9</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span>     <span class="c1">#数据y
+</span><span class="n">Xsample</span><span class="o">=</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>                    <span class="c1">#样本内
+</span><span class="n">Ysample</span><span class="o">=</span><span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>                    
+<span class="n">Xoutsample</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>                 <span class="c1">#样本外
+</span><span class="n">Youtsample</span><span class="o">=</span><span class="n">Y</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>  
+<span class="n">z1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">Xsample</span><span class="p">,</span> <span class="n">Ysample</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>                 <span class="c1">#用np.polyfit（x，y,多项式阶数）获取拟合函数的系数
+</span><span class="n">p1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span>    <span class="c1">#得到拟合的函数
+</span><span class="k">print</span> <span class="s">'得到这个函数：'</span><span class="p">,</span><span class="n">p1</span>
+<span class="k">print</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span>
+ <span class="c1"># 下面计算R方
+</span><span class="n">Yhat</span> <span class="o">=</span> <span class="n">p1</span><span class="p">(</span><span class="n">Xsample</span><span class="p">)</span>                         
+<span class="n">Ybar</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">Ysample</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">Ysample</span><span class="p">)</span>         
+<span class="n">ssreg</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">((</span><span class="n">Yhat</span><span class="o">-</span><span class="n">Ybar</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>   
+<span class="n">sstot</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">((</span><span class="n">Ysample</span> <span class="o">-</span> <span class="n">Ybar</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>    
+<span class="n">r</span> <span class="o">=</span> <span class="n">ssreg</span> <span class="o">/</span> <span class="n">sstot</span> <span class="c1"># R^2
+</span>
+<span class="k">print</span> <span class="n">z1</span>
+<span class="k">print</span> <span class="n">r</span>
+
+<span class="c1">#绘制拟合函数曲线
+</span><span class="n">x_fit</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Xsample</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">Xoutsample</span><span class="p">),</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">y_fit</span> <span class="o">=</span> <span class="n">p1</span><span class="p">(</span><span class="n">x_fit</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xsample</span><span class="p">,</span><span class="n">Ysample</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'b'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xoutsample</span><span class="p">,</span><span class="n">Youtsample</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_fit</span><span class="p">,</span><span class="n">y_fit</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'r'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<blockquote>
+  <p>得到这个函数：           3          2
+-0.04296 x + 0.4365 x - 0.2434 x + 2.487
+[-0.04296296  0.43646825 -0.24342593  2.48666667]
+0.888939795429</p>
+</blockquote>
+
+<p><img src="/img/yu-img/post-img/20180926/output_15_2.png" alt="png" /></p>
+
+<h2 id="曲线拟合"><strong>曲线拟合</strong></h2>
+<p>对于曲线拟合，我们开始使用scipy库optimize的curve_fit函数，其威力强大。</p>
+
+<h3 id="三角函数"><strong>三角函数</strong></h3>
+<ul>
+  <li>$asin(bx+c)+d$</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="c1">#根据某地每月的平均温度[17, 19, 21, 28, 33, 38, 37, 37, 31, 23, 19, 18]拟合温度函数。
+#构建函数y=a*sin(x*pi/6+b)+c
+#使用optimize.curve_fit函数求出a、b、c的值  
+</span><span class="k">def</span> <span class="nf">fmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">6</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">+</span><span class="n">c</span>
+
+<span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x1</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">ymax</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">([</span><span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">18</span> <span class="p">])</span>
+<span class="n">fita</span><span class="p">,</span><span class="n">fitb</span><span class="o">=</span><span class="n">optimize</span><span class="p">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">fmax</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">ymax</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">print</span> <span class="s">'求出a,b,c'</span><span class="p">,</span><span class="n">fita</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ymax</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'b'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">fmax</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">fita</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fita</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">fita</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'r'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>求出a,b,c [ 10.93254951  -1.9496096   26.75      ]
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/img/yu-img/post-img/20180926/output_18_1.png" alt="png" /></p>
+
+<h3 id="对数函数"><strong>对数函数</strong></h3>
+<ul>
+  <li>$alog(bx)+c$</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+</pre></td><td class="rouge-code"><pre><span class="c1">#  对数函数拟合  使用scipy.optimize import curve_fit 函数
+</span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">log</span> <span class="k">as</span> <span class="n">log</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c1">#先定义要拟合的曲线方程
+</span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">y</span>
+
+<span class="n">X</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>      <span class="c1">#数据x
+</span><span class="n">Y</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">33</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">105</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">140</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">159</span><span class="p">,</span><span class="mi">165</span><span class="p">,</span><span class="mi">168</span><span class="p">,</span><span class="mi">170</span><span class="p">,</span><span class="mi">171</span><span class="p">]</span>
+<span class="n">Xsample</span><span class="o">=</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>                    <span class="c1">#样本内
+</span><span class="n">Ysample</span><span class="o">=</span><span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>                    
+<span class="n">Xoutsample</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>                 <span class="c1">#样本外
+</span><span class="n">Youtsample</span><span class="o">=</span><span class="n">Y</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>  
+
+<span class="n">z</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">Xsample</span><span class="p">,</span> <span class="n">Ysample</span><span class="p">)</span>  <span class="c1">#获取拟合的系数值和协方差
+</span>
+<span class="c1">#下面计算r
+</span><span class="n">Yhat</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">Xsample</span> <span class="p">,</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">,</span><span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>                         
+<span class="n">Ybar</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">Ysample</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">Ysample</span><span class="p">)</span>          
+<span class="n">ssreg</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">((</span><span class="n">Yhat</span><span class="o">-</span><span class="n">Ybar</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>   
+<span class="n">sstot</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">((</span><span class="n">Ysample</span> <span class="o">-</span> <span class="n">Ybar</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>    
+<span class="n">r</span> <span class="o">=</span> <span class="n">ssreg</span> <span class="o">/</span> <span class="n">sstot</span>
+
+<span class="k">print</span> <span class="n">z</span>
+<span class="k">print</span> <span class="n">r</span>
+
+<span class="c1">#绘制拟合函数曲线
+</span><span class="n">x_fit</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Xsample</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">Xoutsample</span><span class="p">),</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">y_fit</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x_fit</span> <span class="p">,</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">,</span><span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>  
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xsample</span><span class="p">,</span><span class="n">Ysample</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'b'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xoutsample</span><span class="p">,</span><span class="n">Youtsample</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_fit</span><span class="p">,</span><span class="n">y_fit</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">'r'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>[ 75.60798846 -12.20142498]
+0.97636651944
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/img/yu-img/post-img/20180926/output_20_2.png" alt="png" /></p>
+
+<h3 id="指数函数"><strong>指数函数</strong></h3>
+<ul>
+  <li>$ae^{bx}$</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span> <span class="c1">#自定义函数 e指数形式
+</span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>    
+    <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="n">b</span><span class="o">/</span><span class="n">x</span><span class="p">)</span> 
+<span class="c1">#定义x、y散点坐标
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">num</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.00</span><span class="p">,</span> <span class="mf">5.80</span><span class="p">,</span> <span class="mf">5.900</span><span class="p">,</span> <span class="mf">6.80</span><span class="p">,</span> <span class="mf">7.34</span><span class="p">,</span> <span class="mf">8.9</span><span class="p">,</span> <span class="mf">9.86</span><span class="p">,</span> <span class="mf">11.11</span><span class="p">,</span> <span class="mf">12.85</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">37</span><span class="p">,</span><span class="mi">89</span><span class="p">,</span><span class="mi">200</span><span class="p">]</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="c1">#非线性最小二乘法拟合
+</span><span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1">#获取popt里面是拟合系数
+</span><span class="n">a</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">yvals</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="c1">#拟合y值
+</span><span class="k">print</span> <span class="s">'a:'</span><span class="p">,</span> <span class="n">a</span>
+<span class="k">print</span> <span class="s">'b:'</span><span class="p">,</span> <span class="n">b</span> 
+<span class="c1">#绘图
+</span><span class="n">plot1</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s">'s'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">'original values'</span><span class="p">)</span>
+<span class="n">plot2</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">yvals</span><span class="p">,</span> <span class="s">'r'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">'polyfit values'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'x'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'y'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>a: 16429066.3873
+b: -192.685937261
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/img/yu-img/post-img/20180926/output_22_1.png" alt="png" /></p>
+
+<h3 id="函数结合">函数结合</h3>
+<p>根据官方给出的实例，讲述传递三个参数，通常为 $ae^{(\frac{b}{x})}+c$形式</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>    
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span> 
+
+<span class="c1"># define the data to be fit with some noise
+</span><span class="n">xdata</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">y_noise</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">xdata</span><span class="p">.</span><span class="n">size</span><span class="p">)</span>
+<span class="n">ydata</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">y_noise</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="s">'b-'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'data'</span><span class="p">)</span> 
+
+<span class="c1"># Fit for the parameters a, b, c of the function `func`
+</span><span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">func</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">),</span> <span class="s">'r-'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'fit'</span><span class="p">)</span> 
+
+<span class="c1"># Constrain the optimization to the region of ``0 &lt; a &lt; 3``, ``0 &lt; b &lt; 2``# and ``0 &lt; c &lt; 1``:
+</span><span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">func</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">),</span> <span class="s">'g--'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'fit-with-bounds'</span><span class="p">)</span> 
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'x'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'y'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/img/yu-img/post-img/20180926/output_24_0.png" alt="png" /></p>
+
+<p>以上只是初等函数结合一个例子，很容易想到，其他函数也可以结合，级数也是一个可以考虑的方向，所以你可以有很多方法可以尝试！！！</p>
+
+<h2 id="真实数据拟合">真实数据拟合</h2>
+<ul>
+  <li>老是用一些随机数似乎很单调，所以接下来马上用到真实数据！！!</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="n">data</span> <span class="o">=</span> <span class="n">get_price</span><span class="p">(</span><span class="s">"000001.XSHG"</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s">'2018-06-01'</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s">'2018-09-25'</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">).</span><span class="n">close</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">values</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">values</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">"以下为上证指数在2018年6月1日到9月25日的走势情况"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>以下为上证指数在2018年6月1日到9月25日的走势情况
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/img/yu-img/post-img/20180926/output_27_1.png" alt="png" /></p>
+
+<h3 id="statsmodels方法">statsmodels方法</h3>
+<p>再介绍一个库statsmodels</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">statsmodels</span> <span class="kn">import</span> <span class="n">regression</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="n">sm</span>
+<span class="k">def</span> <span class="nf">sinreg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">),</span> <span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">),</span><span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">),</span><span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">),</span><span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">),</span><span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">)))</span>
+    
+    <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="p">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>                    <span class="c1">#为模型增加常数项
+</span>    <span class="n">model</span> <span class="o">=</span> <span class="n">regression</span><span class="p">.</span><span class="n">linear_model</span><span class="p">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">).</span><span class="n">fit</span><span class="p">()</span> <span class="c1">#对模型进行最小二乘法的线性模型拟合
+</span>    <span class="k">print</span> <span class="s">'%s阶傅里叶级数拟合系数为'</span><span class="o">%</span><span class="n">t</span>
+    <span class="k">print</span> <span class="n">model</span><span class="p">.</span><span class="n">params</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>                       <span class="c1">#将拟合的第一个系数值赋值于a
+</span>    <span class="n">b</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>                       <span class="c1">#...
+</span>    <span class="n">c</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+    
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">t</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">t</span><span class="o">-</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># 返回回归结果和图
+</span>    <span class="c1">#X2 = np.linspace(x[0], x_outsample[-1], 100)  #生成拟合曲线的自变量X2，取样本内数据X[0]为下限；样本外数据X_outsample[-1](最后一个)为上限，均匀的取100个点。因此X2的数据长度为100
+</span>    
+    <span class="n">Y_hat</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="n">e</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="n">g</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">40</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s">'b'</span><span class="p">)</span>            <span class="c1"># 画样本内数据散点图
+</span>    <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y_hat</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span>   <span class="c1"># 添加回归直线，颜色设置为红色
+</span>    <span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">)</span>                      <span class="c1"># 横坐标名称
+</span>    <span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Cumulative Abnormal Return'</span><span class="p">)</span>                     <span class="c1"># 纵坐标名称
+</span>    <span class="k">print</span> <span class="n">model</span><span class="p">.</span><span class="n">summary</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Y_hat</span>                <span class="c1"># 函数返回模型的拟合结果
+</span>
+
+<span class="n">num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">sinreg</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">num</span><span class="p">),</span><span class="n">data</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+</pre></td><td class="rouge-code"><pre>5阶傅里叶级数拟合系数为
+const    2815.452202
+x1         83.341005
+x2         40.751444
+x3         67.021982
+x4         60.605173
+x5         79.884163
+x6         -2.145009
+dtype: float64
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                  close   R-squared:                       0.789
+Model:                            OLS   Adj. R-squared:                  0.772
+Method:                 Least Squares   F-statistic:                     46.24
+Date:                Wed, 26 Sep 2018   Prob (F-statistic):           4.32e-23
+Time:                        00:23:37   Log-Likelihood:                -440.29
+No. Observations:                  81   AIC:                             894.6
+Df Residuals:                      74   BIC:                             911.3
+Df Model:                           6                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const       2815.4522      6.457    436.055      0.000    2802.587    2828.317
+x1            83.3410      9.184      9.075      0.000      65.041     101.641
+x2            40.7514      9.078      4.489      0.000      22.663      58.839
+x3            67.0220      9.184      7.298      0.000      48.722      85.322
+x4            60.6052      9.078      6.676      0.000      42.517      78.693
+x5            79.8842      9.184      8.698      0.000      61.585      98.184
+x6            -2.1450      9.078     -0.236      0.814     -20.233      15.943
+==============================================================================
+Omnibus:                        2.004   Durbin-Watson:                   0.368
+Prob(Omnibus):                  0.367   Jarque-Bera (JB):                1.342
+Skew:                           0.211   Prob(JB):                        0.511
+Kurtosis:                       3.469   Cond. No.                         1.42
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+array([ 2914.66380996,  2949.52329863,  2981.44464373,  3009.20973522,
+        3031.75490339,  3048.22335927,  3058.00788126,  3060.78147358,
+        3056.51434549,  3045.4762742 ,  3028.22418008,  3005.57551907,
+        2978.56884253,  2948.41354791,  2916.43140974,  2883.9929072 ,
+        2852.45163086,  2823.08014124,  2797.01056218,  2775.18292722,
+        2758.30387199,  2746.8177038 ,  2740.89121137,  2740.41284012,
+        2745.00609104,  2754.05624693,  2766.74882774,  2782.11756671,
+        2799.09921256,  2816.59212619,  2833.51547122,  2848.86580414,
+        2861.76805096,  2871.51820126,  2877.61553903,  2879.78283303,
+        2877.97359572,  2872.36624851,  2863.34576361,  2851.47404639,
+        2837.45094082,  2822.06824742,  2806.15951325,  2790.54856473,
+        2775.99979624,  2763.17309885,  2752.58602198,  2744.58532296,
+        2739.32950127,  2736.7832663 ,  2736.72418842,  2738.76107016,
+        2742.3628906 ,  2746.8965575 ,  2751.67118585,  2755.98623566,
+        2759.1806091 ,  2760.67974049,  2760.03781593,  2756.97252776,
+        2751.39018673,  2743.39955966,  2733.31344115,  2721.63766943,
+        2709.04801883,  2696.35610445,  2684.46607853,  2674.32444625,
+        2666.86575018,  2662.9571428 ,  2663.34496979,  2668.60641613,
+        2679.10902542,  2694.98050283,  2716.09067488,  2742.04683361,
+        2772.20297382,  2805.68267926,  2841.41466779,  2878.17930814,
+        2914.66380996,  2949.52329863,  2981.44464373,  3009.20973522,
+        3031.75490339,  3048.22335927])
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/img/yu-img/post-img/20180926/output_29_2.png" alt="png" /></p>
+
+<h1 id="结语">结语</h1>
+
+<ul>
+  <li>本章节介绍了时间序列的概念，并用数据拟合的几个方法去拟合不同的时间序列；</li>
+  <li>介绍了Python里可以用来数据拟合的库numpy, scipy, statsmodels,并用代码将其实现作为例子；</li>
+  <li>最后还用了上证指数作为例子，</li>
+  <li>所以讲到这里，如果你掌握了上述的方法，就可以尝试拟合这段时间的上证指数了，拟合之后尝试去评估拟合的效果，如果效果良好，下一步还可以进行预测时间序列。</li>
+</ul>
+
+<p>Just do it！！！</p>
+:ET

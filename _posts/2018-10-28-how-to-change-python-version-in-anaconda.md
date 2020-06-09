@@ -4,6 +4,7 @@ title: "在Anaconda3中设置Python2和Python3版本"
 author: "雨栋"
 header-img: "img/post-bg-css.jpg"
 header-mask: 0.4
+catalog: true
 tags:
   - Python
 ---

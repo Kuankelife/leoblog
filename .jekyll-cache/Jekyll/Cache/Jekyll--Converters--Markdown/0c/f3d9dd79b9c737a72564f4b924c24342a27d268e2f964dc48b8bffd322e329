@@ -1,0 +1,1098 @@
+I"G�<h2 id="聚宽财务数据用法介绍">聚宽财务数据用法介绍</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'axes.unicode_minus'</span><span class="p">]</span><span class="o">=</span><span class="bp">False</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'font.sans-serif'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="s">'SimHei'</span><span class="p">]</span> <span class="c1">#指定默认字体 SimHei为黑体
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>首先要获取财务数据，在聚宽上调用 get_fundamentals, 传入要筛选的条件即可. 聚宽上四类财务数据分别存放到如下四个表中: 市值表, 利润表, 现金表, 负债表。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#获取沪深300成分股
+</span><span class="n">stocks</span> <span class="o">=</span> <span class="n">get_index_stocks</span><span class="p">(</span><span class="s">'000300.XSHG'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="调用方法格式">调用方法格式</h3>
+
+<hr />
+<p>get_fundamentals(query_object, date=None, statDate=None)</p>
+
+<hr />
+
+<p>date和statDate参数只能传入一个:</p>
+
+<ul>
+  <li>
+    <p>传入date时, 查询指定日期date所能看到的最近(对市值表来说, 最近一天, 对其他表来说, 最近一个季度)的数据, 我们会查找上市公司在这个日期之前(包括此日期)发布的数据, 不会有未来函数.</p>
+  </li>
+  <li>
+    <p>传入statDate时, 查询statDate指定的季度或者年份的财务数据.</p>
+
+    <p>注意:</p>
+    <ul>
+      <li>由于公司发布财报不及时, 一般是看不到当季度或年份的财务报表的, 回测中使用这个数据可能会有未来函数, 请注意规避.</li>
+      <li>由于估值表每天更新, 当按季度或者年份查询时, 返回季度或者年份最后一天的数据</li>
+      <li>对于年报数据, 我们目前只有现金流表和利润表, 当查询其他表时, 会返回该年份最后一个季报的数据</li>
+      <li>当date和statDate都不传入时, 相当于使用date参数, date的默认值下面会描述.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="c1">### 获取单只股票在某一日期的市值数据
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">get_fundamentals</span><span class="p">(</span><span class="n">query</span><span class="p">(</span>
+        <span class="n">valuation</span>
+    <span class="p">).</span><span class="nb">filter</span><span class="p">(</span>
+        <span class="n">valuation</span><span class="p">.</span><span class="n">code</span> <span class="o">==</span> <span class="s">'000001.XSHE'</span>
+    <span class="p">),</span> <span class="n">date</span><span class="o">=</span><span class="s">'2018-10-15'</span><span class="p">)</span>
+
+<span class="n">df</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>code</th>
+      <th>pe_ratio</th>
+      <th>turnover_ratio</th>
+      <th>pb_ratio</th>
+      <th>ps_ratio</th>
+      <th>pcf_ratio</th>
+      <th>capitalization</th>
+      <th>market_cap</th>
+      <th>circulating_cap</th>
+      <th>circulating_market_cap</th>
+      <th>day</th>
+      <th>pe_ratio_lyr</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>18856883</td>
+      <td>000001.XSHE</td>
+      <td>7.2309</td>
+      <td>0.8169</td>
+      <td>0.8433</td>
+      <td>1.5932</td>
+      <td>1.7969</td>
+      <td>1717041.125</td>
+      <td>1735.9286</td>
+      <td>1717024.625</td>
+      <td>1735.9119</td>
+      <td>2018-10-15</td>
+      <td>7.486</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1"># 取出总市值
+</span><span class="n">df</span><span class="p">[</span><span class="s">'market_cap'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>1735.9286
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="c1"># 只选择表里的某些字段
+### 获取多只股票在某一日期的市值, 利润, 现金流和负债数据
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">get_fundamentals</span><span class="p">(</span><span class="n">query</span><span class="p">(</span>
+        <span class="n">valuation</span><span class="p">.</span><span class="n">code</span><span class="p">,</span> <span class="n">valuation</span><span class="p">.</span><span class="n">market_cap</span><span class="p">,</span> <span class="n">valuation</span><span class="p">.</span><span class="n">pe_ratio</span><span class="p">,</span> <span class="n">income</span><span class="p">.</span><span class="n">total_operating_revenue</span>
+    <span class="p">).</span><span class="nb">filter</span><span class="p">(</span>
+        <span class="c1"># 这里不能使用 in 操作, 要使用in_()函数
+</span>        <span class="n">valuation</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">in_</span><span class="p">([</span><span class="s">'000001.XSHE'</span><span class="p">,</span> <span class="s">'600000.XSHG'</span><span class="p">])</span>
+    <span class="p">),</span> <span class="n">date</span><span class="o">=</span><span class="s">'2015-10-15'</span><span class="p">)</span>
+
+<span class="n">df</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>code</th>
+      <th>market_cap</th>
+      <th>pe_ratio</th>
+      <th>total_operating_revenue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>000001.XSHE</td>
+      <td>1598.2791</td>
+      <td>7.4984</td>
+      <td>2.590400e+10</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>600000.XSHG</td>
+      <td>2965.9021</td>
+      <td>6.1440</td>
+      <td>3.771000e+10</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="c1"># 选出所有的总市值大于1000亿元, 市盈率小于10, 营业总收入大于200亿元的股票
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">get_fundamentals</span><span class="p">(</span><span class="n">query</span><span class="p">(</span>
+        <span class="n">valuation</span><span class="p">.</span><span class="n">code</span><span class="p">,</span> <span class="n">valuation</span><span class="p">.</span><span class="n">market_cap</span><span class="p">,</span> <span class="n">valuation</span><span class="p">.</span><span class="n">pe_ratio</span><span class="p">,</span> <span class="n">income</span><span class="p">.</span><span class="n">total_operating_revenue</span>
+    <span class="p">).</span><span class="nb">filter</span><span class="p">(</span>
+        <span class="n">valuation</span><span class="p">.</span><span class="n">market_cap</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">valuation</span><span class="p">.</span><span class="n">pe_ratio</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">income</span><span class="p">.</span><span class="n">total_operating_revenue</span> <span class="o">&gt;</span> <span class="mf">2e10</span>
+    <span class="p">),</span> <span class="n">date</span><span class="o">=</span><span class="s">'2015-10-15'</span><span class="p">)</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+<hr />
+
+<h2 id="财务数据解释公司市值">财务数据解释公司市值</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="n">stocks</span> <span class="o">=</span> <span class="n">get_index_stocks</span><span class="p">(</span><span class="s">'399906.XSHE'</span><span class="p">)</span>
+<span class="n">stocks</span>
+<span class="c1"># 获取多只股票在某一日期的市值, 利润
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">get_fundamentals</span><span class="p">(</span><span class="n">query</span><span class="p">(</span>
+        <span class="n">valuation</span><span class="p">,</span> <span class="n">income</span><span class="p">,</span><span class="n">indicator</span><span class="p">,</span> <span class="n">balance</span>
+    <span class="p">).</span><span class="nb">filter</span><span class="p">(</span>
+    <span class="n">valuation</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">in_</span><span class="p">(</span><span class="n">stocks</span><span class="p">)</span>
+    <span class="p">),</span> <span class="n">date</span><span class="o">=</span><span class="s">'2019-05-21'</span><span class="p">)</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="给定日期的最新财务数据">给定日期的最新财务数据</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="c1">#查询日期为2019-05-21，获得是2019-05-20这天能获取的财务数据。
+</span><span class="n">df</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+<span class="c1">#800 rows × 178 columns
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>code</th>
+      <th>pe_ratio</th>
+      <th>turnover_ratio</th>
+      <th>pb_ratio</th>
+      <th>ps_ratio</th>
+      <th>pcf_ratio</th>
+      <th>capitalization</th>
+      <th>market_cap</th>
+      <th>circulating_cap</th>
+      <th>circulating_market_cap</th>
+      <th>day</th>
+      <th>pe_ratio_lyr</th>
+      <th>id.1</th>
+      <th>code.1</th>
+      <th>day.1</th>
+      <th>pubDate</th>
+      <th>statDate</th>
+      <th>total_operating_revenue</th>
+      <th>operating_revenue</th>
+      <th>interest_income</th>
+      <th>premiums_earned</th>
+      <th>commission_income</th>
+      <th>total_operating_cost</th>
+      <th>operating_cost</th>
+      <th>interest_expense</th>
+      <th>commission_expense</th>
+      <th>refunded_premiums</th>
+      <th>net_pay_insurance_claims</th>
+      <th>withdraw_insurance_contract_reserve</th>
+      <th>policy_dividend_payout</th>
+      <th>reinsurance_cost</th>
+      <th>operating_tax_surcharges</th>
+      <th>sale_expense</th>
+      <th>administration_expense</th>
+      <th>financial_expense</th>
+      <th>asset_impairment_loss</th>
+      <th>fair_value_variable_income</th>
+      <th>investment_income</th>
+      <th>invest_income_associates</th>
+      <th>...</th>
+      <th>borrowing_capital</th>
+      <th>trading_liability</th>
+      <th>notes_payable</th>
+      <th>accounts_payable</th>
+      <th>advance_peceipts</th>
+      <th>sold_buyback_secu_proceeds</th>
+      <th>commission_payable</th>
+      <th>salaries_payable</th>
+      <th>taxs_payable</th>
+      <th>interest_payable</th>
+      <th>dividend_payable</th>
+      <th>other_payable</th>
+      <th>reinsurance_payables</th>
+      <th>insurance_contract_reserves</th>
+      <th>proxy_secu_proceeds</th>
+      <th>receivings_from_vicariously_sold_securities</th>
+      <th>non_current_liability_in_one_year</th>
+      <th>other_current_liability</th>
+      <th>total_current_liability</th>
+      <th>longterm_loan</th>
+      <th>bonds_payable</th>
+      <th>longterm_account_payable</th>
+      <th>specific_account_payable</th>
+      <th>estimate_liability</th>
+      <th>deferred_tax_liability</th>
+      <th>other_non_current_liability</th>
+      <th>total_non_current_liability</th>
+      <th>total_liability</th>
+      <th>paidin_capital</th>
+      <th>capital_reserve_fund</th>
+      <th>treasury_stock</th>
+      <th>specific_reserves</th>
+      <th>surplus_reserve_fund</th>
+      <th>ordinary_risk_reserve_fund</th>
+      <th>retained_profit</th>
+      <th>foreign_currency_report_conv_diff</th>
+      <th>equities_parent_company_owners</th>
+      <th>minority_interests</th>
+      <th>total_owner_equities</th>
+      <th>total_sheet_owner_equities</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>35356284</td>
+      <td>000001.XSHE</td>
+      <td>8.2812</td>
+      <td>0.4580</td>
+      <td>0.9354</td>
+      <td>1.7544</td>
+      <td>21.0987</td>
+      <td>1.717041e+06</td>
+      <td>2125.6970</td>
+      <td>1.717025e+06</td>
+      <td>2125.6765</td>
+      <td>2019-05-20</td>
+      <td>8.5651</td>
+      <td>17903449</td>
+      <td>000001.XSHE</td>
+      <td>2019-05-20</td>
+      <td>2019-04-24</td>
+      <td>2019-03-31</td>
+      <td>3.247600e+10</td>
+      <td>3.247600e+10</td>
+      <td>4.266100e+10</td>
+      <td>NaN</td>
+      <td>1.157900e+10</td>
+      <td>9.924000e+09</td>
+      <td>NaN</td>
+      <td>2.188700e+10</td>
+      <td>2.019000e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.040000e+08</td>
+      <td>NaN</td>
+      <td>9.620000e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-642000000.0</td>
+      <td>2.571000e+09</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>2.166900e+10</td>
+      <td>1.572100e+10</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.150200e+10</td>
+      <td>NaN</td>
+      <td>9.848001e+09</td>
+      <td>1.105300e+10</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.017580e+11</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.271000e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.279242e+12</td>
+      <td>1.717000e+10</td>
+      <td>5.646500e+10</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.078100e+10</td>
+      <td>3.985000e+10</td>
+      <td>1.016090e+11</td>
+      <td>NaN</td>
+      <td>2.509380e+11</td>
+      <td>NaN</td>
+      <td>2.509380e+11</td>
+      <td>3.530180e+12</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>35356285</td>
+      <td>000002.XSHE</td>
+      <td>9.0621</td>
+      <td>0.2635</td>
+      <td>1.9555</td>
+      <td>0.9774</td>
+      <td>6.4286</td>
+      <td>1.130214e+06</td>
+      <td>3080.9641</td>
+      <td>9.715170e+05</td>
+      <td>2648.3555</td>
+      <td>2019-05-20</td>
+      <td>9.1227</td>
+      <td>21894414</td>
+      <td>000002.XSHE</td>
+      <td>2019-05-20</td>
+      <td>2019-04-30</td>
+      <td>2019-03-31</td>
+      <td>4.837463e+10</td>
+      <td>4.837463e+10</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.225158e+10</td>
+      <td>3.142224e+10</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.437556e+09</td>
+      <td>1.371392e+09</td>
+      <td>2.639014e+09</td>
+      <td>1.841741e+09</td>
+      <td>NaN</td>
+      <td>-35196480.0</td>
+      <td>-2.065606e+08</td>
+      <td>-312437184.0</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.313821e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.440450e+09</td>
+      <td>1.433424e+10</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.314350e+11</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>6.156035e+10</td>
+      <td>4.635405e+10</td>
+      <td>1.115029e+12</td>
+      <td>1.261480e+11</td>
+      <td>5.261106e+10</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.361696e+08</td>
+      <td>4.728514e+08</td>
+      <td>2.188339e+09</td>
+      <td>1.999485e+11</td>
+      <td>1.314977e+12</td>
+      <td>1.103915e+10</td>
+      <td>7.961989e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.739325e+10</td>
+      <td>NaN</td>
+      <td>9.284547e+10</td>
+      <td>NaN</td>
+      <td>1.575514e+11</td>
+      <td>7.863797e+10</td>
+      <td>2.361894e+11</td>
+      <td>1.551166e+12</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>35356288</td>
+      <td>000006.XSHE</td>
+      <td>10.7008</td>
+      <td>0.3713</td>
+      <td>1.1855</td>
+      <td>3.0648</td>
+      <td>3.1466</td>
+      <td>1.349995e+05</td>
+      <td>74.7897</td>
+      <td>1.347786e+05</td>
+      <td>74.6674</td>
+      <td>2019-05-20</td>
+      <td>8.5548</td>
+      <td>21977780</td>
+      <td>000006.XSHE</td>
+      <td>2019-05-20</td>
+      <td>2019-04-30</td>
+      <td>2019-03-31</td>
+      <td>4.134936e+08</td>
+      <td>4.134936e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.444878e+08</td>
+      <td>2.511230e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.051002e+07</td>
+      <td>2.214487e+06</td>
+      <td>2.797155e+07</td>
+      <td>2.901531e+07</td>
+      <td>13653447.0</td>
+      <td>NaN</td>
+      <td>6.441681e+07</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.288545e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>5.705216e+07</td>
+      <td>6.717919e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>6.829181e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.374894e+08</td>
+      <td>3.219049e+05</td>
+      <td>5.578220e+09</td>
+      <td>1.310600e+09</td>
+      <td>4.993531e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.715713e+06</td>
+      <td>NaN</td>
+      <td>1.811669e+09</td>
+      <td>7.389889e+09</td>
+      <td>1.349995e+09</td>
+      <td>4.843216e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.483863e+09</td>
+      <td>NaN</td>
+      <td>2.990372e+09</td>
+      <td>NaN</td>
+      <td>6.308551e+09</td>
+      <td>3.212726e+08</td>
+      <td>6.629824e+09</td>
+      <td>1.401971e+10</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>35356290</td>
+      <td>000008.XSHE</td>
+      <td>32.6433</td>
+      <td>0.8227</td>
+      <td>1.4540</td>
+      <td>3.9970</td>
+      <td>-362.7030</td>
+      <td>2.780795e+05</td>
+      <td>106.5045</td>
+      <td>2.599124e+05</td>
+      <td>99.5465</td>
+      <td>2019-05-20</td>
+      <td>32.7654</td>
+      <td>22710880</td>
+      <td>000008.XSHE</td>
+      <td>2019-05-20</td>
+      <td>2019-04-27</td>
+      <td>2019-03-31</td>
+      <td>3.087470e+08</td>
+      <td>3.087470e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.039850e+08</td>
+      <td>1.448895e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>7.327400e+06</td>
+      <td>5.257320e+07</td>
+      <td>7.052305e+07</td>
+      <td>8.071832e+06</td>
+      <td>NaN</td>
+      <td>-5482905.0</td>
+      <td>-4.299728e+05</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.919174e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>5.542671e+07</td>
+      <td>3.612078e+07</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.779759e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.849081e+07</td>
+      <td>2.813214e+09</td>
+      <td>2.344870e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.983337e+07</td>
+      <td>NaN</td>
+      <td>2.830551e+08</td>
+      <td>3.096269e+09</td>
+      <td>2.780795e+09</td>
+      <td>2.771978e+09</td>
+      <td>NaN</td>
+      <td>44309900.0</td>
+      <td>4.685366e+07</td>
+      <td>NaN</td>
+      <td>1.681122e+09</td>
+      <td>NaN</td>
+      <td>7.325059e+09</td>
+      <td>9.265987e+07</td>
+      <td>7.417719e+09</td>
+      <td>1.051399e+10</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>35356291</td>
+      <td>000009.XSHE</td>
+      <td>49.0255</td>
+      <td>0.7387</td>
+      <td>2.2674</td>
+      <td>1.0008</td>
+      <td>9.1161</td>
+      <td>2.149345e+05</td>
+      <td>119.9334</td>
+      <td>2.119789e+05</td>
+      <td>118.2842</td>
+      <td>2019-05-20</td>
+      <td>56.1012</td>
+      <td>23284630</td>
+      <td>000009.XSHE</td>
+      <td>2019-05-20</td>
+      <td>2019-04-30</td>
+      <td>2019-03-31</td>
+      <td>2.249621e+09</td>
+      <td>2.239609e+09</td>
+      <td>1.001234e+07</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.117828e+09</td>
+      <td>1.438458e+09</td>
+      <td>NaN</td>
+      <td>2.091037e+06</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.292985e+07</td>
+      <td>2.564405e+08</td>
+      <td>1.624112e+08</td>
+      <td>1.306775e+08</td>
+      <td>685752.0</td>
+      <td>162383584.0</td>
+      <td>-6.207141e+07</td>
+      <td>-6610219.5</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.233106e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.041870e+08</td>
+      <td>7.710143e+08</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.438105e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>5.883695e+08</td>
+      <td>9.610228e+04</td>
+      <td>1.208985e+10</td>
+      <td>1.788000e+09</td>
+      <td>4.575568e+09</td>
+      <td>633191872.0</td>
+      <td>NaN</td>
+      <td>1.214505e+07</td>
+      <td>1.124689e+08</td>
+      <td>8.833930e+07</td>
+      <td>7.618770e+09</td>
+      <td>1.970862e+10</td>
+      <td>2.149345e+09</td>
+      <td>8.246493e+08</td>
+      <td>NaN</td>
+      <td>7931196.5</td>
+      <td>2.600634e+08</td>
+      <td>NaN</td>
+      <td>2.054833e+09</td>
+      <td>NaN</td>
+      <td>5.289418e+09</td>
+      <td>5.014061e+09</td>
+      <td>1.030348e+10</td>
+      <td>3.001209e+10</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="c1"># 加载资产负债表的股票代码、总市值，资产、负债、股东权益、净利润、研发费用数据
+#df[['code','market_cap','total_assets','total_liability','net_profit','development_expenditure']]
+</span><span class="n">mydata</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s">'code'</span><span class="p">,</span><span class="s">'market_cap'</span><span class="p">,</span><span class="s">'total_assets'</span><span class="p">,</span><span class="s">'total_liability'</span><span class="p">,</span><span class="s">'total_owner_equities'</span><span class="p">,</span><span class="s">'net_profit'</span><span class="p">,</span><span class="s">'development_expenditure'</span><span class="p">]]</span>
+<span class="n">mydata</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+<span class="c1">#800 rows × 7 columns
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>code</th>
+      <th>market_cap</th>
+      <th>total_assets</th>
+      <th>total_liability</th>
+      <th>total_owner_equities</th>
+      <th>net_profit</th>
+      <th>development_expenditure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>000001.XSHE</td>
+      <td>2125.6970</td>
+      <td>3.530180e+12</td>
+      <td>3.279242e+12</td>
+      <td>2.509380e+11</td>
+      <td>7.446000e+09</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>000002.XSHE</td>
+      <td>3080.9641</td>
+      <td>1.551166e+12</td>
+      <td>1.314977e+12</td>
+      <td>2.361894e+11</td>
+      <td>3.205934e+09</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>000006.XSHE</td>
+      <td>74.7897</td>
+      <td>1.401971e+10</td>
+      <td>7.389889e+09</td>
+      <td>6.629824e+09</td>
+      <td>1.156789e+08</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>000008.XSHE</td>
+      <td>106.5045</td>
+      <td>1.051399e+10</td>
+      <td>3.096269e+09</td>
+      <td>7.417719e+09</td>
+      <td>1.063877e+07</td>
+      <td>14590518.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>000009.XSHE</td>
+      <td>119.9334</td>
+      <td>3.001209e+10</td>
+      <td>1.970862e+10</td>
+      <td>1.030348e+10</td>
+      <td>1.859285e+08</td>
+      <td>26316454.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">mydata2</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#对数市值
+</span><span class="n">mydata2</span><span class="p">[</span><span class="s">'market_cap'</span><span class="p">]</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">[</span><span class="s">'market_cap'</span><span class="p">].</span><span class="nb">apply</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">log</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#对数净资产,净资产即所有者权益，在聚宽上称股东权益
+</span><span class="n">mydata2</span><span class="p">[</span><span class="s">'net_assets'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mydata</span><span class="p">[</span><span class="s">'total_assets'</span><span class="p">]</span><span class="o">-</span><span class="n">mydata</span><span class="p">[</span><span class="s">'total_liability'</span><span class="p">]).</span><span class="nb">apply</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">log</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#财务杠杆，负债/资产
+</span><span class="n">mydata2</span><span class="p">[</span><span class="s">'financial leverage'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mydata</span><span class="p">[</span><span class="s">'total_liability'</span><span class="p">]</span><span class="o">/</span><span class="n">mydata</span><span class="p">[</span><span class="s">'total_assets'</span><span class="p">])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#对数净利润
+</span><span class="n">mydata2</span><span class="p">[</span><span class="s">'net_profit'</span><span class="p">]</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">[</span><span class="s">'net_profit'</span><span class="p">].</span><span class="nb">apply</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">log</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#对数研发费用
+</span><span class="n">mydata2</span><span class="p">[</span><span class="s">'development_expenditure'</span><span class="p">]</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">[</span><span class="s">'development_expenditure'</span><span class="p">].</span><span class="nb">apply</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">log</span><span class="p">).</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">],</span><span class="mf">0.0</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">mydata2</span> <span class="o">=</span> <span class="n">mydata2</span><span class="p">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">mydata2</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>market_cap</th>
+      <th>net_assets</th>
+      <th>financial leverage</th>
+      <th>net_profit</th>
+      <th>development_expenditure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7.661855</td>
+      <td>26.248472</td>
+      <td>0.928916</td>
+      <td>22.730943</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>8.032998</td>
+      <td>26.187900</td>
+      <td>0.847734</td>
+      <td>21.888269</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.314680</td>
+      <td>22.614844</td>
+      <td>0.527107</td>
+      <td>18.566328</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.668187</td>
+      <td>22.727137</td>
+      <td>0.294490</td>
+      <td>16.180015</td>
+      <td>16.495882</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4.786937</td>
+      <td>23.055747</td>
+      <td>0.656689</td>
+      <td>19.040873</td>
+      <td>17.085705</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="-市值解释模型-"><font color="purple"> 市值解释模型 </font></h2>
+
+<p>用线性模型与随机森林模型来解释市值</p>
+
+<p>1) 线性市值解释模型</p>
+<ul>
+  <li>模型形式为:</li>
+</ul>
+
+\[m_{it} = \alpha_{0t} IND_{it} + \alpha_{1t} b_{it} + \alpha_{2t} \ln NI_{it}^{+} + \alpha_{3t} I_{\lt 0} \ln NI_{it}^{-} + \alpha_{4t} LEV_{it} + \alpha_{5t} g_{it} + \alpha_{6t} RD_{it} + \epsilon_{it}\]
+
+<ul>
+  <li>其中, $m_{it}$为股票i在t时候的对数市值，$IND_{it}$为行业哑变量，$b_{it}$为股票对数净资产，$NI$为公司净利润，这里根据净利润的正负拆分了两个变量，$LEV_{it}$为公司财务杠杆，即负债除以资产, $g_{it}$为季度同比的营业收入增长率， $RD_{it}$为开发支出。</li>
+</ul>
+
+<p>2) 随机森林非线性市值解释模型</p>
+<ul>
+  <li>将线性模型的自变量作为随机森林模型的输入特征，对数市值作为数据的标签，进行训练。</li>
+</ul>
+
+<p>下面用的数据未使用$IND_{it}$行业哑变量和$g_{it}$</p>
+
+<h3 id="ols线性回归和随机森林回归">OLS线性回归和随机森林回归</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="n">sm</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="n">st</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">r2_score</span>
+
+
+<span class="c1">#对数市值
+</span><span class="n">y</span> <span class="o">=</span> <span class="n">mydata2</span><span class="p">[</span><span class="s">'market_cap'</span><span class="p">]</span>
+<span class="c1">#输入标签
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">mydata2</span><span class="p">[[</span><span class="s">'net_assets'</span><span class="p">,</span><span class="s">'financial leverage'</span><span class="p">,</span><span class="s">'net_profit'</span><span class="p">,</span><span class="s">'development_expenditure'</span><span class="p">]]</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="c1">#OLS线性回归
+</span><span class="n">model_1</span> <span class="o">=</span> <span class="n">sm</span><span class="p">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s">'drop'</span><span class="p">).</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">predict_market_1</span> <span class="o">=</span> <span class="n">model_1</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">model_1_resid</span> <span class="o">=</span> <span class="n">model_1</span><span class="p">.</span><span class="n">resid</span>
+<span class="n">model_1_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">predict_market_1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">model_1_r2</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>0.5127315745827835
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="c1">#随机森林回归
+</span><span class="n">model_2</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">()</span>
+<span class="n">model_2</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">predict_market_2</span> <span class="o">=</span> <span class="n">model_2</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">model_2_resid</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">predict_market_2</span>
+<span class="n">model_2_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">predict_market_2</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">model_2_r2</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>0.94671393031602
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="k">print</span><span class="p">(</span><span class="s">'线性模型的拟合R2:%.2f'</span><span class="o">%</span><span class="n">model_1_r2</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'随机森林模型的拟合R2:%.2f'</span><span class="o">%</span><span class="n">model_2_r2</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>线性模型的拟合R2:0.51
+随机森林模型的拟合R2:0.95
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="残差">残差</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">histtype</span><span class="o">=</span><span class="s">'stepfilled'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">model_1_resid</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s">'OLS回归'</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">model_2_resid</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s">'随机森林回归'</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'2019年5月20日一期残差分布'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/下载.png" /></p>
+
+:ET

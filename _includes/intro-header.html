@@ -110,6 +110,16 @@
         <div class="site-heading">
         {% endif %}
           <h1>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</h1>
+           <span id="jrsc">正在加载我喜爱的诗词....</span>
+                        <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+                        <script type="text/javascript">
+                            jinrishici.load(function (result) {
+                                // 自己的处理逻辑
+                                console.log(result.data.content, result.data.origin.author, result.data.origin.dynasty);
+                                var string = result.data.content + "  ——" + result.data.origin.dynasty + "·" + result.data.origin.author;
+                                document.getElementById("jrsc").innerHTML = string;
+                            });
+                        </script>
           <span class="subheading">{{ page.description }}</span>
         </div>
       </div>

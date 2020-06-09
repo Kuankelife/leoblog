@@ -1,0 +1,443 @@
+I"�Y<h2 id="pca文档">PCA文档</h2>
+
+<p><strong>用法</strong>：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>class sklearn.decomposition.PCA(n_components=None, copy=True, whiten=False, svd_solver=’auto’, tol=0.0, iterated_power=’auto’, random_state=None)[source]
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><strong>参数</strong>：</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">n_components</code>：PCA算法中所要保留的主成分个数n，也即保留下来的特征个数n。最常用的做法是直接指定降维到的维度数目，此时n_components是一个大于等于1的整数。当然，也可以指定主成分的方差和所占的最小比例阈值，让PCA类自己去根据样本特征方差来决定降维到的维度数，此时n_components是一个（0，1]之间的数。还可以将参数设置为”mle”, 此时PCA类会用MLE算法根据特征的方差分布情况自己去选择一定数量的主成分特征来降维。也可以用默认值，即不输入n_components，此时n_components=min(样本数，特征数)。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">copy</code> : bool，True或者False，缺省时默认为True。
+表示是否在运行算法时，将原始训练数据复制一份。若为True，则运行PCA算法后，原始训练数据的值不会有任何改变，因为是在原始数据的副本上进行运算；若为False，则运行PCA算法后，原始训练数据的值会改，因为是在原始数据上进行降维计算。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">whiten</code> ：判断是否进行白化。所谓白化，就是对降维后的数据的每个特征进行归一化，让方差都为1,即使得每个特征具有相同的方差.对于PCA降维本身来说，一般不需要白化。如果你PCA降维后有后续的数据处理动作，可以考虑白化。默认值是False，即不进行白化。</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">svd_solver</code>：即指定奇异值分解SVD的方法，由于特征分解是奇异值分解SVD的一个特例，一般的PCA库都是基于SVD实现的。有4个可以选择的值：{‘auto’, ‘full’, ‘arpack’, ‘randomized’}。
+    <ul>
+      <li>‘randomized’ 一般适用于数据量大，数据维度多同时主成分数目比例又较低的PCA降维，它使用了一些加快SVD的随机算法。</li>
+      <li>‘full’ 则是传统意义上的SVD，使用了scipy库对应的实现。</li>
+      <li>‘arpack’ 和randomized的适用场景类似，区别是randomized使用的是scikit-learn自己的SVD实现，而arpack直接使用了scipy库的sparse SVD实现。当svd_solve设置为’arpack’时，保留的成分必须少于特征数，即不能保留所有成分。</li>
+      <li>默认是’auto’，即PCA类会自己去在前面讲到的三种算法里面去权衡，选择一个合适的SVD算法来降维。一般来说，使用默认值就够了。</li>
+    </ul>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tol</code>: 当svd_solver == ‘arpack’时，奇异值的容忍度</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">iterated_power</code>: 当svd_solver == ‘randomized’时，power method的迭代次数</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">random_state</code>: 整数, RandomState实例或者None, 可不填 (默认=None)</p>
+
+    <p>在svd_solver == ‘arpack’ or ‘randomized’时使用.</p>
+
+    <ul>
+      <li>若填整数，<code class="language-plaintext highlighter-rouge">random_state</code>是一个随机数生成器的种子。</li>
+      <li>若填RandomState实例，<code class="language-plaintext highlighter-rouge">random_state</code>是一个随机数生成器</li>
+      <li>若填None，使用<code class="language-plaintext highlighter-rouge">np.random</code>生成随机数</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>属性</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">components_</code> : array, shape (n_components, n_features)
+    <ul>
+      <li>特征空间的主轴，表示数据中最大方差的方向。按explained_variance_排序。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">explained_variance_</code> : array, shape (n_components,)
+    <ul>
+      <li>代表降维后的各主成分的方差值。方差值越大，则说明越是重要的主成分。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">explained_variance_ratio_</code> : array, shape (n_components,)
+    <ul>
+      <li>返回所保留各个特征的方差百分比，它代表降维后的各主成分的方差值占总方差值的比例，这个比例越大，则越是重要的主成分。如果n_components没有赋值，则所有特征都会返回一个数值且解释方差之和等于1。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">singular_values_ </code>: array, shape (n_components,)
+    <ul>
+      <li>对应于每个选定主成分的奇异值。奇异值等于低维空间中n_components变量的2范数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_components_</code>：
+    <ul>
+      <li>返回所保留的特征个数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">mean_ </code>: array, shape (n_features,)
+    <ul>
+      <li>每个特征的均值。</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>方法</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fit(X)</code>，表示用数据X来训练PCA模型。
+    <ul>
+      <li>函数返回值：调用fit方法的对象本身。比如pca.fit(X)，表示用X对pca这个对象进行训练。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">fit_transform(X)</code>
+    <ul>
+      <li>用X来训练PCA模型，同时返回降维后的数据。newX=pca.fit_transform(X)，newX就是降维后的数据。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">get_covariance()</code>
+    <ul>
+      <li>使用生成模型计算数据协方差。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">get_precision()</code>
+    <ul>
+      <li>利用生成模型计算数据精度矩阵。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">transform(X)</code>
+    <ul>
+      <li>取得估计器的参数。 将数据X转换成降维后的数据。当模型训练好后，对于新输入的数据，都可以用transform方法来降维。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">inverse_transform()</code>
+    <ul>
+      <li>取得估计器的参数。 将降维后的数据转换成原始数据，X=pca.inverse_transform(newX)。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">score(X[, y])</code>
+    <ul>
+      <li>取得估计器的参数。 返回所有样本的平均对数极大似然估计。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">score_samples(X)</code>
+    <ul>
+      <li>返回每个样本的对数极大似然估计。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">get_params([deep])</code>：
+    <ul>
+      <li>取得估计器的参数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">set_params(**params)</code>:
+    <ul>
+      <li>为这个估计器手动设定参数。</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="核pca文档">核PCA文档</h2>
+
+<p>核PCA和PCA都是用来做无监督数据处理的，PCA是把m维的数据降至k维。核PCA是把m维的数据升至k维。但是他们共同的目标都是让数据在目标维度中（线性）可分，即PCA的最大可分性。</p>
+
+<p>在sklearn中，核PCA和pca的使用基本一致，接口都是一样的。核PCA需要指定核函数，不然默认线性核。</p>
+
+<p><strong>用法</strong>：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>class sklearn.decomposition.KernelPCA(n_components=None, kernel=’linear’, gamma=None, degree=3, coef0=1, kernel_params=None, alpha=1.0, fit_inverse_transform=False, eigen_solver=’auto’, tol=0, max_iter=None, remove_zero_eig=False, random_state=None, copy_X=True, n_jobs=None)[source]
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><strong>参数</strong>：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">n_components </code>: 整数
+    <ul>
+      <li>主成分的数量。如果没有，则保留所有非零主成分</li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">kernel </code>: 可选核函数，“linear”</td>
+          <td>“poly”</td>
+          <td>“rbf”</td>
+          <td>“sigmoid”</td>
+          <td>“cosine”</td>
+          <td>“precomputed”，默认“linear”</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">gamma</code> : 浮点数, 默认=1/n_features
+    <ul>
+      <li>rbf、poly和sigmoid核的核系数，其他核函数可以忽略。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">degree</code> : 整数, 默认=3
+    <ul>
+      <li>多项式核的维数，其他核函数可以忽略。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">coef0</code> : float, 默认=1
+    <ul>
+      <li>多项式 and sigmoid 核的独立项. 其他核函数可以忽略。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">kernel_params </code>: mapping of string to any, default=None
+    <ul>
+      <li>作为可调用对象传递的核的参数. Ignored by other kernels.</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">alpha </code>: int, 默认=1.0
+    <ul>
+      <li>逆变换的岭回归的超参数 (当 fit_inverse_transform = True).</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">fit_inverse_transform </code>: 布尔值 default=False
+    <ul>
+      <li>非预计算核的逆变换</li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">eigen_solver</code> : string [‘auto’</td>
+          <td>’dense’</td>
+          <td>’arpack’], 默认=’auto’</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>选择要使用的特征求解器。如果n_components小于训练样本的数量，arpack可能会更有效率，而不是稠密的特征解</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">tol </code>: float, 默认=0
+    <ul>
+      <li>arpack的收敛判据. 如果0，则由arpack选择最优值</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">max_iter</code> : int, 默认=None
+    <ul>
+      <li>arpack的最大迭代次数. 如果没有，则由arpack选择最优值。</li>
+    </ul>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">remove_zero_eig </code>: boolean, 默认=False</p>
+  </li>
+  <li>
+    <p>如果为True，则删除所有特征值为零的成分</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">random_state</code>: 整数, RandomState实例或者None, 可不填 (默认=None)</p>
+
+    <p>在Used when eigen_solver == ‘arpack’.时使用.</p>
+
+    <ul>
+      <li>若填整数，<code class="language-plaintext highlighter-rouge">random_state</code>是一个随机数生成器的种子。</li>
+      <li>若填RandomState实例，<code class="language-plaintext highlighter-rouge">random_state</code>是一个随机数生成器</li>
+      <li>若填None，使用<code class="language-plaintext highlighter-rouge">np.random</code>生成随机数</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">copy_X </code>: 布尔值, 默认=True
+    <ul>
+      <li>如果为True, 输入X将被模型复制并存储在X_fit_属性中。如果不对X做进一步的修改，设置copy_X=False可以通过存储引用来节省内存。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_jobs</code>：整形数。　指定计算所用的进程数。
+    <ul>
+      <li>若值为 -1，则用所有的CPU进行运算。若值为1，则不进行并行运算，这样的话方便调试。</li>
+      <li>若值小于-1，则用到的CPU数为(n_cpus + 1 + n_jobs)。因此如果 n_jobs值为-2，则用到的CPU数为总CPU数减1。</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>属性</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">lambdas_ </code>: array, (n_components,)
+    <ul>
+      <li>中心核矩阵的特征值按递减顺序排列。如果没有设置n_components和remove_zero_eig，则存储所有值。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">alphas_</code> : array, (n_samples, n_components)
+    <ul>
+      <li>中心核矩阵的特征向量。如果没有设置n_components和remove_zero_eig，则存储所有组件。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">dual_coef_</code> : array, (n_samples, n_features)
+    <ul>
+      <li>逆变换矩阵。只有当fit_inverse_transform为True时才可用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">X_transformed_fit_</code> : array, (n_samples, n_components)
+    <ul>
+      <li>拟合数据在核主成分上的投影。只有当fit_inverse_transform为True时才可用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">X_fit_</code> : (n_samples, n_features)
+    <ul>
+      <li>用于拟合模型的数据。如果copy_X=False，则X_fit_是参考数据。</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>方法</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fit(X[, y])</code>
+    <ul>
+      <li>根据X中的数据拟合模型。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">fit_transform(X[, y])</code>
+    <ul>
+      <li>根据X中的数据拟合模型并转换X。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">inverse_transform(X)	</code>
+    <ul>
+      <li>将X变换回原始空间。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">transform(X)</code>
+    <ul>
+      <li>取得估计器的参数。 将数据X转换成降维后的数据。当模型训练好后，对于新输入的数据，都可以用transform方法来降维。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">get_params([deep])</code>：
+    <ul>
+      <li>取得估计器的参数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">set_params(**params)</code>:
+    <ul>
+      <li>为这个估计器手动设定参数。</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="tsne文档">TSNE文档</h2>
+
+<p>TSNE即t-distributed Stochastic Neighbor Embedding，TSNE是一种可视化高维数据的工具。它将数据点之间的相似性转化为联合概率，并试图最小化低维嵌入和高维数据联合概率之间的Kullback-Leibler divergence。t-SNE具有非凸的代价函数，即初始化不同，得到的结果也不同。</p>
+
+<p>t-分布随机邻域嵌入（t-Distributed Stochastic Neighbor Embedding，t-SNE），是目前一个非常流行的对高维度数据进行降维的算法, 由Laurens van der Maaten和 Geoffrey Hinton于2008年提出，其在降低维度同时，同时试图保持相似的实例相邻，并将不相似的实例分开。它主要用于可视化， 尤其是用于可视化高维空间中的实例（例如，可以将MNIST图像降维到2D可视化);
+t-SNE的工作对数学领域的知识要求比较高。t-SNE的大致作用是试图保持邻域内的距离。</p>
+
+<p><strong>用法</strong>：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>class sklearn.manifold.TSNE(n_components=2, perplexity=30.0, early_exaggeration=12.0, learning_rate=200.0, n_iter=1000, n_iter_without_progress=300, min_grad_norm=1e-07, metric=’euclidean’, init=’random’, verbose=0, random_state=None, method=’barnes_hut’, angle=0.5)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><strong>参数</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">n_components</code>：int，可选（默认值：2）
+    <ul>
+      <li>嵌入式空间的维度。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">perplexity</code>：浮点型，可选（默认：30）
+    <ul>
+      <li>较大的数据集通常需要更大的perplexity。考虑选择一个介于5和50之间的值。由于t-SNE对这个参数非常不敏感，所以选择并不是非常重要。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">early_exaggeration</code>：float，可选（默认值：4.0）
+    <ul>
+      <li>控制原始空间中的自然集群在嵌入空间中的紧密程度，以及它们之间的空间大小,这个参数的选择不是非常重要。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">learning_rate</code>：float，可选（默认值：1000）
+    <ul>
+      <li>学习率可以是一个关键参数。它应该在100到1000之间。如果在初始优化期间成本函数增加，则早期夸大因子或学习率可能太高。如果成本函数陷入局部最小的最小值，则学习速率有时会有所帮助。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_iter</code>：int，可选（默认值：1000）
+    <ul>
+      <li>优化的最大迭代次数。至少应该250。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_iter_without_progress</code>：int，可选（默认值：30）
+    <ul>
+      <li>在中止优化之前，没有进展的最大迭代次数,控制停止条件。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">min_grad_norm</code>：float，可选（默认值：1E-7）
+    <ul>
+      <li>如果梯度范数低于此阈值，则优化将被中止。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">metric</code>：字符串或可迭代的，可选，
+    <ul>
+      <li>计算特征数组中实例之间的距离时使用的度量。如果度量标准是字符串，则它必须是scipy.spatial.distance.pdist为其度量标准参数所允许的选项之一，或者是成对列出的度量标准.PAIRWISE_DISTANCE_FUNCTIONS。如果度量是“预先计算的”，则X被假定为距离矩阵。或者，如果度量标准是可调用函数，则会在每对实例（行）上调用它，并记录结果值。可调用应该从X中获取两个数组作为输入，并返回一个表示它们之间距离的值。默认值是“euclidean”，它被解释为欧氏距离的平方。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">init</code>：字符串，可选（默认值：“random”）嵌入的初始化。可能的选项是“随机”和“pca”。
+    <ul>
+      <li>PCA初始化不能用于预先计算的距离，并且通常比随机初始化更全局稳定。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">random_state</code>：int或RandomState实例或None（默认）
+    <ul>
+      <li>伪随机数发生器种子控制。如果没有，请使用numpy.random单例。请注意，不同的初始化可能会导致成本函数的不同局部最小值。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">method</code>：字符串（默认：’barnes_hut’）
+    <ul>
+      <li>默认情况下，梯度计算算法使用在O（NlogN）时间内运行的Barnes-Hut近似值。 method =’exact’将运行在O（N ^ 2）时间内较慢但精确的算法上。当最近邻的误差需要好于3％时，应该使用精确的算法。但是，确切的方法无法扩展到数百万个示例。0.17新版​​功能：通过Barnes-Hut近似优化方法。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">angle</code>：float（默认值：0.5）
+    <ul>
+      <li>仅当method =’barnes_hut’时才使用这是Barnes-Hut T-SNE的速度和准确性之间的折衷。 ‘angle’是从一个点测量的远端节点的角度大小（在[3]中称为theta）。如果此大小低于’角度’，则将其用作其中包含的所有点的汇总节点。该方法对0.2-0.8范围内该参数的变化不太敏感。小于0.2的角度会迅速增加计算时间和角度，因此0.8会快速增加误差。</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>属性</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">embedding_</code> : array-like, shape (n_samples, n_components)
+    <ul>
+      <li>存储嵌入向量。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">kl_divergence_</code> : float
+    <ul>
+      <li>优化后的Kullback-Leibler divergence.</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_iter_</code> : int
+    <ul>
+      <li>运行的迭代次数。</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>方法</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fit(X[, y])</code>
+    <ul>
+      <li>将X投射到嵌入空间中。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">fit_transform(X[, y])</code>
+    <ul>
+      <li>将X投射到嵌入空间中并返回转换后的输出</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">get_params([deep])	</code>
+    <ul>
+      <li>获取此估计器的参数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">set_params(**params)	</code>
+    <ul>
+      <li>设置此估计器的参数。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>附上<a href="http://sklearn.apachecn.org/#/">scikit-learn (sklearn) 官方文档中文版</a></p>
+:ET

@@ -1,0 +1,43 @@
+I"	<p>最近强迫症发作，就想着在joinquant金融终端里安装扩展extension时，在聚宽工作人员的指导下，折腾了一番，搞定了，现在把我的步骤分享一下。</p>
+
+<h2 id="1在本地安装anaconda-并安装jupyter-extension插件">1.在本地安装Anaconda, 并安装jupyter extension插件</h2>
+<p>需要在本地安装Anaconda，安装教程非常简单，就是傻瓜操作，就不再多说，安好anaconda后, 点击左下角的开始，可以看到下图里添加了Anaconda3</p>
+
+<p><img src="https://image.joinquant.com/94c32b85631719557a0f321f2d826f4a" alt="图一" /></p>
+
+<ul>
+  <li>点击上图里红圈anconda3(64bit), 可以看到有Anaconda Prompt</li>
+</ul>
+
+<p><img src="https://image.joinquant.com/dbc9d66677758bfa05ca7b85692cdf5c" alt="Img" /></p>
+
+<ul>
+  <li>点击Anaconda Prompt，然后安装jupyter notebook扩展插件，官方安装教程在<a href="https://github.com/Jupyter-contrib/jupyter_nbextensions_configurator">这里</a>。</li>
+</ul>
+
+<p>中文教程在<a href="https://www.cnblogs.com/huabaixiaoduanku/p/7858479.html">这里</a></p>
+<ul>
+  <li>安装好Anaconda后，</li>
+</ul>
+
+<h2 id="2在金融终端设置jupyter-extension插件">2.在金融终端设置jupyter extension插件</h2>
+<p>同样两条命令，图省事的看下面的图敲命令吧
+<img src="https://image.joinquant.com/5970346fd7dd41d175611711142d47de" alt="Img" /> 
+<img src="https://image.joinquant.com/014a2d5ec0cf4e48d2d6823d3ba068d4" alt="Img" /> 
+可以从本地的路径C:\ProgramData\jupyter里面的文件夹nbextensions到D:\JoinQuant-Desktop-Py3\USERDATA.jupyter_jq，</p>
+
+<ul>
+  <li>
+    <p>本地夹位置如图<img src="https://image.joinquant.com/973fa2653fedddb6e80d61aa043b5f42" alt="Img" /></p>
+  </li>
+  <li>
+    <p>复制到金融终端相应目录如图
+<img src="https://image.joinquant.com/9999c6bc53020246899ed12b40f7f96d" alt="Img" /></p>
+  </li>
+  <li>
+    <p>然后打开金融终端，成功了。<img src="https://image.joinquant.com/8f415ddd0f6e6cccd6b3410729041424" alt="Img" /> <img src="https://image.joinquant.com/014a2d5ec0cf4e48d2d6823d3ba068d4" alt="Img" /></p>
+  </li>
+</ul>
+
+<p>如果有任何疑问，可以通过<a href="mailto:1115223619@qq.com"> 邮件 </a>或者<a href="https://ownyulife.top/contact/">这里的联系方式</a>联系我。</p>
+:ET

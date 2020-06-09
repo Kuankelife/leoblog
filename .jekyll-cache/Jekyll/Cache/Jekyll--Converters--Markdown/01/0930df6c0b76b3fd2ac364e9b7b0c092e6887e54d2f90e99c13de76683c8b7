@@ -1,0 +1,152 @@
+I"#<h2 id="逻辑回归文档">逻辑回归文档</h2>
+
+<p><strong>用法</strong>：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>class sklearn.linear_model.LogisticRegression(penalty=’l2’, dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver=’warn’, max_iter=100, multi_class=’warn’, verbose=0, warm_start=False, n_jobs=None)
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><strong>参数</strong>:</p>
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">penalty</code>:字符串型，’l1’ or ‘l2’，默认：’l2’；正则化类型。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">dual</code>:布尔型，默认：False。如果为True，则求解对偶形式；如果为False，则求解原始形式，当样本数&gt;特征数时，令dual=False；用于liblinear中L2正则化（只是在penalty=’l2’ 且solver=’liblinear’ 有对偶形式）。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tol</code>:浮点型，默认：1e-4；迭代终止判断的误差范围。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">C</code>:浮点型，默认：1.0；其值等于正则化强度的倒数，为正的浮点数。数值越小表示正则化越强。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">fit_intercept</code>:布尔型，默认：True；指定是否应该向决策函数添加常量(即偏差或截距)，即b,如果为False，则不会计算b值（模型会假设你的数据已经中心化）。。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">intercept_scaling</code>:浮点型，默认为1；仅仅当solver是”liblinear”时有用,当采用 fit_intercept 时，相当于人造一个特征出来，该特征恒为 1，其权重为b,在计算正则化项的时候，该人造特征也被考虑了。因此为了降低人造特征的影响，需要提供 intercept_scaling。 。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">class_weight</code>:默认为None；与“{class_label: weight}”形式中的类相关联的权重。如果为字符串 ‘balanced’：则每个分类的权重与该分类在样品中出现的频率成反比。如果未指定，则每个分类的权重都为 1。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">random_state</code>:整型，默认None；当“solver”==“sag”或“liblinear”时使用。在变换数据时使用的伪随机数生成器的种子。如果是整数,random_state为随机数生成器使用的种子;若为RandomState实例，则random_state为随机数生成器;如果没有，随机数生成器就是’ np.random ‘使用的RandomState实例。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">solver</code>:{‘newton-cg’, ‘lbfgs’, ‘liblinear’, ‘sag’, ‘saga’}，默认: ‘liblinear’；用于指定优化问题的算法。</p>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">newton-cg</code>：使用牛顿法。</li>
+      <li><code class="language-plaintext highlighter-rouge">lbfgs</code>：使用L-BFGS拟牛顿法。</li>
+      <li><code class="language-plaintext highlighter-rouge">liblinear</code>：使用 liblinear。</li>
+      <li><code class="language-plaintext highlighter-rouge">sag</code>：使用 Stochastic Average Gradient descent 算法。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>    注意：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>对于规模小的数据集，'liblearner'比较适用；对于规模大的数据集，'sag'比较适用。'newton-cg'、'lbfgs'、'sag' 只处理penalty=‘12’的情况。
+
+对于小数据集来说，“liblinear”是个不错的选择，而“sag”和'saga'对于大型数据集会更快。对于多类问题，只有'newton-cg'， 'sag'， 'saga'和'lbfgs'可以处理多项损失;“liblinear”仅限于“one-versus-rest”分类。
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p> </p>
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">max_iter</code>:最大迭代次数，整型，默认是100；</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">multi_class</code>:字符串型，{ovr’， ‘multinomial’}，默认:’ovr’；定对于多分类问题的策略，可以为如下的值。
+  <code class="language-plaintext highlighter-rouge">ovr</code> ：采用 one-vs-rest 策略。
+  <code class="language-plaintext highlighter-rouge">multinomial</code>：直接采用多分类逻辑回归策略。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">verbose</code>:整型，默认是0；用于开启/关闭迭代中间输出的日志。。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">warm_start</code>:布尔型，默认为False；如果为True，那么使用前一次训练结果继续训练，否则从头开始训练。对liblinear解码器无效。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">n_jobs</code>:整型，默认是1；定任务并行时的 CPU 数量。如果为 -1 则使用所有了用的 CPU。</p>
+  </li>
+</ul>
+
+<p><strong>属性</strong>:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">classes_</code>: array, shape (n_classes，)分类器已知的类标签列表。返回数组，shape=(n_samples，) if n_classes == 2 else (n_samples, n_classes)</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">coef_</code>:数组，shape (1, n_features)或(n_classes, n_features)
+    <ul>
+      <li>决策函数中特征的系数。当给定的问题是二进制时，coef_的形状为(1,n_features)。特别是当multi_class= ‘多项’时，coef_对应结果1 (True)，coef_对应结果0 (False)。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">intercept_</code>:数组，shape(1，)或(n_classes，)
+    <ul>
+      <li>截距(又称偏差)添加到决策函数中。如果将fit_intercept设置为False，则将截距设置为零。当给定的问题是二进制时，intercept_的形状为(1，)。特别是当multi_class= ‘多项’时，intercept_对应结果1 (True)， -intercept_对应结果0 (False)。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_iter_</code>:数组，形状(n_classes，)或(1，)，所有类的实际迭代次数。如果是二进制或多项式，它只返回一个元素。对于线性求解器，只给出了所有类的最大迭代次数。</li>
+</ul>
+
+<p>在版本0.20中更改:在SciPy &lt;= 1.0.0中，lbfgs迭代的次数可能超过max_iter。</p>
+
+<p><strong>方法</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">decision_function(X)</code>:
+    <ul>
+      <li>预测样本的置信度。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">densify()</code>:
+    <ul>
+      <li>系数矩阵转换为密集矩阵格式。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">fit(X, y[, sample_weight])</code>：
+    <ul>
+      <li>根据给定的训练数据拟合模型。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">get_params([deep])</code>：
+    <ul>
+      <li>获取此估计器的参数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">predict(X)</code>：
+    <ul>
+      <li>预测样本在X中的类标签。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">predict_log_proba(X)</code>:
+    <ul>
+      <li>数据X概率估计的对数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">predict_proba(X)</code>:
+    <ul>
+      <li>数据X概率的估计。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">score(X, y[, sample_weight])</code>：
+    <ul>
+      <li>返回给定测试数据平均准确度。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">set_params(**params)</code>:
+    <ul>
+      <li>设置此估计器的参数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">sparsify()</code>:
+    <ul>
+      <li>将系数矩阵转换为稀疏格式。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>附上<a href="http://sklearn.apachecn.org/#/">scikit-learn (sklearn) 官方文档中文版</a></p>
+:ET

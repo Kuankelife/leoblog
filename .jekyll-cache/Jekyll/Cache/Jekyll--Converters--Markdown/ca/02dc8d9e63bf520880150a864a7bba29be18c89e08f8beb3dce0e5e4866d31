@@ -1,0 +1,426 @@
+I"Kf<h1 id="介绍篇"><b>介绍篇</b></h1>
+
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&amp;id=1310361899&amp;auto=0&amp;height=66"></iframe>
+<p>不要奇怪为什么有音乐，我是一个重度音乐迷哈哈哈，我离开不它，希望你也能喜欢。</p>
+
+<p>接下来就说说自己的学习建议吧，一个小教程，也是自己走过的流程（但是下面的文字属于乱打哈哈），仅供参考哈，<strong>特别注意的是</strong>我用的很厉害的一款软件<strong>typora</strong>。不过似乎在版本1.0之后开始收费，so我开始转向Marktext，一款开源的正在不断更新的项目开发的编辑器。</p>
+
+<p><br /></p>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/dff/mm.jpg" /></p>
+
+<h1 id="背景篇"><b>背景篇</b></h1>
+
+<hr />
+
+<p>Google，百度等搜索引擎。。。网络上</p>
+
+<p>在这个时代学习新东西，一定要善于使用Bing/的资源非常丰富，自学能力也尤为重要，尤其是学习技术。</p>
+
+<p><br /></p>
+
+<h1 id="入门篇"><b>入门篇</b></h1>
+
+<hr />
+
+<p>说起设计学前端的初衷，大概还是因为各种华丽的网页特效太炫酷，拜倒在前端大神的杰作下。</p>
+
+<p>其实这也是我对于一直以来美的追求，我是一个完美主义者，严重强迫症患者。</p>
+
+<p>先体验一下炫酷的界面吧</p>
+
+<hr />
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/dff/mmm.jpg" /></p>
+
+<hr />
+
+<p><strong>开始例子吧</strong></p>
+
+<hr />
+
+<h2 id="各级标题"><strong>各级标题</strong></h2>
+
+<h1 id="雨栋">雨栋</h1>
+
+<h2 id="雨栋-1">雨栋</h2>
+<h3 id="雨栋-2">雨栋</h3>
+<h4 id="雨栋-3">雨栋</h4>
+<h5 id="雨栋-4">雨栋</h5>
+<h6 id="雨栋-5">雨栋</h6>
+
+<hr />
+
+<h2 id="加粗"><strong>加粗</strong></h2>
+
+<p><strong>音响顶部的操作键，中间K字是电源开关，四周顺时针环绕的依次是WiFi键、音量+、蓝牙键以及音量-。不同的工作状态会有不同的LED指示灯指示，用户一目了然。</strong></p>
+
+<pre><code class="language-no-highlight">**音响顶部的操作键，中间K字是电源开关，四周顺时针环绕的依次是WiFi键、音量+、蓝牙键以及音量-。不同的工作状态会有不同的LED指示灯指示，用户一目了然。** 
+</code></pre>
+
+<hr />
+
+<h2 id="斜体"><strong>斜体</strong></h2>
+
+<p><em>音源插座隔壁还有个AUX in的插孔，可以通过3.5音频转接线提供有线的输入声道。比如连接电视或者电脑。</em></p>
+
+<pre><code class="language-no-highlight">*音源插座隔壁还有个AUX in的插孔，可以通过3.5音频转接线提供有线的输入声道。比如连接电视或者电脑。*
+</code></pre>
+
+<hr />
+
+<h2 id="强调"><strong>强调</strong></h2>
+<p><strong>作为一个理工科的男生，在简书上写文章的时候经常遇到要写公式的时候，数理公式中经常出现诸如n的平方或log2n这样的数学式</strong></p>
+
+<pre><code class="language-no-highlight">**作为一个理工科的男生，在简书上写文章的时候经常遇到要写公式的时候，数理公式中经常出现诸如n的平方或log2n这样的数学式** 
+</code></pre>
+
+<hr />
+
+<h2 id="有序列表"><strong>有序列表</strong></h2>
+
+<ol>
+  <li>酷狗除了做音乐播放器，想不到还做音频硬件，最近酷狗出的一款音响卖得还挺火，这款音响名字叫PANDORA（潘多拉）互联网蓝牙音响。</li>
+  <li>猜猜是做什么用的</li>
+  <li>整体清爽、极简，又不失必要信息</li>
+  <li>它的包装和机身一样极简素雅：白色打底正面居中印着音响渲染图和PANDORA字样。侧面和背面是一些产品介绍和二维码。</li>
+</ol>
+
+<pre><code class="language-no-highlight">1. 酷狗除了做音乐播放器，想不到还做音频硬件，最近酷狗出的一款音响卖得还挺火，这款音响名字叫PANDORA（潘多拉）互联网蓝牙音响。
+2. 猜猜是做什么用的
+3. 整体清爽、极简，又不失必要信息
+4. 它的包装和机身一样极简素雅：白色打底正面居中印着音响渲染图和PANDORA字样。侧面和背面是一些产品介绍和二维码。 
+</code></pre>
+
+<h2 id="无序列表"><strong>无序列表</strong></h2>
+
+<ul>
+  <li>打开包装映入眼帘就是潘多拉音响，体积比渲染图大一些。正面错落有致的银色镂空，看似冰冷有金属质感，实际是舒适的工程塑料和细磨砂工艺。其余部分多为纯白。</li>
+  <li>菱形的感觉和整个机身的设计也是相互辉映，有音量加减、开关机键K(长按开关机、短按暂停播放)、WIFI、蓝牙功能键。操作更加细化。</li>
+  <li>深刻搭街坊</li>
+  <li>传统音响是通过外接音源，比如cd、电视等，蓝牙音响可以无线接入手机，通过蓝牙传输。以上这两种方式酷狗潘多拉都支持。</li>
+</ul>
+
+<pre><code class="language-no-highlight">- 打开包装映入眼帘就是潘多拉音响，体积比渲染图大一些。正面错落有致的银色镂空，看似冰冷有金属质感，实际是舒适的工程塑料和细磨砂工艺。其余部分多为纯白。
+- 菱形的感觉和整个机身的设计也是相互辉映，有音量加减、开关机键K(长按开关机、短按暂停播放)、WIFI、蓝牙功能键。操作更加细化。
+- 深刻搭街坊
+- 传统音响是通过外接音源，比如cd、电视等，蓝牙音响可以无线接入手机，通过蓝牙传输。以上这两种方式酷狗潘多拉都支持。
+</code></pre>
+
+<h2 id="删除文本"><strong>删除文本</strong></h2>
+
+<p><del>要使用微信端，必须保证手机和音响链接相同的wifi。功能基本和遥控器相似，但是多了一个显示歌词功能，收藏啊、切歌、音量等更为直观。还有个更厉害的就是调控音效。</del></p>
+
+<pre><code class="language-no-highlight">`要使用微信端，必须保证手机和音响链接相同的wifi。功能基本和遥控器相似，但是多了一个显示歌词功能，收藏啊、切歌、音量等更为直观。还有个更厉害的就是调控音效。
+</code></pre>
+
+<hr />
+
+<h2 id="下划线-"><strong>下划线 </strong></h2>
+
+<p><u>在屋顶唱著你的歌 让星星点缀成最浪漫的夜晚,在屋顶和我爱的人 浪漫的夜晚,拥抱这时刻 这一分一秒全都停止</u></p>
+<h2 id="整个文本框">整个文本框</h2>
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="p">&lt;</span><span class="k">u</span><span class="p">&gt;</span>在屋顶唱著你的歌 让星星点缀成最浪漫的夜晚<span class="p">,</span>在屋顶和我爱的人 浪漫的夜晚<span class="p">,</span>拥抱这时刻 这一分一秒全都停止<span class="p">&lt;</span>/<span class="k">u</span><span class="p">&gt;</span> 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">要使用微信端，必须保证手机和音响链接相同的wifi。功能基本和遥控器相似，但是多了一个显示歌词功能，收藏啊、切歌、音量等更为直观。还有个更厉害的就是调控音效。</code></p>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="p">![</span>点击查看源网页<span class="p">](</span>https<span class="p">:</span><span class="sr">//</span>timgsa<span class="p">.</span>baidu<span class="p">.</span><span class="k">com</span>/timg?image&amp;quality<span class="p">=</span><span class="m">80</span>&amp;size<span class="p">=</span>b9999_10000&amp;sec<span class="p">=</span><span class="m">1537726105749</span>&amp;<span class="k">di</span><span class="p">=</span>b0381e59cdce3674c5ebcafe526ff0d1&amp;imgtype<span class="p">=</span><span class="m">0</span>&amp;<span class="k">src</span><span class="p">=</span>http%<span class="m">3</span>A%<span class="m">2</span>F%<span class="m">2</span>Fimg<span class="p">.</span><span class="nb">mp</span><span class="p">.</span>itc<span class="p">.</span><span class="k">cn</span>%<span class="m">2</span>Fupload%<span class="m">2</span>F20160621%<span class="m">2</span>F85759e2fa24b48a3b5d8cd7e4edfe6d5_th<span class="p">.</span>jpg<span class="p">)</span>
+
+<span class="p">![</span>img<span class="p">](</span>https<span class="p">:</span><span class="sr">//</span>timgsa<span class="p">.</span>baidu<span class="p">.</span><span class="k">com</span>/timg?image&amp;quality<span class="p">=</span><span class="m">80</span>&amp;size<span class="p">=</span>b9999_10000&amp;sec<span class="p">=</span><span class="m">1537726100622</span>&amp;<span class="k">di</span><span class="p">=</span><span class="m">20094</span>aa791e2984df9514048a8d5b14b&amp;imgtype<span class="p">=</span><span class="m">0</span>&amp;<span class="k">src</span><span class="p">=</span>http%<span class="m">3</span>A%<span class="m">2</span>F%<span class="m">2</span>Fimg<span class="p">.</span>komovie<span class="p">.</span><span class="k">cn</span>%<span class="m">2</span>Fgallery%<span class="m">2</span>Fphoto%<span class="m">2</span>F2568%<span class="m">2</span>Fp1020615699<span class="p">.</span>jpg<span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="角度符号"><strong>角度符号</strong></h2>
+
+<p>30°</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>30<span class="ni">&amp;deg;</span> 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="转义符号可以打出关键词"><strong>转义符号</strong>（可以打出关键词#）</h2>
+
+<p>转义符号 #</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>转义符号 \# 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="超链接"><strong>超链接</strong></h2>
+
+<p><a href="https://ownyulife.top/">https://ownyulife.top/</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>&lt;https://ownyulife.top/&gt;   
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="表格typrod可以自动便捷生成图标在此不再提及因为非常麻烦语法见这里"><strong>表格</strong>（typrod可以自动便捷生成图标，在此不再提及，因为非常麻烦，语法<a href="https://www.jianshu.com/p/2df05f279331">见这里</a></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Modern</td>
+      <td>SEOs</td>
+      <td>Modern</td>
+    </tr>
+    <tr>
+      <td>cused</td>
+      <td>fsdf</td>
+      <td>best</td>
+    </tr>
+    <tr>
+      <td>Modern Jekyll</td>
+      <td>practices</td>
+      <td>fdf</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="块引用"><strong>块引用</strong></h2>
+
+<blockquote>
+  <p>半夜睡不著觉 把心情哼成歌,只好到屋顶找另一个梦境 ,睡梦中被敲醒 我还是不确定,怎会有动人弦律在对面的屋顶,我悄悄关上门，带著希望上去,原来是我梦里常出现的那个人 。</p>
+</blockquote>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="p">&gt;</span>半夜睡不著觉 把心情哼成歌<span class="p">,</span>只好到屋顶找另一个梦境   
+睡梦中被敲醒 我还是不确定<span class="p">,</span>怎会有动人弦律在对面的屋顶<span class="p">,</span>我悄悄关上门，带著希望上去<span class="p">,</span>原来是我梦里常出现的那个人。
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="数学公式"><strong>数学公式</strong></h2>
+
+<p>对于大神来说，<strong>数学公式</strong>是必不可少的！！！</p>
+
+<p>行内公式$lim_{x \to \infty} \ exp(-x)=0$ 将产生如下的数学表达式，更多latex<a href="https://blog.csdn.net/libing403/article/details/71189148">公式学习</a></p>
+
+<p>行外公式代码</p>
+
+\[\varGamma(x) = \frac{\int_{\alpha}^{\beta} g(t)(x-t)^2\text{ d}t }{\phi(x)\sum_{i=0}^{N-1} \omega_i} \tag{2}\]
+
+\[\mathbf{V}_1 \times \mathbf{V}_2 =  \begin{vmatrix} \mathbf{i} &amp; \mathbf{j} &amp; \mathbf{k} \\\frac{\partial X}{\partial u} &amp;  \frac{\partial Y}{\partial u} &amp; 0 \\\frac{\partial X}{\partial v} &amp;  \frac{\partial Y}{\partial v} &amp; 0 \\\end{vmatrix}\]
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>$$
+<span class="se"> \</span>varGamma<span class="p">(</span><span class="k">x</span><span class="p">)</span> <span class="p">=</span> \frac<span class="p">{</span>\int_<span class="p">{</span>\alpha<span class="p">}</span>^<span class="p">{</span>\beta<span class="p">}</span> <span class="k">g</span><span class="p">(</span><span class="k">t</span><span class="p">)(</span><span class="k">x</span><span class="p">-</span><span class="k">t</span><span class="p">)</span>^<span class="m">2</span>\text<span class="p">{</span> <span class="k">d</span><span class="p">}</span><span class="k">t</span> <span class="p">}{</span>\phi<span class="p">(</span><span class="k">x</span><span class="p">)</span>\sum_<span class="p">{</span><span class="k">i</span><span class="p">=</span><span class="m">0</span><span class="p">}</span>^<span class="p">{</span>N<span class="m">-1</span><span class="p">}</span> \omega_i<span class="p">}</span> \<span class="k">tag</span><span class="p">{</span><span class="m">2</span><span class="p">}</span>
+$$
+
+$$
+xxxxxxxxxx \mathbf<span class="p">{</span>V<span class="p">}</span>_1 \times \mathbf<span class="p">{</span>V<span class="p">}</span>_2 <span class="p">=</span>  \begin<span class="p">{</span>vmatrix<span class="p">}</span> \mathbf<span class="p">{</span><span class="k">i</span><span class="p">}</span> &amp; \mathbf<span class="p">{</span><span class="k">j</span><span class="p">}</span> &amp; \mathbf<span class="p">{</span><span class="k">k</span><span class="p">}</span> \\\frac<span class="p">{</span>\partial X<span class="p">}{</span>\partial <span class="k">u</span><span class="p">}</span> &amp;  \frac<span class="p">{</span>\partial Y<span class="p">}{</span>\partial <span class="k">u</span><span class="p">}</span> &amp; <span class="m">0</span> \\\frac<span class="p">{</span>\partial X<span class="p">}{</span>\partial <span class="k">v</span><span class="p">}</span> &amp;  \frac<span class="p">{</span>\partial Y<span class="p">}{</span>\partial <span class="k">v</span><span class="p">}</span> &amp; <span class="m">0</span> \\\end<span class="p">{</span>vmatrix<span class="p">}</span>
+$$
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="代码块"><strong>代码块</strong></h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="s">"2"</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="s">"2"</span><span class="p">]])</span>
+<span class="n">data</span><span class="p">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">"one"</span><span class="p">,</span> <span class="s">"two"</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># 当前类型
+</span><span class="k">print</span><span class="p">(</span><span class="s">"----</span><span class="se">\n</span><span class="s">修改前类型："</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">dtypes</span><span class="p">)</span>
+
+<span class="c1"># 类型转换
+</span><span class="n">data</span><span class="p">[[</span><span class="s">"two"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s">"two"</span><span class="p">]].</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># 修改后类型
+</span><span class="k">print</span><span class="p">(</span><span class="s">"----</span><span class="se">\n</span><span class="s">修改后类型"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">dtypes</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="rouge-code"><pre>···
+<span class="k">import</span> pandas <span class="k">as</span> pd
+
+data <span class="p">=</span> pd<span class="p">.</span>DataFrame<span class="p">([[</span><span class="m">1</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">],</span> <span class="p">[</span><span class="m">2</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">]])</span>
+data<span class="p">.</span><span class="nb">columns</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"one"</span><span class="p">,</span> <span class="s2">"two"</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span>data<span class="p">)</span>
+
+# 当前类型
+<span class="k">print</span><span class="p">(</span><span class="s2">"----\n修改前类型："</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span>data<span class="p">.</span>dtypes<span class="p">)</span>
+
+# 类型转换
+data<span class="p">[[</span><span class="s2">"two"</span><span class="p">]]</span> <span class="p">=</span> data<span class="p">[[</span><span class="s2">"two"</span><span class="p">]].</span>astype<span class="p">(</span>int<span class="p">)</span>
+
+# 修改后类型
+<span class="k">print</span><span class="p">(</span><span class="s2">"----\n修改后类型"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span>data<span class="p">.</span>dtypes<span class="p">)</span>
+···
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="标注"><strong>标注</strong></h2>
+
+<p>我们可以对某一个词语进行<strong>标注</strong>，非常强大</p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />吃饭</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />逛街</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />看电影</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />学习</li>
+</ul>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre> 我们可以对某一个词语进行**标注**，非常强大
+<span class="p">-</span> <span class="p">[</span> <span class="p">]</span> 吃饭
+<span class="p">-</span> <span class="p">[</span> <span class="p">]</span> 逛街
+<span class="p">-</span> <span class="p">[</span> <span class="p">]</span> 看电影
+<span class="p">-</span> <span class="p">[</span><span class="k">x</span><span class="p">]</span> 学习
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="高亮-可能网站不支持以后会我有时间慢慢修复"><strong>高亮 </strong>(可能网站不支持，以后会我有时间慢慢修复)</h2>
+
+<p>==文字==</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>==文字==
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="长横线"><strong>长横线</strong></h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>---
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="插入链接">插入链接</h2>
+
+<p><a href="链接地址">VS Code 编辑器支持用户自定义配置，例如改变主题颜色、键盘快捷方式、编辑器属性和其他参数。另外，还支持扩展程序，并在编辑器中内置了扩展程序管理的功能。</a></p>
+
+<div class="language-latex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>[显示内容](链接地址)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<h2 id="换行"><strong>换行</strong></h2>
+
+<p>代码是&lt;br&gt;</p>
+
+<hr />
+
+<h2 id="插入静态图"><strong>插入静态图</strong></h2>
+<p><img src="/img/home-img/testabout.png" alt="点击查看源网页" /></p>
+
+<h2 id="插入动图"><strong>插入动图</strong></h2>
+
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1537726105749&amp;di=b0381e59cdce3674c5ebcafe526ff0d1&amp;imgtype=0&amp;src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20160621%2F85759e2fa24b48a3b5d8cd7e4edfe6d5_th.jpg" alt="点击查看源网页" /></p>
+
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1537726100622&amp;di=20094aa791e2984df9514048a8d5b14b&amp;imgtype=0&amp;src=http%3A%2F%2Fimg.komovie.cn%2Fgallery%2Fphoto%2F2568%2Fp1020615699.jpg" alt="img" /></p>
+
+<h2 id="插入音乐"><strong>插入音乐</strong></h2>
+
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&amp;id=528478901&amp;auto=0&amp;height=66"></iframe>
+
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&amp;id=528478901&amp;auto=0&amp;height=66"></iframe>
+
+<h2 id="插入视频"><strong>插入视频</strong></h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>
+<hr />
+<iframe width="640" height="360" src="https://www.youtube.com/embed/Ck0ozfJV9-g" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<h2 id="标准字体"><strong>标准字体</strong></h2>
+
+<font face="黑体">我是黑体字</font>
+<font face="微软雅黑">我是微软雅黑</font>
+<font face="STCAIYUN">我是华文彩云</font>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="p">&lt;</span>font face<span class="p">=</span><span class="s2">"黑体"</span><span class="p">&gt;</span>我是黑体字<span class="p">&lt;</span>/font<span class="p">&gt;</span>
+<span class="p">&lt;</span>font face<span class="p">=</span><span class="s2">"微软雅黑"</span><span class="p">&gt;</span>我是微软雅黑<span class="p">&lt;</span>/font<span class="p">&gt;</span>
+<span class="p">&lt;</span>font face<span class="p">=</span><span class="s2">"STCAIYUN"</span><span class="p">&gt;</span>我是华文彩云<span class="p">&lt;</span>/font<span class="p">&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+
+<p>好，暂时写到这里，还有目录、缩进、上下标等可以依赖文本编辑器实现，也不再赘述，后续会不断更新，最后以麦克斯韦方程组和薛之谦的《暧昧》做结束吧，后续进阶学习内容在<a href="https://blog.csdn.net/m0_37925202/article/details/80461714">这里</a>。</p>
+
+\[\begin{aligned}
+\nabla \cdot \mathbf{E} &amp;= 4 \pi \rho \\
+\nabla \cdot \mathbf{B} &amp;= 0 \\
+\nabla \times \mathbf{E} &amp;= - \frac{1}{c} \frac{\partial \mathbf{B}}{\partial t} \\
+\nabla \times \mathbf{B} &amp;= \frac{1}{c} ({4 \pi} \mathbf{J} + \frac{\partial \mathbf{E}}{\partial t})
+\end{aligned}\]
+
+<hr />
+
+:ET

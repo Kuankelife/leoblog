@@ -49,6 +49,7 @@ plugins: [jekyll-paginate]
 markdown: kramdown
 kramdown:
   input: GFM                            # use Github Flavored Markdown !important
+  
   syntax_highlighter_opts:
     span:
       line_numbers: false
@@ -82,7 +83,7 @@ ga_domain: ownyulife.top
 
 
 # Sidebar settings
-sidebar: true                         # whether or not using Sidebar.
+sidebar: false                        # whether or not using Sidebar.
 sidebar-about-description: "大多数人都高估了他们一天能做的事情，但低估了他们一年能做的事情。"
 sidebar-avatar: /img/face.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 

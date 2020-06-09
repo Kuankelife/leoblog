@@ -1,0 +1,203 @@
+I"�7<p>I love vim and often use it to write Python code. Here are some useful plugins and tools for building a delightful vim python environment, escpecially for Vim8:</p>
+
+<p><img src="/posts/vim-python-ide-screenshot.png" alt="" /></p>
+
+<p>As you can see, tmux is also one of my favourite tools in terminal.</p>
+
+<h3 id="syntax-checking">Syntax Checking</h3>
+
+<p>If you use Vim8, <a href="https://github.com/w0rp/ale">w0rp/ale</a> is a better option than syntastic, for it utilizes the async feature in Vim8, you will never get stuck due to the syntax checking. It’s similar to flycheck in emacs, which allows you to lint while you type.</p>
+
+<p><img src="https://github.com/w0rp/ale/blob/master/img/example.gif?raw=true" alt="" />
+(taken from ale)</p>
+
+<h3 id="code-formatter">Code Formatter</h3>
+
+<p><a href="https://github.com/google/yapf">google/yapf</a> can be used to format python code. Make a key mapping as bellow, then you can format your python code via <code class="language-plaintext highlighter-rouge">&lt;LocalLeader&gt; =</code>.</p>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>
+autocmd <span class="nb">FileType</span> <span class="k">python</span> nnoremap <span class="p">&lt;</span>LocalLeader<span class="p">&gt;=</span> <span class="p">:</span><span class="m">0</span><span class="p">,</span>$<span class="p">!</span>yapf<span class="p">&lt;</span>CR<span class="p">&gt;</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>You can also take a look at <a href="https://github.com/Chiel92/vim-autoformat">Chiel92/vim-autoformat</a>.</p>
+
+<h3 id="sort-import">Sort Import</h3>
+
+<p><a href="https://github.com/timothycrosley/isort">timothycrosley/isort</a> helps you sort imports alphabetically, and automatically separated into sections.  For example, use <code class="language-plaintext highlighter-rouge">&lt;LocalLeader&gt;i</code> to run isort on your current python file:</p>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>
+autocmd <span class="nb">FileType</span> <span class="k">python</span> nnoremap <span class="p">&lt;</span>LocalLeader<span class="p">&gt;</span><span class="k">i</span> <span class="p">:!</span>isort %<span class="p">&lt;</span>CR<span class="p">&gt;&lt;</span>CR<span class="p">&gt;</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Or you can use its vim plugin: <a href="https://github.com/fisadev/vim-isort#installation">fisadev/vim-isort</a>.</p>
+
+<p><strong>Update:</strong> ALE now has a command <a href="https://github.com/w0rp/ale/issues/541"><code class="language-plaintext highlighter-rouge">ALEFix</code> for autofixing</a>. Concerning <em>code formatter</em> and <em>sort import</em>, you could do that by merely configuring ALE properly. I’d love to put these in <a href="https://github.com/liuchengxu/space-vim/blob/master/core/ftplugin/python.vim">ftplugin/python.vim</a>:</p>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre>
+<span class="k">let</span> <span class="nv">b:ale_linters</span> <span class="p">=</span> <span class="p">[</span><span class="s1">'flake8'</span><span class="p">]</span>
+<span class="k">let</span> <span class="nv">b:ale_fixers</span> <span class="p">=</span> <span class="p">[</span>
+<span class="se">\</span>   <span class="s1">'remove_trailing_lines'</span><span class="p">,</span>
+<span class="se">\</span>   <span class="s1">'isort'</span><span class="p">,</span>
+<span class="se">\</span>   <span class="s1">'ale#fixers#generic_python#BreakUpLongLines'</span><span class="p">,</span>
+<span class="se">\</span>   <span class="s1">'yapf'</span><span class="p">,</span>
+<span class="se">\</span><span class="p">]</span>
+
+nnoremap <span class="p">&lt;</span><span class="k">buffer</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>LocalLeader<span class="p">&gt;=</span> <span class="p">:</span>ALEFix<span class="p">&lt;</span>CR<span class="p">&gt;</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>If you want to fix files automatically on save:</p>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">g:ale_fix_on_save</span> <span class="p">=</span> <span class="m">1</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Now you have the support of syntax checking and autofixing with one ALE! As a matter of fact, ALE also has a plan to support auto-completion via <a href="https://langserver.org/">LSP</a>. Keep watching this amazing project if you are interested.</p>
+
+<h3 id="auto-completion">Auto Completion</h3>
+
+<p><a href="https://github.com/Valloric/YouCompleteMe">Valloric/YouCompleteMe</a> is a good way to provide code auto completion. It has several completion engines, aside from Python, C, C++, Rust, Go and Javascript are also supported. Whereas a bunch of people also think YCM is too huge and need to be compiled, then <a href="https://github.com/davidhalter/jedi-vim">jedi-vim</a> is an alternative. They all use <a href="https://github.com/davidhalter/jedi">jedi</a> as their backend.</p>
+
+<p><img src="https://github.com/davidhalter/jedi/raw/master/docs/_screenshots/screenshot_complete.png" alt="jedi-vim" />
+(from jedi-vim)</p>
+
+<p>What’s more, I know many people use <a href="https://github.com/Shougo/deoplete.nvim">Shougo/deoplete.nvim</a>. Thanks to the async API, some more hopeful completion plugins are borned:</p>
+
+<p><a href="https://github.com/maralla/completor.vim">maralla/completor.vim</a> is an code completion framework for Vim8, and support NeoVim too.</p>
+
+<p><img src="https://camo.githubusercontent.com/0dcc3b75a89c1366910d913fa5668a5b004fedb7/687474703a2f2f692e696d6775722e636f6d2f6635456f6941362e676966" alt="completor.vim" />
+(from Completor)</p>
+
+<p><a href="https://github.com/roxma/nvim-completion-manager">roxma/nvim-completion-manager</a> also provides experimental support for Vim8. <a href="https://github.com/prabirshrestha/asyncomplete.vim">prabirshrestha/asyncomplete.vim</a> is a fork of nvim-completion-manager in pure vim script with python dependency removed.</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/4538941/23752974/8fffbdda-0512-11e7-8466-8a30f480de21.gif" alt="nvim-completion-manager" />
+(from NCM)</p>
+
+<p><strong>Update:</strong> Unfortunately, <a href="https://github.com/roxma/nvim-completion-manager/issues/12#issuecomment-382334422">NCM</a> is not maintained any more.</p>
+
+<p><strong>Update again:</strong> <a href="https://github.com/ncm2/ncm2">ncm2</a>, the successor of NCM, comes out! <a href="https://github.com/neoclide/coc.nvim">coc.nvim</a> is also promising.</p>
+
+<h3 id="quick-run">Quick Run</h3>
+
+<p>If use Vim8, you can execute python file asynchronously by <a href="https://github.com/skywind3000/asyncrun.vim">skywind3000/asyncrun.vim</a> and output automatically the result to the quickfix window like this:</p>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+</pre></td><td class="rouge-code"><pre><span class="c">" Quick run via &lt;F5&gt;</span>
+nnoremap <span class="p">&lt;</span>F5<span class="p">&gt;</span> <span class="p">:</span><span class="k">call</span> <span class="p">&lt;</span>SID<span class="p">&gt;</span>compile_and_run<span class="p">()&lt;</span>CR<span class="p">&gt;</span>
+
+<span class="k">function</span><span class="p">!</span> <span class="nv">s:compile_and_run</span><span class="p">()</span>
+    exec <span class="s1">'w'</span>
+    <span class="k">if</span> &amp;<span class="k">filetype</span> <span class="p">==</span> <span class="s1">'c'</span>
+        exec <span class="s2">"AsyncRun! gcc % -o %&lt;; time ./%&lt;"</span>
+    <span class="k">elseif</span> &amp;<span class="k">filetype</span> <span class="p">==</span> <span class="s1">'cpp'</span>
+       exec <span class="s2">"AsyncRun! g++ -std=c++11 % -o %&lt;; time ./%&lt;"</span>
+    <span class="k">elseif</span> &amp;<span class="k">filetype</span> <span class="p">==</span> <span class="s1">'java'</span>
+       exec <span class="s2">"AsyncRun! javac %; time java %&lt;"</span>
+    <span class="k">elseif</span> &amp;<span class="k">filetype</span> <span class="p">==</span> <span class="s1">'sh'</span>
+       exec <span class="s2">"AsyncRun! time bash %"</span>
+    <span class="k">elseif</span> &amp;<span class="k">filetype</span> <span class="p">==</span> <span class="s1">'python'</span>
+       exec <span class="s2">"AsyncRun! time python %"</span>
+    <span class="k">endif</span>
+<span class="k">endfunction</span>
+
+<span class="c">" augroup SPACEVIM_ASYNCRUN</span>
+<span class="c">"     autocmd!</span>
+<span class="c">"    " Automatically open the quickfix window</span>
+<span class="c">"     autocmd User AsyncRunStart call asyncrun#quickfix_toggle(15, 1)</span>
+<span class="c">" augroup END</span>
+<span class="c">"</span>
+<span class="c">" asyncrun now has an option for opening quickfix automatically</span>
+<span class="k">let</span> <span class="nv">g:asyncrun_open</span> <span class="p">=</span> <span class="m">15</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>For neovim, <a href="https://github.com/neomake/neomake">neomake/neomake</a> is worthy of trying. Here is the description from neomake’s README:</p>
+
+<blockquote>
+  <p>It is intended to replace the built-in :make command and provides functionality similar to plugins like syntastic and dispatch.vim. It is primarily used to run code linters and compilers from within Vim, but can be used to run any program.</p>
+</blockquote>
+
+<p>Another approach is to use <strong><a href="https://github.com/tmux/tmux">TMUX</a></strong>. The idea is simple: it can split your terminal screen into two. Basically, you will have one side of your terminal using Vim and the other side will be where you run your scripts.</p>
+
+<p><img src="/posts/vim-python-ide-tmux.png" alt="" /></p>
+
+<h3 id="enhance-the-default-python-syntax-highlighting">Enhance the default python syntax highlighting</h3>
+
+<p><a href="https://github.com/python-mode/python-mode">python-mode/python-mode</a> provides a more precise python syntax highlighting than the defaults. For example, you can add a highlighting for <code class="language-plaintext highlighter-rouge">pythonSelf</code> .</p>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>
+<span class="k">hi</span> pythonSelf  ctermfg<span class="p">=</span><span class="m">68</span>  guifg<span class="p">=</span><span class="mh">#5f87d7</span> cterm<span class="p">=</span><span class="nb">bold</span> <span class="k">gui</span><span class="p">=</span><span class="nb">bold</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="https://github.com/liuchengxu/space-vim-dark/blob/screenshots/screenshot2.png?raw=true" alt="" /></p>
+
+<p>For more customized python syntax highlightings, please see <a href="https://github.com/liuchengxu/space-vim-dark/blob/aea1ef1707a40e6518a569911a63e9c41104d27e/colors/space-vim-dark.vim#L318-L337">space-vim-dark theme</a> and <em>syntax/python.vim</em> in <a href="https://github.com/python-mode/python-mode/blob/develop/syntax/python.vim">python-mode/python-mode</a> . You can also put them after color command.</p>
+
+<p>Actually, python-mode contains tons of stuff to develop python applications in Vim, e.g., static analysis, completion, documentation, and more. (But personally, I prefer to obtain the functionalities by some other better plugins.)</p>
+
+<h3 id="python-text-objects">Python text objects</h3>
+
+<p><a href="https://github.com/jeetsukumaran/vim-pythonsense">vim-pythonsense</a> provides text objects and motions for Python classes, methods, functions, and doc strings.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>There are also some neccessary general programming plugins, e.g., <a href="https://github.com/scrooloose/nerdcommenter">scrooloose/nerdcommenter</a> for convenient commenter, <a href="https://github.com/Yggdroot/indentLine">Yggdroot/indentLine</a> or <a href="https://github.com/nathanaelkane/vim-indent-guides">nathanaelkane/vim-indent-guides</a> for visually displaying indent levels in Vim, <a href="https://github.com/junegunn/fzf">fzf</a>  and <a href="https://github.com/junegunn/fzf.vim">fzf.vim</a> for fuzzy file searching, etc.</p>
+
+<p>Although vim is great and many plugins are productive, IDE is still my first choice when it comes to refactoring code and debugging:). Some useful links for debugging python:</p>
+
+<ul>
+  <li><a href="http://stackoverflow.com/questions/1623039/python-debugging-tips">python-debugging-tips</a></li>
+  <li><a href="http://keflavich.github.io/blog/my-python-ipython-vim-debugging-workflow.html">my-python-ipython-vim-debugging-workflow</a></li>
+</ul>
+
+<p>For detailed vim configuration, please see <strong><a href="https://github.com/liuchengxu/space-vim">space-vim</a></strong>, enable ycmd, syntax-checking, python, programming Layer , then you could get a nice vim environment for python like the screenshot. Hope it helpful.</p>
+
+<p><img src="https://github.com/liuchengxu/space-vim-dark/blob/screenshots/screenshot1.png?raw=true" alt="" /></p>
+:ET

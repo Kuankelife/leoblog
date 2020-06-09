@@ -56,7 +56,7 @@
   overflow: auto;
   height: 100%;
   padding-bottom: 40px;
-  width: 195px;
+  width: 190px;
 }
 .side-catalog.fixed {
   position: fixed;
@@ -80,7 +80,7 @@
   height: auto;
   overflow: hidden;
   padding-left: 0px;
-  padding-right: 5px;
+  padding-right: 0px;
   text-indent: 0;
 }
 .side-catalog .catalog-body li {
@@ -197,6 +197,8 @@
   min-width: min-content;
   outline: 0px;
 }
+
+
 /* Everything from here down is actually just for the demo - the material buttons and card, and various other pieces of styling */
 /* Variables */
 /* Buttons */
@@ -738,19 +740,24 @@ samp {
 @media screen and (max-width: 768px) {
   .post-container h1 {
     font-size: 30px;
+    color: gray;
   }
   .post-container h2 {
     font-size: 22px;
+   
   }
   .post-container h3 {
     font-size: 20px;
+    
   }
   .post-container h4 {
     font-size: 19px;
+   
   }
   .post-container h5,
   .post-container h6 {
     font-size: 18px;
+
   }
 }
 .post-container ul,
@@ -1219,7 +1226,6 @@ samp {
   font-style: italic;
   color: #a3a3a3;
 }
-
 .post-content-preview:hover {
   color: #0085a1;
 }
@@ -1577,7 +1583,7 @@ img::-moz-selection {
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 1.5em auto 1.6em auto;
+  margin: 1.5em auto 1.5em auto;
 }
 /* Hux Optimize UserExperience */
 .navbar-default .navbar-toggle:focus,
@@ -1693,3 +1699,11 @@ img::-moz-selection {
   -webkit-overflow-scrolling: touch;
 }
 
+.progress-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  z-index: 99;
+  background-color: red;
+}

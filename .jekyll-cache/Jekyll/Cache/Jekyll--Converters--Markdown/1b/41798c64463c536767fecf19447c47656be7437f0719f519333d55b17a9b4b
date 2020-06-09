@@ -1,0 +1,208 @@
+I"�<h2 id="神经网络文档">神经网络文档</h2>
+
+<p><strong>用法</strong>：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>class sklearn.neural_network.MLPClassifier(hidden_layer_sizes=(100, ), activation=’relu’, solver=’adam’, alpha=0.0001, batch_size=’auto’, learning_rate=’constant’, learning_rate_init=0.001, power_t=0.5, max_iter=200, shuffle=True, random_state=None, tol=0.0001, verbose=False, warm_start=False, momentum=0.9, nesterovs_momentum=True, early_stopping=False, validation_fraction=0.1, beta_1=0.9, beta_2=0.999, epsilon=1e-08, n_iter_no_change=10)[source]
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><strong>参数</strong>:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">hidden_layer_sizes</code>，长度=n_layers-2, 默认100
+    <ul>
+      <li>第i个元素表示第i个隐藏层的神经元的个数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">activation</code>
+    <ul>
+      <li>激活函数，默认为relu</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">solver</code>，默认 ‘adam’，
+    <ul>
+      <li>用来优化权重</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">alpha</code>，可选的，默认0.0001,
+    <ul>
+      <li>正则化项参数</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">batch_size</code>，默认‘auto’,
+    <ul>
+      <li>随机优化的minibatches的大小</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">learning_rate</code>，默认‘constant’，
+    <ul>
+      <li>学习率，用于权重更新</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">max_iter</code>，默认200，
+    <ul>
+      <li>最大迭代次数。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">random_state</code>，可选，默认None，
+    <ul>
+      <li>随机数生成器的状态或种子</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">shuffle</code>，可选，默认True,只有当solver=’sgd’或者‘adam’时使用，
+    <ul>
+      <li>判断是否在每次迭代时对样本进行打乱。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">tol</code>，可选，默认1e-4，
+    <ul>
+      <li>优化的容忍度</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">learning_rate_int</code>，默认0.001，
+    <ul>
+      <li>初始学习率，控制更新权重的补偿，只有当solver=’sgd’ 或’adam’时使用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">power_t</code>
+    <ul>
+      <li>只有solver=’sgd’时使用，是逆扩展学习率的指数.当learning_rate=’invscaling’，用来更新有效学习率。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">verbose</code>
+    <ul>
+      <li>是否将过程打印到stdout</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">warm_start</code>
+    <ul>
+      <li>当设置成True，使用之前的解决方法作为初始拟合，否则释放之前的解决方法。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">momentum</code>,浮点数,默认0.9
+    <ul>
+      <li>梯度下降的动量更新。应该在0和1之间。仅当求解器= ‘ sgd ‘时使用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">nesterovs_momentum </code>
+    <ul>
+      <li>是否使用Nesterov的动量。仅当解算器= ‘ sgd ‘和动量&gt; 0时使用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">early_stopping</code>
+    <ul>
+      <li>当交叉验证分数没有提高时，是否使用early stop终止培训。如果设置为true，它将自动留出10%的训练数据作为验证，并在n_iter_no_change连续时间的验证分数至少没有提高tol时终止训练。只有当求解器= ‘ sgd ‘或’ adam ‘时才有效。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">validation_fraction</code>
+    <ul>
+      <li>预留用于验证的训练数据的比例，用于提前停止。必须在0和1之间。只有在early_stop为true时才使用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">beta_1</code>
+    <ul>
+      <li>adam中第一个矩向量估计值的指数衰减率应为[0,1]，仅当解算器= ‘ adam ‘时使用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">beta_2</code>
+    <ul>
+      <li>adam中二阶矩矢量估计值的指数衰减率应为[0,1]，仅当求解器= ‘ adam ‘时使用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">epsilon</code>
+    <ul>
+      <li>数值稳定性的adam值。只在solver= ‘ adam ‘时使用。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_iter_no_change</code>
+    <ul>
+      <li>不满足tol改进的最大迭代数。只有当求解器= ‘ sgd ‘或’ adam ‘时才有效。</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>属性</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">classes_</code>:
+    <ul>
+      <li>每个输出的类的标签</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">oss_</code>:
+    <ul>
+      <li>损失函数计算出来的当前损失值</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">coefs_</code>:
+    <ul>
+      <li>列表中的第i个元素表示i层的权重矩阵</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">intercepts_</code>:
+    <ul>
+      <li>列表中第i个元素代表i+1层的偏差向量</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_iter_ </code>：
+    <ul>
+      <li>迭代次数</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_layers_</code>:
+    <ul>
+      <li>层数</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">n_outputs_</code>:
+    <ul>
+      <li>输出的个数</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">out_activation_</code>:
+    <ul>
+      <li>输出激活函数的名称。</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>方法</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fit(X,y)</code>
+    <ul>
+      <li>拟合数据</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">get_params([deep])</code>:
+    <ul>
+      <li>获取参数</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">predict(X)</code>:
+    <ul>
+      <li>使用MLP进行预测</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">predic_log_proba(X)</code>:
+    <ul>
+      <li>返回X的对数概率估计</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">predic_proba(X)</code>：
+    <ul>
+      <li>X的概率估计</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">score(X,y[,sample_weight])</code>:
+    <ul>
+      <li>返回给定测试数据和标签上的平均准确度</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">set_params(**params)</code>:
+    <ul>
+      <li>设置参数。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>附上<a href="http://sklearn.apachecn.org/#/">scikit-learn (sklearn) 官方文档中文版</a></p>
+:ET

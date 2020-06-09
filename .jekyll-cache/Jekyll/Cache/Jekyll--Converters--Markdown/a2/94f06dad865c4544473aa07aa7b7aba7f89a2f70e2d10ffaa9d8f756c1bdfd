@@ -1,0 +1,384 @@
+I"Ny<p>人类可以在二维和三维上甚至在第四维来思考。但是机器学习经常要求使用成千上万个维度！即使是非常简单的事情，当在非常高的维度上思考的时候，也会变得难以理解。 降维技术就必不可少，可视化降维结果将更符合人类的思考习惯。幸运的是，目前很多大神为此做了很多努力，有了很多成果。</p>
+
+<p>注意：此ipnb文件在python 3.7.3运行，注意不要一下子运行所有cell，否则cpu会跑不动</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="rouge-code"><pre><span class="c1">#导入相应的库
+</span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'axes.labelsize'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'xtick.labelsize'</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">12</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'ytick.labelsize'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'axes.unicode_minus'</span><span class="p">]</span><span class="o">=</span><span class="bp">False</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'font.sans-serif'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="s">'SimHei'</span><span class="p">]</span> <span class="c1">#指定默认字体 SimHei为黑体
+</span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="c1">#获取数据集，运行时需要一段时间，等待一下，否则没办法进行下一步
+</span><span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="n">urllib</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">fetch_openml</span>
+    <span class="n">mnist</span> <span class="o">=</span> <span class="n">fetch_openml</span><span class="p">(</span><span class="s">'mnist_784'</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mnist</span><span class="p">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">mnist</span><span class="p">.</span><span class="n">target</span><span class="p">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">fetch_mldata</span>
+    <span class="n">mnist</span> <span class="o">=</span> <span class="n">fetch_mldata</span><span class="p">(</span><span class="s">'MNIST original'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">X_raw</span> <span class="o">=</span> <span class="n">mnist</span><span class="p">[</span><span class="s">"data"</span><span class="p">]</span>
+<span class="n">y_raw</span> <span class="o">=</span> <span class="n">mnist</span><span class="p">[</span><span class="s">"target"</span><span class="p">]</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#有七万张图
+</span><span class="n">X_raw</span><span class="p">.</span><span class="n">shape</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>(70000, 784)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>MNIST是一种简单的计算机视觉数据集。它由28×28像素的手写数字图像组成，一个图像有28×28个像素，因此得到了一个28×28的数组，可以将每个数组变为28×28＝784维向量</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">X_raw</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">shape</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>(784,)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">X_raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+</pre></td><td class="rouge-code"><pre>array([  0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   3.,  18.,
+        18.,  18., 126., 136., 175.,  26., 166., 255., 247., 127.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+        30.,  36.,  94., 154., 170., 253., 253., 253., 253., 253., 225.,
+       172., 253., 242., 195.,  64.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,  49., 238., 253., 253., 253., 253.,
+       253., 253., 253., 253., 251.,  93.,  82.,  82.,  56.,  39.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+        18., 219., 253., 253., 253., 253., 253., 198., 182., 247., 241.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,  80., 156., 107., 253.,
+       253., 205.,  11.,   0.,  43., 154.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,  14.,   1., 154., 253.,  90.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+       139., 253., 190.,   2.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,  11., 190., 253.,  70.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,  35., 241., 225., 160., 108.,   1.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,  81., 240.,
+       253., 253., 119.,  25.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,  45., 186., 253., 253., 150.,  27.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,  16.,  93., 252., 253., 187.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0., 249., 253.,
+       249.,  64.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,  46., 130., 183., 253., 253., 207.,   2.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,  39., 148., 229., 253., 253., 253.,
+       250., 182.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,  24., 114.,
+       221., 253., 253., 253., 253., 201.,  78.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,  23.,  66., 213., 253., 253., 253., 253., 198.,  81.,
+         2.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,  18., 171., 219., 253., 253.,
+       253., 253., 195.,  80.,   9.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,  55.,
+       172., 226., 253., 253., 253., 253., 244., 133.,  11.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0., 136., 253., 253., 253., 212., 135.,
+       132.,  16.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
+         0.,   0.,   0.])
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre><span class="c1">#可视化图片
+</span><span class="k">def</span> <span class="nf">plot_digits</span><span class="p">(</span><span class="n">instances</span><span class="p">,</span> <span class="n">images_per_row</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="mi">28</span>
+    <span class="n">images_per_row</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">instances</span><span class="p">),</span> <span class="n">images_per_row</span><span class="p">)</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">instance</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">size</span><span class="p">,</span><span class="n">size</span><span class="p">)</span> <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">]</span>
+    <span class="n">n_rows</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">instances</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">images_per_row</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">row_images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">n_empty</span> <span class="o">=</span> <span class="n">n_rows</span> <span class="o">*</span> <span class="n">images_per_row</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">instances</span><span class="p">)</span>
+    <span class="n">images</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="n">n_empty</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+        <span class="n">rimages</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">row</span> <span class="o">*</span> <span class="n">images_per_row</span> <span class="p">:</span> <span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">images_per_row</span><span class="p">]</span>
+        <span class="n">row_images</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">rimages</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">row_images</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="p">.</span><span class="n">cm</span><span class="p">.</span><span class="n">binary</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">axis</span><span class="p">(</span><span class="s">"off"</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#图片实在太多了，会运行很长时间，选取其中十分之一的图片
+</span><span class="n">X</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_raw</span><span class="p">,</span><span class="n">y_raw</span><span class="p">,</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="c1">#降维到100个维度
+</span><span class="n">X_reduced</span> <span class="o">=</span> <span class="n">pca</span><span class="p">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="c1">#降维后，在原有的维度上尝试恢复原来的维度
+</span><span class="n">X_recovered</span> <span class="o">=</span> <span class="n">pca</span><span class="p">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">X_reduced</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="c1">#任选五张图片可视化
+</span><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plot_digits</span><span class="p">(</span><span class="n">X</span><span class="p">[::</span><span class="mi">200</span><span class="p">])</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"原始数据集"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plot_digits</span><span class="p">(</span><span class="n">X_recovered</span><span class="p">[::</span><span class="mi">200</span><span class="p">])</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"压缩后数据集"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>Text(0.5, 1.0, '压缩后数据集')
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/ky/output_12_1.png" /></p>
+
+<p>降维代码很容易写，有现成的工具，太幸福了，人生苦短，我用python, 耗时间的其实是可视化。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
+<span class="kn">from</span> <span class="nn">matplotlib.offsetbox</span> <span class="kn">import</span> <span class="n">AnnotationBbox</span><span class="p">,</span> <span class="n">OffsetImage</span>
+<span class="c1">#重写可视化函数
+</span><span class="k">def</span> <span class="nf">plot_digits</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">min_distance</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">images</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
+    
+    <span class="n">X_normalized</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">().</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    
+    <span class="n">neighbors</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">]])</span>
+    
+    <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="p">.</span><span class="n">cm</span><span class="p">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s">"jet"</span><span class="p">)</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">digit</span> <span class="ow">in</span> <span class="n">digits</span><span class="p">:</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_normalized</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="n">digit</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_normalized</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="n">digit</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="n">cmap</span><span class="p">(</span><span class="n">digit</span> <span class="o">/</span> <span class="mi">9</span><span class="p">)])</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">axis</span><span class="p">(</span><span class="s">"off"</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">gcf</span><span class="p">().</span><span class="n">gca</span><span class="p">()</span>  <span class="c1"># get current axes in current figure
+</span>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">image_coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X_normalized</span><span class="p">):</span>
+        <span class="n">closest_distance</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">-</span> <span class="n">image_coord</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">).</span><span class="nb">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">closest_distance</span> <span class="o">&gt;</span> <span class="n">min_distance</span><span class="p">:</span>
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">r_</span><span class="p">[</span><span class="n">neighbors</span><span class="p">,</span> <span class="p">[</span><span class="n">image_coord</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">images</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">plt</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="n">image_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">image_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">])),</span>
+                         <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">/</span> <span class="mi">9</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s">"weight"</span><span class="p">:</span> <span class="s">"bold"</span><span class="p">,</span> <span class="s">"size"</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">index</span><span class="p">].</span><span class="n">reshape</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span>
+                <span class="n">imagebox</span> <span class="o">=</span> <span class="n">AnnotationBbox</span><span class="p">(</span><span class="n">OffsetImage</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">"binary"</span><span class="p">),</span> <span class="n">image_coord</span><span class="p">)</span>
+                <span class="n">ax</span><span class="p">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">imagebox</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="factor-analysis">Factor Analysis</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">FactorAnalysis</span>
+<span class="n">X_fa_reduced</span> <span class="o">=</span> <span class="n">FactorAnalysis</span><span class="p">(</span><span class="n">n_components</span> <span class="o">=</span> <span class="mi">2</span><span class="p">).</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">plot_digits</span><span class="p">(</span><span class="n">X_fa_reduced</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/ky/output_16_0.png" /></p>
+
+:ET

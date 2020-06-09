@@ -1,0 +1,1411 @@
+I"�<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1537012717707&amp;di=93b200d1c628327cd3686e48bccae82e&amp;imgtype=0&amp;src=http%3A%2F%2Fimg.mp.sohu.com%2Fupload%2F20170625%2F1f1509fb3265468b895c0515c2c9de3b.png" width="400" height="400" /></p>
+
+<hr />
+<center>本文只用于平时教学学习，未经得作者同意禁止直接转载或编辑后转载。</center>
+
+<hr />
+<h1 id="python数据可视化教程更新至2018-10-01"><center>Python数据可视化教程（更新至2018-10-01）</center></h1>
+
+<h1 id="入门--传剑">入门  (传剑）</h1>
+
+<h2 id="matplotlib数据可视化">Matplotlib数据可视化</h2>
+
+<h2 id="简介">简介</h2>
+
+<ul>
+  <li>
+    <p>在数据科学中，数据可视化是研究的其中一部份工作，它是为了将处理后的数据呈现给需要的人，因为有时候有规律的结果需要以图表的形式呈
+现，即使如此，人们从呈现出来的图表获取的信息量还远远不够，这就要求画图者需要使用多样化的图表来呈现结果。</p>
+  </li>
+  <li>
+    <p>数据可视化是一项技能，看似简单，但是也面临着巨大的挑战，由此技术人员开发了很多可视化工具，可以说，如果一门编程语言没有可视化的功能，那它在数据科学上的推广必然很吃力，而作为Data science的编程新星<strong><code class="language-plaintext highlighter-rouge">Python</code></strong>（在2018年9月26日发布了3.71版本），必然少不了可视化工具<strong>Matplotlib</strong>, Matplotlib是Python中最常用的可视化工具之一，可以非常方便地创建海量类型的2D图表和一些基本的3D图表, 它就是我接下来要详细介绍的内容。</p>
+  </li>
+</ul>
+
+<blockquote>
+  <p>Matplotlib库由各种可视化类构成，内部结构复杂, Matplotlib.pyplot是绘制各类可视化图形的命令子库，其实风格和Matlab的绘图风格差不多，没错，开发者就是模仿Matlab的绘图风格，所以学过Matlab绘图的同学，对Matplotlib的学习就不需要心怀恐惧，没学过Matlab的同学也不必担心，just follow me step by step, 你会少走很多弯路。</p>
+</blockquote>
+
+<blockquote>
+  <p>其实官方和网上都有关于Matplotlib的教程，但都不全面，也不够深入，有的教程也是看着看着就睡着了，我其实也是想写一篇无比详细的教程，可是写到四分之一我就放弃了，数据可视化是为呈现结果，注重的是实用性，让看图者最短时间去从图表获取最多的信息，故选择什么类型的图表就显得极为重要，同时要美观，下一步才是各种图的学习。故我把入门教程分为三个部分，<strong>模仿篇</strong>，<strong>美化篇</strong>，<strong>拓展篇</strong>，这是符合大多数人的学习路径。</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="c1">#首先导入画图的库，使用方法为
+</span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'axes.unicode_minus'</span><span class="p">]</span><span class="o">=</span><span class="bp">False</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'font.sans-serif'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="s">'SimHei'</span><span class="p">]</span> <span class="c1">#指定默认字体 SimHei为黑体
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="模仿篇">模仿篇</h2>
+
+<p>为了学得更愉快，我不会一下子塞一大堆东西给你，除非你是<strong>AI</strong>.</p>
+
+<h3 id="原始图">原始图</h3>
+<p>首先我们用五行代码就对上证指数做了简单的可视化</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="n">data</span> <span class="o">=</span> <span class="n">get_price</span><span class="p">(</span><span class="s">"000001.XSHG"</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s">'2018-06-01'</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s">'2018-09-29'</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">).</span><span class="n">close</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">values</span>
+<span class="n">x</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_11_0.png" /></p>
+
+<h3 id="x轴时间">x轴时间</h3>
+<p>看图者只看到一条曲线，不知到x,y轴代表什么意思，而我们知道x轴应该是时间才对，那么加上去</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="c1">#把x轴改为时间列表
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">values</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_13_0.png" /></p>
+
+<h3 id="x-y轴label">x, y轴label</h3>
+<p>即使看图者通过日期知道了x轴代表时间，但是y轴呢，y轴代表的指数没有单位，所以加上label.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'时间'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'指数'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_15_0.png" /></p>
+
+<h3 id="标题">标题</h3>
+<p>画图总得有个标题吧</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'指数走势'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'时间'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'指数'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_17_0.png" /></p>
+
+<h3 id="多条曲线">多条曲线</h3>
+<p>很多情况下，我们都需要在同一张图里画多条曲线</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="n">data_2</span> <span class="o">=</span> <span class="n">get_price</span><span class="p">(</span><span class="s">"000016.XSHG"</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s">'2018-06-01'</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s">'2018-09-28'</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">).</span><span class="n">close</span>
+<span class="n">y2</span> <span class="o">=</span> <span class="n">data_2</span><span class="p">.</span><span class="n">values</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'时间'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'指数'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'上证指数和上证50指数'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_19_0.png" /></p>
+<h3 id="图例">图例</h3>
+<p>还有，怎么知道两条曲线代表哪个指数？所以需要加上图例</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="c1">#创建一个图例，不要问为什么，其实相当于实例化，没学过类的话可以不管，看着看着就会懂了。。。
+</span><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">u'上证指数和上证50指数'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'时间'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'指数'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s">'上证50指数'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s">'上证指数'</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_21_0.png" /></p>
+
+<p>这样，一个成型的图画出来了，似乎看起来有点丑。。。。</p>
+
+<h2 id="美化篇">美化篇</h2>
+
+<blockquote>
+  <p>作为强迫症的重度患者，自然对上面的图坐视不理了!!!</p>
+</blockquote>
+
+<h3 id="图的大小">图的大小</h3>
+<p>首先图太小了，能不能放大一点？能！</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">u'上证指数和上证50指数'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'时间'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'指数'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s">'上证50指数'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s">'上证指数'</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_26_0.png" /></p>
+
+<p>整个人舒畅了很多了。。。</p>
+
+<h3 id="图例字体样式及大小">图例字体样式及大小</h3>
+<p>字体也不满意</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="c1">#设置图例并且设置图例的字体及大小
+</span><span class="n">font1</span> <span class="o">=</span> <span class="p">{</span><span class="s">'family'</span> <span class="p">:</span> <span class="s">'Times New Roman'</span><span class="p">,</span>
+<span class="s">'weight'</span> <span class="p">:</span> <span class="s">'normal'</span><span class="p">,</span>
+<span class="s">'size'</span>   <span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>/opt/conda/envs/python2new/lib/python2.7/site-packages/matplotlib/font_manager.py:1297: UserWarning: findfont: Font family [u'Times New Roman'] not found. Falling back to DejaVu Sans
+  (prop.get_family(), self.defaultFamily[fontext]))
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_29_1.png" /></p>
+
+<h3 id="曲线的颜色">曲线的颜色</h3>
+<ul>
+  <li>
+    <p>线的颜色不合我的心意，改！</p>
+  </li>
+  <li>
+    <p>color用于设置颜色</p>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_31_0.png" /></p>
+
+<h3 id="线条的粗细">线条的粗细</h3>
+<ul>
+  <li>似乎线条粗一点更好看。。。。</li>
+  <li>linewidth用于修改线条颜色</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_33_0.png" /></p>
+
+<p>耳目一新了！！！</p>
+
+<h3 id="图例的位置">图例的位置</h3>
+
+<h4 id="调整在图里的位置">调整在图里的位置</h4>
+
+<ul>
+  <li>
+    <p>图例在图内有时会和曲线重合，而图例的位置也可以调整，具体的参数就不列举了，可以自行网上查阅，比如图的图例在右上角，我设置为左上角</p>
+  </li>
+  <li>
+    <p>参数loc用于设置legend的位置</p>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">],</span><span class="n">loc</span><span class="o">=</span><span class="s">'upper left'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_37_0.png" /></p>
+
+<h4 id="图例移动在图外的位置">图例移动在图外的位置</h4>
+<ul>
+  <li>
+    <p>有时候图例太大，内容太多，和曲线有重合，把图例放在图外是不错的选择。</p>
+  </li>
+  <li>
+    <p>bbox_to_anchor用于在bbox_transform坐标（默认轴坐标）中为图例指定任意位置</p>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">],</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.05</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),</span><span class="n">borderaxespad</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_39_0.png" /></p>
+
+<h3 id="格子">格子</h3>
+<p>高端一点？加个格子上去，世界杯之后对格子莫名的喜欢</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_41_0.png" /></p>
+
+<h3 id="样式">样式</h3>
+<p>其实matploblib自带很多<strong>样式</strong></p>
+
+<h4 id="grayscale--style">grayscale  style</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">use</span><span class="p">(</span><span class="s">"grayscale"</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_44_0.png" /></p>
+
+<h4 id="ggplot--style">ggplot  style</h4>
+<p>作为R和Python的兼修者，我把R的ggplot样式搬到Python来了，因为这是我最满意的样式，但有时也会小问题不断。。。。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">use</span><span class="p">(</span><span class="s">"ggplot"</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_46_0.png" /></p>
+
+<h4 id="bmh--style">bmh  style</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">use</span><span class="p">(</span><span class="s">"bmh"</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_48_0.png" /></p>
+
+<h4 id="dark_background--style">dark_background  style</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">use</span><span class="p">(</span><span class="s">"dark_background"</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_50_0.png" /></p>
+
+<h4 id="fivethirtyeight--style">fivethirtyeight  style</h4>
+<p>此处图例和背景同色，原因是上面调用太多style, 导致出错，每个style单独用是不会出现这种问题。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">use</span><span class="p">(</span><span class="s">"fivethirtyeight"</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">'time'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">'index'</span><span class="p">,</span><span class="n">font1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'上证50指数'</span><span class="p">,</span><span class="s">'上证指数'</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_52_0.png" /></p>
+
+<blockquote>
+  <p>如无其他说明，下面的部分我将使用ggplot样式</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">use</span><span class="p">(</span><span class="s">"ggplot"</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="拓展篇">拓展篇</h2>
+
+<h3 id="多个子图网格">多个子图(网格）</h3>
+<ul>
+  <li>可选参数用numRows, numCols, plotNum</li>
+</ul>
+
+<hr />
+<p>在Matplotlib下, 一个 Figure 对象可以包含多个子图(Axes), 可以使用 subplot() 快速绘制, 其调用形式如下</p>
+
+<blockquote>
+  <p>subplot(numRows, numCols, plotNum)</p>
+</blockquote>
+
+<ul>
+  <li>
+    <p>图表的整个绘图区域被分成 numRows 行和 numCols 列</p>
+  </li>
+  <li>
+    <p>然后按照从左到右，从上到下的顺序对每个子区域进行编号，左上的子区域的编号为1</p>
+  </li>
+  <li>
+    <p>plotNum 参数指定创建的 Axes 对象所在的区域</p>
+  </li>
+</ul>
+
+<hr />
+
+<h3 id="规则划分">规则划分</h3>
+
+<p>如图：numRows ＝ 3, numCols ＝ 3, 那整个绘制图表样式为 3X3 的图片区域</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">11</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_60_0.png" /></p>
+
+<h3 id="不规则划分">不规则划分</h3>
+
+<ol>
+  <li>
+    <p>将整个表按照 3*2 划分，本应有六张图 。</p>
+  </li>
+  <li>
+    <p>前两个简单, 分别占的位置为(3, 2, 1) 和 (3, 2, 2)，而第三个图占了(3,2,3) 和 (3,2,4)，第四个图占了(3,2,5) 和 (3,2,6)。</p>
+  </li>
+  <li>
+    <p>故对其重新划分, 按照 3 * 1 划分，前两个图占用了 (3, 1, 1) 的位置，第三个图占用了 (3, 1, 2) 的位置，第四个图占用了 (3, 1, 2) 的位置。</p>
+  </li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">321</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">322</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">312</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">313</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_63_0.png" /></p>
+
+<p>所以说完全可以怎么画就怎么画</p>
+
+<h3 id="常见图画法">常见图画法</h3>
+
+<h4 id="说明"><strong>说明</strong></h4>
+<ul>
+  <li>
+    <p>限于篇幅，我就不一一列举，我将通过上面介绍过的多子图方法，把<strong><code class="language-plaintext highlighter-rouge">散点图</code></strong>，<strong><code class="language-plaintext highlighter-rouge">折线图</code></strong>，<strong><code class="language-plaintext highlighter-rouge">柱状图</code></strong>，<strong><code class="language-plaintext highlighter-rouge">扇形图</code></strong>，<strong><code class="language-plaintext highlighter-rouge">箱形图</code></strong>全画出来。</p>
+  </li>
+  <li>
+    <p>更多画法，详细请见<a href="https://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot">官方文档</a></p>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">18</span><span class="p">))</span>
+
+<span class="c1">#散点图
+</span><span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">321</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1">#折线图
+</span><span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">322</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1">#垂直柱状图
+</span><span class="n">x_bar</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">y_bar</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">34</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">323</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x_bar</span><span class="p">,</span><span class="n">y_bar</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">)</span>
+
+<span class="c1">#水平柱状图
+</span><span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">324</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">barh</span><span class="p">(</span><span class="n">x_bar</span><span class="p">,</span><span class="n">y_bar</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'y'</span><span class="p">)</span>
+
+<span class="c1">#箱线图
+</span><span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">325</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1">#扇形图
+</span><span class="n">sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="c1">#权重
+</span><span class="n">explode</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">#各部分间隔
+</span><span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">326</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">sizes</span><span class="p">,</span> <span class="n">explode</span><span class="o">=</span><span class="n">explode</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">'%1.1f%%'</span><span class="p">,</span>
+        <span class="n">shadow</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">startangle</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">axis</span><span class="p">(</span><span class="s">'equal'</span><span class="p">)</span> 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>(-1.1991859391653492,
+ 1.1308366712784419,
+ -1.1617174718372747,
+ 1.1029389285149376)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_67_1.png" /></p>
+
+<h3 id="三维图">三维图</h3>
+<ul>
+  <li>三维工具mplot3d</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span> <span class="c1">#引进三维画法用到的库
+</span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="c1">#添加参数projection
+</span><span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">x_3d</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">z</span><span class="p">)</span>
+<span class="n">y_3d</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">z</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_3d</span><span class="p">,</span> <span class="n">y_3d</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'grey'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_69_0.png" /></p>
+
+<h1 id="进阶修炼">进阶（修炼）</h1>
+
+<h2 id="seaborn数据可视化">Seaborn数据可视化</h2>
+<p>虽然Matplotlib已经证明了其在数据科学数据可视化的地位，但是不得不承认，其还是有一些不支持的功能，<strong>Seaborn</strong>属于Matplotlib的一个高级接口,故需要跟seaborn结合起来,。</p>
+
+<p>本篇参考借鉴</p>
+<ul>
+  <li><a href="http://seaborn.pydata.org/api.html">Seaborn API</a></li>
+  <li><a href="https://blog.csdn.net/qq_34264472/article/details/53814653">Python数据可视化—seaborn简介和实例</a></li>
+</ul>
+
+<h3 id="set_style--set-">set_style( ), set( )</h3>
+
+<ul>
+  <li>set_style( )是用来设置主题的，Seaborn有五个预设好的主题： darkgrid , whitegrid , dark , white ,和 ticks</li>
+  <li>默认： darkgrid</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+
+<span class="n">sns</span><span class="p">.</span><span class="n">set_style</span><span class="p">(</span><span class="s">'whitegrid'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/75.png" /></p>
+
+<p>set( )通过设置参数可以用来设置背景，调色板等，更加常用。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="n">sns</span><span class="p">.</span><span class="nb">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">"white"</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s">"muted"</span><span class="p">,</span> <span class="n">color_codes</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>     <span class="c1">#set( )设置主题，palette调色板更常用  
+</span><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>  
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_75_0.png" /></p>
+
+<h3 id="distplot--kdeplot-">distplot( ), kdeplot( )</h3>
+<ul>
+  <li>distplot( )为hist加强版，kdeplot( )为密度曲线图</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="c1">#导入pandas库
+</span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="n">df_iris</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'iris.csv'</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span><span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span> <span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="c1">#kde是密度曲线，rug是边际毛毯
+</span><span class="n">sns</span><span class="p">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">df_iris</span><span class="p">[</span><span class="s">'PetalLength'</span><span class="p">],</span><span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kde</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">rug</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> 
+
+<span class="c1">#shade是阴影
+</span><span class="n">sns</span><span class="p">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">df_iris</span><span class="p">[</span><span class="s">'PetalLength'</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shade</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_79_0.png" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="n">sns</span><span class="p">.</span><span class="nb">set</span><span class="p">(</span><span class="n">palette</span> <span class="o">=</span> <span class="s">'muted'</span><span class="p">,</span><span class="n">color_codes</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">rs</span><span class="p">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">f</span><span class="p">,</span><span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">sharex</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">kde</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">'r'</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">hist</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">rug</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">'g'</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">hist</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">'y'</span><span class="p">,</span> <span class="n">kde_kws</span> <span class="o">=</span> <span class="p">{</span><span class="s">'shade'</span><span class="p">:</span><span class="bp">True</span><span class="p">},</span><span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'grey'</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/80_0.png" /></p>
+
+<h3 id="箱型图-boxplot-">箱型图 boxplot( )</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">sns</span><span class="p">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">df_iris</span><span class="p">[</span><span class="s">'Name'</span><span class="p">],</span> <span class="n">y</span> <span class="o">=</span> <span class="n">df_iris</span><span class="p">[</span><span class="s">'SepalWidth'</span><span class="p">])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_82_1.png" /></p>
+
+<h3 id="线性回归的边缘分布">线性回归的边缘分布</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+<span class="n">sns</span><span class="p">.</span><span class="nb">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">"darkgrid"</span><span class="p">)</span>
+<span class="n">tips</span> <span class="o">=</span> <span class="n">sns</span><span class="p">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s">"tips"</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="p">.</span><span class="n">jointplot</span><span class="p">(</span><span class="s">"total_bill"</span><span class="p">,</span> <span class="s">"tip"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">tips</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s">"reg"</span><span class="p">,</span>
+                  <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">"m"</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_84_0.png" /></p>
+
+<p>### 散射矩阵</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">sns</span><span class="p">.</span><span class="nb">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">"ticks"</span><span class="p">)</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">df_iris</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s">"Name"</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_86_1.png" /></p>
+
+<h3 id="热力图">热力图</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>
+<span class="n">sns</span><span class="p">.</span><span class="nb">set</span><span class="p">()</span>
+<span class="c1">#加载数据集
+</span><span class="n">flights_long</span> <span class="o">=</span> <span class="n">sns</span><span class="p">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s">"flights"</span><span class="p">)</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">flights_long</span><span class="p">.</span><span class="n">pivot</span><span class="p">(</span><span class="s">"month"</span><span class="p">,</span> <span class="s">"year"</span><span class="p">,</span> <span class="s">"passengers"</span><span class="p">)</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">flights</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s">"d"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_88_1.png" /></p>
+
+<h3 id="热力图数据中的结构">热力图数据中的结构</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="rouge-code"><pre><span class="n">sns</span><span class="p">.</span><span class="nb">set</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">sns</span><span class="p">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s">"brain_networks"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">#选择网络的一个子集
+</span><span class="n">used_networks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">]</span>
+<span class="n">used_columns</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">columns</span><span class="p">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s">"network"</span><span class="p">)</span>
+                          <span class="p">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+                          <span class="p">.</span><span class="n">isin</span><span class="p">(</span><span class="n">used_networks</span><span class="p">))</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">used_columns</span><span class="p">]</span>
+
+<span class="c1"># 创建一个分类格来识别网络
+</span><span class="n">network_pal</span> <span class="o">=</span> <span class="n">sns</span><span class="p">.</span><span class="n">husl_palette</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="p">.</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">network_lut</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">used_networks</span><span class="p">),</span> <span class="n">network_pal</span><span class="p">))</span>
+
+<span class="c1"># 将调色板转换成将在矩阵的一侧绘制的向量
+</span><span class="n">networks</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">columns</span><span class="p">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s">"network"</span><span class="p">)</span>
+<span class="n">network_colors</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">(</span><span class="n">networks</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="p">.</span><span class="n">columns</span><span class="p">).</span><span class="nb">map</span><span class="p">(</span><span class="n">network_lut</span><span class="p">)</span>
+
+<span class="c1">#画图
+</span><span class="n">sns</span><span class="p">.</span><span class="n">clustermap</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">corr</span><span class="p">(),</span> <span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">"vlag"</span><span class="p">,</span>
+               <span class="n">row_colors</span><span class="o">=</span><span class="n">network_colors</span><span class="p">,</span> <span class="n">col_colors</span><span class="o">=</span><span class="n">network_colors</span><span class="p">,</span>
+               <span class="n">linewidths</span><span class="o">=</span><span class="p">.</span><span class="mi">75</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">13</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>&lt;seaborn.matrix.ClusterGrid at 0x7f3908564f10&gt;
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/90_1.png" /></p>
+
+<h2 id="dataframe数据可视化">Dataframe数据可视化</h2>
+<ul>
+  <li>DataFrame.plot( )函数</li>
+</ul>
+
+<blockquote>
+  <p>DataFrame.plot(x=None, y=None, kind=’line’, ax=None, subplots=False, sharex=None, sharey=False, layout=None,figsize=None, use_index=True, title=None, grid=None, legend=True, style=None, logx=False, logy=False,loglog=False, xticks=None, yticks=None, xlim=None, ylim=None, rot=None, fontsize=None, colormap=None,table=False, yerr=None, xerr=None, secondary_y=False, sort_columns=False, **kwds)</p>
+</blockquote>
+
+<blockquote>
+  <p>一行代码就搞定了画图，现在精通可视化的大神都会这样画图.</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">df</span> <span class="o">=</span> <span class="n">get_price</span><span class="p">(</span><span class="s">"000001.XSHG"</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s">'2018-06-01'</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s">'2018-09-29'</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">).</span><span class="n">iloc</span><span class="p">[:,:</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">df</span><span class="p">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_94_1.png" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">25</span><span class="p">).</span><span class="n">reshape</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">)),</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'a'</span><span class="p">,</span><span class="s">'b'</span><span class="p">,</span><span class="s">'c'</span><span class="p">,</span><span class="s">'d'</span><span class="p">,</span><span class="s">'e'</span><span class="p">],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'one'</span><span class="p">,</span><span class="s">'two'</span><span class="p">,</span><span class="s">'three'</span><span class="p">,</span><span class="s">'four'</span><span class="p">,</span><span class="s">'five'</span><span class="p">])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="垂直柱状图">垂直柱状图</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df2</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span> <span class="o">=</span> <span class="s">'bar'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_97_1.png" /></p>
+
+<h3 id="散点图">散点图</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="s">'close'</span><span class="p">,</span><span class="s">'open'</span><span class="p">,</span><span class="n">kind</span> <span class="o">=</span> <span class="s">'scatter'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f39082f9b10&gt;
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_99_1.png" /></p>
+
+<h3 id="水平柱状图">水平柱状图</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df2</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span> <span class="o">=</span> <span class="s">'barh'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_101_1.png" /></p>
+<h3 id="横向条形图">横向条形图</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df2</span><span class="p">.</span><span class="n">plot</span><span class="p">.</span><span class="n">barh</span><span class="p">(</span><span class="n">stacked</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_103_1.png" /></p>
+
+<h3 id="垂直条形图">垂直条形图</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df2</span><span class="p">.</span><span class="n">plot</span><span class="p">.</span><span class="n">bar</span><span class="p">(</span><span class="n">stacked</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/105_1.png" /></p>
+
+<h3 id="直方图">直方图</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="n">df3</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'a'</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+                 <span class="s">'c'</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="s">'d'</span><span class="p">:</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="s">'e'</span><span class="p">:</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)},</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span><span class="s">'d'</span><span class="p">,</span><span class="s">'e'</span><span class="p">])</span>
+<span class="n">df3</span><span class="p">.</span><span class="n">plot</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/107_1.png" /></p>
+<h3 id="子图">子图</h3>
+
+<p>设置 subplot = True,同时画多个子图</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>array([&lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f390879c810&gt;,
+       &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f3907ad5310&gt;,
+       &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f3907a58650&gt;,
+       &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f3907a3cb10&gt;], dtype=object)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_109_1.png" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax_1</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax_2</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax_1</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df3</span><span class="p">)</span>
+<span class="n">ax_2</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>[&lt;matplotlib.lines.Line2D at 0x7f3907754d50&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f39077b5b90&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f39077b5350&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f39077a9cd0&gt;]
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_110_1.png" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df3</span><span class="p">.</span><span class="n">diff</span><span class="p">().</span><span class="n">hist</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">'y'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>array([[&lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f39076e29d0&gt;,
+        &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f390768a3d0&gt;],
+       [&lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f390760d690&gt;,
+        &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f390756df10&gt;],
+       [&lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f390750a250&gt;,
+        &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f390746ca10&gt;]], dtype=object)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_111_1.png" /></p>
+
+<h3 id="箱型图">箱型图</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">df</span><span class="p">.</span><span class="n">boxplot</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f39096d64d0&gt;
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_113_1.png" /></p>
+
+<h1 id="高手忘剑">高手（忘剑）</h1>
+
+<h2 id="可视化实战实例">可视化实战实例</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>  
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">import</span> <span class="nn">matplotlib.ticker</span> <span class="k">as</span> <span class="n">mtk</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="n">mdate</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">Series</span>
+<span class="kn">import</span> <span class="nn">matplotlib.finance</span> <span class="k">as</span> <span class="n">mpf</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">use</span><span class="p">(</span><span class="s">"ggplot"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'axes.unicode_minus'</span><span class="p">]</span><span class="o">=</span><span class="bp">False</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'font.sans-serif'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="s">'SimHei'</span><span class="p">]</span> <span class="c1">#指定默认字体 SimHei为黑体
+</span>
+
+<span class="k">def</span> <span class="nf">draw_distribution</span><span class="p">(</span><span class="n">indexcode</span><span class="p">,</span><span class="n">indextime</span><span class="p">,</span><span class="n">stockstart</span><span class="p">,</span><span class="n">stockend</span><span class="p">,</span><span class="n">factortime</span><span class="p">):</span>
+
+    <span class="n">stockname</span> <span class="o">=</span> <span class="n">get_index_stocks</span><span class="p">(</span><span class="n">indexcode</span><span class="p">,</span><span class="n">date</span><span class="o">=</span><span class="n">indextime</span><span class="p">)</span>
+
+    <span class="n">stockprice</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">return_rate</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">stock_cnname</span><span class="o">=</span><span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">stockname</span><span class="p">),</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">stockprice</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_price</span><span class="p">(</span><span class="n">stockname</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">start_date</span><span class="o">=</span><span class="n">stockstart</span><span class="p">,</span><span class="n">end_date</span><span class="o">=</span><span class="n">stockend</span>
+                                <span class="p">,</span><span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">,</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s">'open'</span><span class="p">,</span><span class="s">'close'</span><span class="p">],</span><span class="n">skip_paused</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">fq</span><span class="o">=</span><span class="s">'pre'</span><span class="p">))</span>
+        <span class="n">return_rate</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">stockprice</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">close</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">stockprice</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nb">open</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">stockprice</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nb">open</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1">#获取多只股票在某一日期的PE和市值cap
+</span>    <span class="n">df1</span> <span class="o">=</span> <span class="n">get_fundamentals</span><span class="p">(</span><span class="n">query</span><span class="p">(</span><span class="n">valuation</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="n">valuation</span><span class="p">.</span><span class="n">pe_ratio</span><span class="p">,</span><span class="n">valuation</span><span class="p">.</span><span class="n">market_cap</span><span class="p">).</span><span class="nb">filter</span><span class="p">(</span><span class="n">valuation</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">in_</span><span class="p">(</span><span class="n">stockname</span><span class="p">)),</span> <span class="n">date</span><span class="o">=</span><span class="n">factortime</span><span class="p">)</span>
+    <span class="n">df1</span><span class="p">.</span><span class="n">index</span><span class="o">=</span><span class="n">df1</span><span class="p">[</span><span class="s">'code'</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">df1</span><span class="p">[</span><span class="s">'code'</span><span class="p">]</span>
+    <span class="c1">#获取ROE
+</span>    <span class="n">df2</span> <span class="o">=</span> <span class="n">get_fundamentals</span><span class="p">(</span><span class="n">query</span><span class="p">(</span><span class="n">indicator</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="n">indicator</span><span class="p">.</span><span class="n">roe</span><span class="p">).</span><span class="nb">filter</span><span class="p">(</span><span class="n">indicator</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">in_</span><span class="p">(</span><span class="n">stockname</span><span class="p">)),</span> <span class="n">date</span><span class="o">=</span><span class="n">factortime</span><span class="p">)</span>
+    <span class="n">df2</span><span class="p">.</span><span class="n">index</span><span class="o">=</span><span class="n">df2</span><span class="p">[</span><span class="s">'code'</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">df2</span><span class="p">[</span><span class="s">'code'</span><span class="p">]</span>
+    <span class="c1">#获取股票名字
+</span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">stockname</span><span class="p">),</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">stock_cnname</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_security_info</span><span class="p">(</span><span class="n">stockname</span><span class="p">[</span><span class="n">i</span><span class="p">]).</span><span class="n">display_name</span><span class="p">)</span>
+    <span class="c1">#print stock_cnname
+</span>
+    <span class="n">result</span><span class="o">=</span><span class="n">df1</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s">'return_rate'</span><span class="p">]</span><span class="o">=</span><span class="n">return_rate</span>
+    <span class="n">result</span><span class="p">[</span><span class="s">'cnname'</span><span class="p">]</span><span class="o">=</span><span class="n">stock_cnname</span>
+    <span class="n">indexcnname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">get_security_info</span><span class="p">(</span><span class="n">indexcode</span><span class="p">).</span><span class="n">display_name</span><span class="p">)</span>
+  
+    <span class="c1">#收益率分布
+</span>    <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'%s至%s%s指数收益率分布'</span><span class="o">%</span><span class="p">(</span><span class="n">stockstart</span><span class="p">,</span><span class="n">stockend</span><span class="p">,</span><span class="n">indexcnname</span><span class="p">),</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> 
+    <span class="n">sns</span><span class="p">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s">'any'</span><span class="p">).</span><span class="n">return_rate</span><span class="p">,</span><span class="n">kde</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">u'收益率'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">u'频数'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+    
+    <span class="c1">#前五后五  
+</span>    <span class="n">result_aftsort</span><span class="o">=</span><span class="n">result</span><span class="p">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s">'return_rate'</span><span class="p">],</span><span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">).</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s">'any'</span><span class="p">)</span>
+    <span class="n">blist</span><span class="o">=</span><span class="n">result_aftsort</span><span class="p">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">wlist</span><span class="o">=</span><span class="n">result_aftsort</span><span class="p">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">best5_index</span><span class="o">=</span><span class="n">blist</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">worst5_index</span><span class="o">=</span><span class="n">wlist</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">values</span>   
+    <span class="c1">#print blist
+</span>    <span class="c1">#print wlist
+</span>    
+    <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">best5_index</span><span class="p">,</span><span class="n">worst5_index</span><span class="p">]</span>
+    <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">blist</span><span class="p">.</span><span class="n">cnname</span><span class="p">,</span><span class="n">wlist</span><span class="p">.</span><span class="n">cnname</span><span class="p">]</span> 
+    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s">u'最好'</span><span class="p">,</span><span class="s">u'最差'</span><span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>  
+        <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'%s至%s%s指数%s5支走势对比'</span><span class="o">%</span><span class="p">(</span><span class="n">stockstart</span><span class="p">,</span><span class="n">stockend</span><span class="p">,</span><span class="n">indexcnname</span><span class="p">,</span><span class="n">title</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>    
+        <span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">u'时间'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+        <span class="n">closeprice</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">tradedate</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">closerate</span><span class="o">=</span><span class="p">[]</span> 
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">closeprice</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_price</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">start_date</span><span class="o">=</span><span class="n">stockstart</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">stockend</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s">'close'</span><span class="p">],</span>
+                                <span class="n">skip_paused</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">fq</span><span class="o">=</span><span class="s">'pre'</span><span class="p">).</span><span class="n">close</span><span class="p">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">closerate</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">closeprice</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">closeprice</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">tradedate</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_price</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">start_date</span><span class="o">=</span><span class="n">stockstart</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">stockend</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s">'close'</span><span class="p">],</span>
+                                <span class="n">skip_paused</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">fq</span><span class="o">=</span><span class="s">'pre'</span><span class="p">).</span><span class="n">index</span><span class="p">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tradedate</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">closerate</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s">'best'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+            <span class="n">plt</span><span class="p">.</span><span class="n">grid</span><span class="p">()</span>
+
+    
+    <span class="c1">#市值市盈率散点图
+</span>    <span class="c1">#过滤极端值（要先整合到dataframe里面！！）还要增加一列return rate
+</span>    <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="n">result</span><span class="p">.</span><span class="n">pe_ratio</span> <span class="o">&gt;=-</span><span class="mi">500</span><span class="p">].</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">pe</span><span class="o">=</span><span class="n">result</span><span class="p">.</span><span class="n">pe_ratio</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">cap</span><span class="o">=</span><span class="n">result</span><span class="p">.</span><span class="n">market_cap</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">roe</span><span class="o">=</span><span class="n">result</span><span class="p">.</span><span class="n">roe</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">return_rate</span><span class="o">=</span><span class="n">result</span><span class="p">.</span><span class="n">return_rate</span>
+    
+    <span class="c1">#
+</span>    <span class="c1">#cm = plt.cm.get_cmap('RdYlGn_r')  
+</span>    <span class="n">cm2</span><span class="o">=</span> <span class="n">colors</span><span class="p">.</span><span class="n">ListedColormap</span><span class="p">([</span><span class="s">'#32CD32'</span><span class="p">,</span><span class="s">'#F08080'</span><span class="p">,</span><span class="s">'#FF4500'</span><span class="p">,</span><span class="s">'#8B0000'</span><span class="p">],</span><span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">u'市值、市盈率、收益率'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">u'市盈率'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">u'市值'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pe</span><span class="p">,</span><span class="n">cap</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">return_rate</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cm2</span><span class="p">)</span>
+
+    <span class="c1">#text
+</span>    <span class="c1">#str(result.cnname[i])
+</span>    <span class="k">for</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pe</span><span class="p">,</span><span class="n">cap</span><span class="p">,</span><span class="n">result</span><span class="p">.</span><span class="n">cnname</span><span class="p">):</span>
+            <span class="n">plt</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="s">'%s'</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">),</span><span class="n">ha</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span><span class="n">va</span><span class="o">=</span><span class="s">'top'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>   
+    <span class="n">plt</span><span class="p">.</span><span class="n">colorbar</span><span class="p">()</span> 
+    <span class="n">plt</span><span class="p">.</span><span class="n">grid</span><span class="p">()</span>
+       
+    
+    <span class="c1">#3D+ROE
+</span>    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>  
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">u'市值、市盈率、净资产收益率'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">u'市盈率'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span> 
+    <span class="n">ax</span><span class="p">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">u'市值'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span> 
+    <span class="n">ax</span><span class="p">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s">u'净资产收益率'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>   
+    <span class="n">ax</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pe</span><span class="p">,</span><span class="n">cap</span><span class="p">,</span><span class="n">roe</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">return_rate</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cm2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+    
+<span class="k">def</span> <span class="nf">addvolume</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">volumedata</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="n">i</span>
+        <span class="n">volumedata</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">volumedata</span>
+<span class="k">def</span> <span class="nf">x_fmt_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">pos</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">df</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="s">'datetime'</span><span class="p">].</span><span class="n">iat</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+<span class="k">def</span> <span class="nf">decorateAx</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">x_func</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s">"-"</span><span class="p">)</span>
+    <span class="c1">#plt.title("")
+</span>    <span class="c1">#plt.xlabel("time")
+</span>    <span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">"index"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x_func</span><span class="p">:</span>
+        <span class="n">ax</span><span class="p">.</span><span class="n">xaxis</span><span class="p">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">mtk</span><span class="p">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="n">x_func</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> 
+
+<span class="k">def</span> <span class="nf">draw_distribution_2</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">pre</span><span class="p">,</span><span class="n">df</span><span class="p">):</span>
+   
+    <span class="n">datetime</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s">'datetime'</span><span class="p">]</span><span class="o">=</span><span class="n">datetime</span>
+    <span class="n">close1</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">close</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">high</span><span class="o">=</span><span class="n">df</span><span class="p">.</span><span class="n">high</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">low</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">low</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">open1</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nb">open</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">datetime</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s">'datetime'</span><span class="p">]</span><span class="o">=</span><span class="n">datetime</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">volume</span>
+    <span class="n">volume2</span><span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">addvolume</span><span class="p">(</span><span class="n">volume</span><span class="p">))</span>
+    <span class="n">idx_pxy</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">volume</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">index</span>
+    <span class="n">left</span><span class="p">,</span><span class="n">width</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span><span class="mf">0.8</span>
+    <span class="n">rect_vol</span> <span class="o">=</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="mf">0.3</span><span class="p">]</span>
+    <span class="n">rect_main</span> <span class="o">=</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="mf">0.5</span><span class="p">]</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
+    <span class="n">ax_vol</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">rect_vol</span><span class="p">)</span>
+    <span class="n">ax_vol</span><span class="p">.</span><span class="n">fill_between</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">240</span><span class="p">),</span><span class="n">volume</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s">'y'</span><span class="p">)</span>
+    <span class="n">decorateAx</span><span class="p">(</span><span class="n">ax_vol</span><span class="p">,</span> <span class="n">idx_pxy</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s">'close'</span><span class="p">],</span><span class="s">'green'</span><span class="p">,</span> <span class="n">x_fmt_func</span><span class="p">)</span>
+    <span class="n">ax_main</span>  <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">rect_main</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">u'上证指数2018年9月28日走势'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
+    <span class="n">ax_main</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">volume2</span><span class="p">,</span><span class="n">close1</span><span class="p">)</span>
+    
+<span class="c1">#调用函数1   
+</span><span class="n">indexcode</span><span class="o">=</span><span class="s">'000300.XSHG'</span><span class="c1">#指数代码    SZ50-000016;HS300-000300;ZZ800-000906;ZZ500-000905
+</span><span class="n">indextime</span><span class="o">=</span><span class="s">'2017-01-01'</span><span class="c1">#指数成分取值时间
+</span><span class="n">stockstart</span><span class="o">=</span><span class="s">'2017-01-01'</span><span class="c1">#股票行情开始时间
+</span><span class="n">stockend</span><span class="o">=</span><span class="s">'2017-12-31'</span><span class="c1">#股票行情结束时间
+</span><span class="n">factortime</span><span class="o">=</span><span class="s">'2017-01-01'</span><span class="c1">#财务数据取值时间
+</span><span class="n">draw_distribution</span><span class="p">(</span><span class="n">indexcode</span><span class="p">,</span><span class="n">indextime</span><span class="p">,</span><span class="n">stockstart</span><span class="p">,</span><span class="n">stockend</span><span class="p">,</span><span class="n">factortime</span><span class="p">)</span>
+
+<span class="c1">#调用函数2   
+</span><span class="n">start</span> <span class="o">=</span><span class="s">'2018-09-28 9:30:00'</span>
+<span class="n">end</span> <span class="o">=</span> <span class="s">'2018-09-28 15:00:00'</span>
+<span class="n">pre</span> <span class="o">=</span> <span class="s">'2018-09-27'</span>   
+<span class="n">df</span> <span class="o">=</span> <span class="n">get_price</span><span class="p">(</span><span class="s">'000001.XSHG'</span><span class="p">,</span><span class="n">start_date</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s">'1m'</span><span class="p">)</span>
+<span class="n">draw_distribution_2</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">pre</span><span class="p">,</span><span class="n">df</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div align="center"><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_116_0.png" /></div>
+<div align="center"><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_116_1.png" /></div>
+<div align="center"><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_116_2.png" /></div>
+<div align="center"><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_116_3.png" /></div>
+<div align="center"><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_116_4.png" /></div>
+<div align="center"><img src="http://i.caigoubao.cc/627139/bgpc/uyer/output_116_5.png" /></div>
+
+<h1 id="结语">结语</h1>
+<ul>
+  <li>我希望通过这篇教程，能够在数据可视化上帮你少走弯路，少掉坑，我的初衷是想像武侠世界一样，传授剑法给你，然后勤加修炼，当你熟练到可以抛开条条框框，从而达到融会贯通的程度时，你就差不多成为高手了，此时无剑胜有剑，岂不妙哉！加油吧！</li>
+  <li>如果你在学习上有什么问题，欢迎通过<strong>1115223619@qq.com</strong>或者<a href="https://ownyulife.top/">这里</a>跟我交流。</li>
+</ul>
+
+<hr />
+<center>本文只用于平时教学学习，未经得作者同意禁止直接转载或编辑后转载。</center>
+
+<hr />
+:ET

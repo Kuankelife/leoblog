@@ -9,7 +9,7 @@ tags:
     - 机器学习
     - 降维
 mathjax: false
-
+catalog: true
 ---
 接着中篇的内容
 

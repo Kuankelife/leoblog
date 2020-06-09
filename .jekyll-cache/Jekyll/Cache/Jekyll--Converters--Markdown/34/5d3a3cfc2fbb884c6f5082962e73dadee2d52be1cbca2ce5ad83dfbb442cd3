@@ -1,0 +1,64 @@
+I"<p>接着中篇的内容</p>
+
+<h2 id="组合pca--lle">组合（PCA + LLE)</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="n">pca_lle</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s">"pca"</span><span class="p">,</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s">"lle"</span><span class="p">,</span> <span class="n">LocallyLinearEmbedding</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)),</span>
+<span class="p">])</span>
+
+<span class="n">X_pca_lle_reduced</span> <span class="o">=</span> <span class="n">pca_lle</span><span class="p">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">plot_digits</span><span class="p">(</span><span class="n">X_pca_lle_reduced</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/ky/output_38_0.png" /></p>
+
+<h2 id="组合pca--mds">组合（PCA + MDS)</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="n">pca_mds</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s">"pca"</span><span class="p">,</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s">"mds"</span><span class="p">,</span> <span class="n">MDS</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)),</span>
+<span class="p">])</span>
+<span class="n">X_pca_mds_reduced</span> <span class="o">=</span> <span class="n">pca_mds</span><span class="p">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">plot_digits</span><span class="p">(</span><span class="n">X_pca_mds_reduced</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/ky/output_28_0.png" /></p>
+
+<h2 id="组合pca--tsne">组合（PCA + TSNE)</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="n">pca_tsne</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s">"pca"</span><span class="p">,</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s">"tsne"</span><span class="p">,</span> <span class="n">TSNE</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)),</span>
+<span class="p">])</span>
+<span class="n">X_pca_tsne_reduced</span> <span class="o">=</span> <span class="n">pca_tsne</span><span class="p">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">plot_digits</span><span class="p">(</span><span class="n">X_pca_tsne_reduced</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><img src="http://i.caigoubao.cc/627139/bgpc/ky/output_42_0.png" />
+如果你在学习上有什么问题，欢迎通过<strong>1115223619@qq.com</strong>或者<a href="https://ownyulife.top/">这里</a>跟我交流。</p>
+:ET

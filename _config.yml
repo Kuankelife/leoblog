@@ -83,7 +83,7 @@ ga_domain: ownyulife.top
 
 
 # Sidebar settings
-sidebar: false                        # whether or not using Sidebar.
+sidebar: true                       # whether or not using Sidebar.
 sidebar-about-description: "大多数人都高估了他们一天能做的事情，但低估了他们一年能做的事情。"
 sidebar-avatar: /img/face.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
@@ -94,7 +94,7 @@ featured-tags: true                     # whether or not using Feature-Tags
 featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
 
 leancloud:
-  enable: true
+  enable: false
   app_id   :  dm0hjRoU45xHEAJ82R1WLDCx-gzGzoHsz
   app_key  :  IqwFcWmYDwjtgv9dCsqRzx9s
 

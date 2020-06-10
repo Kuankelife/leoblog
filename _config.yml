@@ -6,7 +6,7 @@ email: 1115223619@qq.com
 description: "关于量化投资、机器学习 | 雨栋，Data science & Python Lover，Shenzhen University graduate | 这里是雨栋的个人博客，与你一起发现更大的世界。"
 keyword: "雨栋，量化投资，机器学习，数据分析，数据挖掘，运动，乒乓球，深圳大学"
 url: "https://ownyulife.top"              # your host, for absolute URL
-baseurl: "/_posts"                             # for example, '/blog' if your blog hosted on 'host/blog'
+baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
 future: true
@@ -14,7 +14,7 @@ future: true
 # SNS settings
 RSS: false
 weibo_username: 2256575271
-qqmail_username: 1115223619@qq.com
+qqmail_username: 
 zhihu_username:   yu-dong-99-52
 github_username:   marktext
 twitter_username:  Leo_Mosqi

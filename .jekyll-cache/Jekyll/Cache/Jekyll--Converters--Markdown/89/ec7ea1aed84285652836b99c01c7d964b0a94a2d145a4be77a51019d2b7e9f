@@ -1,0 +1,210 @@
+I"i6<p>平时有太多小任务需要定期发送邮件，琐碎重复但又不得不做，所以利用python做了一个自动化发送邮件的部署。自动化后，感觉人轻松了很多。</p>
+
+<p>第一个方法比较灵活，第二个方法集成方便。持续更新。</p>
+
+<p>期间借鉴了网上多个教程，不胜感激，程序猿真的是史上最无私的群体之一。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">import</span> <span class="nn">email</span>
+<span class="c1"># 负责构造文本
+</span><span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="c1"># 负责构造图片
+</span><span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+<span class="c1"># 负责将多个对象集合起来
+</span><span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h1 id="第一种方法">第一种方法</h1>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="c1"># SMTP服务器,这里使用163邮箱
+</span><span class="n">mail_host</span> <span class="o">=</span> <span class="s">"smtp.163.com"</span>
+<span class="c1"># 发件人邮箱
+</span><span class="n">mail_sender</span> <span class="o">=</span> <span class="s">"****@163.com"</span>
+<span class="c1"># 邮箱授权码,注意这里不是邮箱密码,如何获取邮箱授权码,请看本文最后教程
+</span><span class="n">mail_license</span> <span class="o">=</span> <span class="s">"*****"</span>
+<span class="c1"># 收件人邮箱，可以为多个收件人
+</span><span class="n">mail_receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s">"****@qq.com"</span><span class="p">]</span>
+<span class="c1">#mail_receivers = ["1115223619@qq.com","******@outlook.com"]
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">mm</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s">'related'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="c1"># 邮件主题
+</span><span class="n">subject_content</span> <span class="o">=</span> <span class="s">"""Python邮件测试"""</span>
+<span class="c1"># 设置发送者,注意严格遵守格式,里面邮箱为发件人邮箱
+</span><span class="n">mm</span><span class="p">[</span><span class="s">"From"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"sender_name&lt;c**o@163.com&gt;"</span>
+<span class="c1"># 设置接受者,注意严格遵守格式,里面邮箱为接受者邮箱
+</span><span class="n">mm</span><span class="p">[</span><span class="s">"To"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"receiver_1_name&lt;**@qq.com&gt;"</span>
+<span class="c1">#mm["To"] = "receiver_1_name&lt;1115223619@qq.com&gt;,receiver_2_name&lt;******@outlook.com&gt;"
+# 设置邮件主题
+</span><span class="n">mm</span><span class="p">[</span><span class="s">"Subject"</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">subject_content</span><span class="p">,</span><span class="s">'utf-8'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="c1"># 邮件正文内容
+</span><span class="n">body_content</span> <span class="o">=</span> <span class="s">"""你好，这是一个测试邮件！"""</span>
+<span class="c1"># 构造文本,参数1：正文内容，参数2：文本格式，参数3：编码方式
+</span><span class="n">message_text</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">body_content</span><span class="p">,</span><span class="s">"plain"</span><span class="p">,</span><span class="s">"utf-8"</span><span class="p">)</span>
+<span class="c1"># 向MIMEMultipart对象中添加文本对象
+</span><span class="n">mm</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="n">message_text</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="c1"># # 二进制读取图片
+# image_data = open('timg.jpg','rb')
+# # 设置读取获取的二进制数据
+# message_image = MIMEImage(image_data.read())
+# # 关闭刚才打开的文件
+# image_data.close()
+# # 添加图片文件到邮件信息当中去
+# mm.attach(message_image)
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="c1"># 构造附件
+</span><span class="n">atta</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">'files.html'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">).</span><span class="n">read</span><span class="p">(),</span> <span class="s">'base64'</span><span class="p">,</span> <span class="s">'utf-8'</span><span class="p">)</span>
+<span class="c1"># 设置附件信息
+</span><span class="n">atta</span><span class="p">[</span><span class="s">"Content-Disposition"</span><span class="p">]</span> <span class="o">=</span> <span class="s">'attachment; filename="files.html"'</span>
+<span class="c1"># 添加附件到邮件信息当中去
+</span><span class="n">mm</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="n">atta</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre><span class="c1"># html
+</span><span class="n">html</span> <span class="o">=</span> <span class="s">"""
+    &lt;html&gt;
+        &lt;body&gt;
+            &lt;h1&gt;this is a test,don't scared!&lt;/h1&gt;
+            &lt;a href = 'https://www.baidu.com'&gt;click it plz!&lt;/a&gt;
+        &lt;/body&gt;
+
+    &lt;/html&gt;
+"""</span>
+<span class="n">msg_html</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s">'html'</span><span class="p">,</span> <span class="s">'utf-8'</span><span class="p">)</span>
+<span class="n">mm</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msg_html</span><span class="p">)</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre><span class="c1"># 创建SMTP对象
+</span><span class="n">stp</span> <span class="o">=</span> <span class="n">smtplib</span><span class="p">.</span><span class="n">SMTP</span><span class="p">()</span>
+<span class="c1"># 设置发件人邮箱的域名和端口，端口地址为25
+</span><span class="n">stp</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">mail_host</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>  
+<span class="c1"># set_debuglevel(1)可以打印出和SMTP服务器交互的所有信息
+</span><span class="n">stp</span><span class="p">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># 登录邮箱，传递参数1：邮箱地址，参数2：邮箱授权码
+</span><span class="n">stp</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="n">mail_sender</span><span class="p">,</span><span class="n">mail_license</span><span class="p">)</span>
+<span class="c1"># 发送邮件，传递参数1：发件人邮箱地址，参数2：收件人邮箱地址，参数3：把邮件内容格式改为str
+</span><span class="n">stp</span><span class="p">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">mail_sender</span><span class="p">,</span> <span class="n">mail_receivers</span><span class="p">,</span> <span class="n">mm</span><span class="p">.</span><span class="n">as_string</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"邮件发送成功"</span><span class="p">)</span>
+<span class="c1"># 关闭SMTP对象
+</span><span class="n">stp</span><span class="p">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h1 id="第二种方法">第二种方法</h1>
+<p>用现成的库yagmail,一键发送。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="rouge-code"><pre>
+<span class="kn">import</span> <span class="nn">yagmail</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="k">def</span> <span class="nf">join_current_dir</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+    <span class="s">"""Join filepath with current file directory"""</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="nb">file</span><span class="p">)</span>
+
+<span class="c1"># 登录你的邮箱
+</span><span class="n">yag</span> <span class="o">=</span> <span class="n">yagmail</span><span class="p">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">user</span> <span class="o">=</span> <span class="s">'***@163.com'</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="s">'h***'</span><span class="p">,</span> <span class="n">host</span> <span class="o">=</span> <span class="s">'smtp.163.com'</span><span class="p">)</span> 
+<span class="c1"># 发送邮件
+</span><span class="n">yag</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">to</span> <span class="o">=</span> <span class="p">[</span><span class="s">'111*****@qq.com'</span><span class="p">],</span> <span class="n">subject</span> <span class="o">=</span> <span class="s">'邮件的主题'</span><span class="p">,</span> \
+         <span class="n">contents</span> <span class="o">=</span> <span class="p">[</span><span class="s">'我要发送的内容'</span><span class="p">,</span> <span class="s">r'C:\\Users\\dell\\Desktop\\100jfif'</span><span class="p">,</span><span class="s">r"D:\JoinQuant-Desktop-Py3\USERDATA\.joinquant-py3\notebook\f702a98f83d18867a703599d6c89c2cc\学习代码\用Python实现自动发送邮件\fig1.png"</span><span class="p">])</span>
+
+<span class="n">yag</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">to</span> <span class="o">=</span> <span class="p">[</span><span class="s">'1115223619@qq.com'</span><span class="p">],</span> <span class="n">subject</span> <span class="o">=</span> <span class="s">'邮件的主题'</span><span class="p">,</span> \
+         <span class="n">contents</span> <span class="o">=</span> <span class="p">[</span><span class="s">'我要发送的内容'</span><span class="p">])</span>
+<span class="c1">#         [join_current_dir('fig1.png')])
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+:ET

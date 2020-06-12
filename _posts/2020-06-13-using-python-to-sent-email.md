@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Python自动化发送邮件"
+title:  "用Python自动化发送邮件"
 subtitle: '人生苦短，我用Python'
 date:   2020-06-13
 author: "YU"

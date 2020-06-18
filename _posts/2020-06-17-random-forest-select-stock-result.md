@@ -1,0 +1,1676 @@
+---
+layout: post
+title:  "随机森林模型多因子选股：回测结果"
+subtitle: ''
+date:   2020-06-17
+author: "YU"
+header-img: "img/yu-img/post-img/u=3455037329,48387545&fm=27&gp=0.jpg"
+tags:
+  - 量价分析
+  - 量化投资
+  - 机器学习
+mathjax: False
+---
+
+这个结果已经很久没改动了。
+# <center><font color=#6600ff> 随机森林模型part3(滚动回测各项指标) </font><center>
+
+
+
+```python
+#导入需要用到的库
+import numpy as np
+import pandas as pd
+from jqfactor import get_factor_values
+from jqlib.technical_analysis import *
+from jqfactor import neutralize
+from jqfactor import winsorize_med
+from jqfactor import standardlize
+from jqfactor import winsorize
+from IPython.core.interactiveshell import InteractiveShell
+InteractiveShell.ast_node_interactivity = "all"
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import _validation
+from sklearn.metrics import precision_score, recall_score, accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import roc_curve, auc
+import matplotlib.pyplot as plt
+import time
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.cross_validation import train_test_split
+```
+
+
+```python
+print 'Starting yudong-back-test, please wait ...........' 
+start_time = time.time()
+stocklist = get_index_stocks('000300.XSHG')   
+
+sample_1 = pd.read_csv('data/data_train_2007to2010.csv')
+sample_2 = pd.read_csv('data/data_train_2007to2011.csv')
+sample_3 = pd.read_csv('data/data_train_2007to2012.csv')
+sample_4 = pd.read_csv('data/data_train_2008to2013.csv')
+sample_5 = pd.read_csv('data/data_train_2009to2014.csv')
+sample_6 = pd.read_csv('data/data_train_2010to2015.csv')
+sample_7 = pd.read_csv('data/data_train_2011to2016.csv')
+sample_8 = pd.read_csv('data/data_train_2012to2017.csv')
+sample2011to2017 = [sample_1, sample_2, sample_3, sample_4, sample_5, sample_6, sample_7]
+
+
+year_start = pd.to_datetime(pd.date_range('2011-01-01','2017-12-31',freq = 'AS'))
+year_end = pd.to_datetime(pd.date_range('2011-01-01','2017-12-31',freq = 'A'))
+
+accuracy_test_list = [] 
+precision_test_list = []
+auc_test_list = []
+recall_test_list = []
+factor_score_list = []
+gs_list = []
+year = 2011
+    
+for i,j,k in zip(year_start, year_end,sample2011to2017):
+    print '%s年回测开始：............'%year
+    gs,a,b,c,d,factor_score = test_out(k, i,j,stocklist)
+    gs_list.append(gs)
+    factor_score_list.append(factor_score)
+    accuracy_test_list += a
+    precision_test_list += b
+    auc_test_list += c
+    recall_test_list += d
+    print '%s年回测已经结束了............'%year
+    print '\n'
+    year += 1
+    
+```
+
+
+```python
+gs_last, e,f,g,h,factor_score_last = test_out(sample_8, '2018-01-01', '2018-08-15',stocklist)
+accuracy_test_list += e
+precision_test_list += f
+auc_test_list += g
+recall_test_list += h
+gs_list.append(gs_last)
+factor_score_list.append(factor_score_last)
+print 'Total cost time: %s'%(time.time() - start_time)
+```
+
+
+```python
+#打印每年因子重要性
+factor_importance = factor_score_list[0]
+for i in factor_score_list[1:]:
+    factor_importance = pd.merge(factor_importance, i, left_on = 'features',right_on = 'features')
+factor_importance
+```
+
+
+
+
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>features</th>
+      <th>importance_x</th>
+      <th>importance_y</th>
+      <th>importance_x</th>
+      <th>importance_y</th>
+      <th>importance_x</th>
+      <th>importance_y</th>
+      <th>importance_x</th>
+      <th>importance_y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>turnover_volatility</td>
+      <td>0.085290</td>
+      <td>0.070940</td>
+      <td>0.063438</td>
+      <td>0.060765</td>
+      <td>0.054880</td>
+      <td>0.056762</td>
+      <td>0.055559</td>
+      <td>0.058241</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>quick_ratio</td>
+      <td>0.080541</td>
+      <td>0.078048</td>
+      <td>0.078836</td>
+      <td>0.082299</td>
+      <td>0.066128</td>
+      <td>0.061665</td>
+      <td>0.063301</td>
+      <td>0.065500</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>VMACD</td>
+      <td>0.079592</td>
+      <td>0.073785</td>
+      <td>0.074901</td>
+      <td>0.071236</td>
+      <td>0.086967</td>
+      <td>0.086361</td>
+      <td>0.082764</td>
+      <td>0.077204</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>total_profit_growth_rate</td>
+      <td>0.074588</td>
+      <td>0.071198</td>
+      <td>0.074967</td>
+      <td>0.074053</td>
+      <td>0.089616</td>
+      <td>0.089956</td>
+      <td>0.087829</td>
+      <td>0.084951</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>total_asset_growth_rate</td>
+      <td>0.074156</td>
+      <td>0.068602</td>
+      <td>0.070751</td>
+      <td>0.071566</td>
+      <td>0.065317</td>
+      <td>0.062932</td>
+      <td>0.061112</td>
+      <td>0.065447</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>sharpe_ratio_20</td>
+      <td>0.073172</td>
+      <td>0.078520</td>
+      <td>0.072455</td>
+      <td>0.070199</td>
+      <td>0.065867</td>
+      <td>0.068128</td>
+      <td>0.071411</td>
+      <td>0.073998</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>AR</td>
+      <td>0.069965</td>
+      <td>0.077588</td>
+      <td>0.080356</td>
+      <td>0.089524</td>
+      <td>0.082555</td>
+      <td>0.075638</td>
+      <td>0.073560</td>
+      <td>0.067520</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>ACCA</td>
+      <td>0.058606</td>
+      <td>0.060009</td>
+      <td>0.057979</td>
+      <td>0.057339</td>
+      <td>0.053839</td>
+      <td>0.056908</td>
+      <td>0.056895</td>
+      <td>0.058328</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>net_asset_per_share</td>
+      <td>0.057264</td>
+      <td>0.059393</td>
+      <td>0.060932</td>
+      <td>0.056911</td>
+      <td>0.055650</td>
+      <td>0.058687</td>
+      <td>0.060041</td>
+      <td>0.063181</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>DAVOL20</td>
+      <td>0.055162</td>
+      <td>0.056412</td>
+      <td>0.055093</td>
+      <td>0.060552</td>
+      <td>0.056986</td>
+      <td>0.065627</td>
+      <td>0.077496</td>
+      <td>0.075411</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>WVAD</td>
+      <td>0.054794</td>
+      <td>0.059070</td>
+      <td>0.065648</td>
+      <td>0.064613</td>
+      <td>0.067596</td>
+      <td>0.071261</td>
+      <td>0.066566</td>
+      <td>0.063420</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>ocf_to_operating_profit</td>
+      <td>0.005169</td>
+      <td>0.008875</td>
+      <td>0.007189</td>
+      <td>0.006166</td>
+      <td>0.006301</td>
+      <td>0.006058</td>
+      <td>0.008223</td>
+      <td>0.007676</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>market_cap</td>
+      <td>0.004201</td>
+      <td>0.005158</td>
+      <td>0.006412</td>
+      <td>0.004656</td>
+      <td>0.005585</td>
+      <td>0.005569</td>
+      <td>0.004950</td>
+      <td>0.006358</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>pcf_ratio</td>
+      <td>0.004132</td>
+      <td>0.004365</td>
+      <td>0.003435</td>
+      <td>0.003133</td>
+      <td>0.003354</td>
+      <td>0.002892</td>
+      <td>0.003402</td>
+      <td>0.003481</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>pe_ratio_lyr</td>
+      <td>0.004000</td>
+      <td>0.002750</td>
+      <td>0.003271</td>
+      <td>0.003652</td>
+      <td>0.003199</td>
+      <td>0.002932</td>
+      <td>0.002802</td>
+      <td>0.002381</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Skewness60</td>
+      <td>0.003794</td>
+      <td>0.002698</td>
+      <td>0.002795</td>
+      <td>0.002840</td>
+      <td>0.002915</td>
+      <td>0.002152</td>
+      <td>0.002464</td>
+      <td>0.002355</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Kurtosis120</td>
+      <td>0.003760</td>
+      <td>0.002702</td>
+      <td>0.003176</td>
+      <td>0.002217</td>
+      <td>0.003039</td>
+      <td>0.002630</td>
+      <td>0.001842</td>
+      <td>0.001894</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>AR1</td>
+      <td>0.003692</td>
+      <td>0.004269</td>
+      <td>0.003722</td>
+      <td>0.002837</td>
+      <td>0.002903</td>
+      <td>0.003140</td>
+      <td>0.002957</td>
+      <td>0.002812</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>VOL20</td>
+      <td>0.003623</td>
+      <td>0.003058</td>
+      <td>0.002721</td>
+      <td>0.001964</td>
+      <td>0.002580</td>
+      <td>0.002921</td>
+      <td>0.002510</td>
+      <td>0.002612</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>AROON_XG2</td>
+      <td>0.003606</td>
+      <td>0.004343</td>
+      <td>0.002776</td>
+      <td>0.003067</td>
+      <td>0.002634</td>
+      <td>0.002366</td>
+      <td>0.002559</td>
+      <td>0.003905</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>net_asset_growth_rate</td>
+      <td>0.003587</td>
+      <td>0.002296</td>
+      <td>0.002526</td>
+      <td>0.003019</td>
+      <td>0.003617</td>
+      <td>0.002715</td>
+      <td>0.002124</td>
+      <td>0.001671</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>VDEA</td>
+      <td>0.003586</td>
+      <td>0.003024</td>
+      <td>0.002566</td>
+      <td>0.002793</td>
+      <td>0.002569</td>
+      <td>0.002817</td>
+      <td>0.002632</td>
+      <td>0.002326</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>total_profit_to_cost_ratio</td>
+      <td>0.003450</td>
+      <td>0.002984</td>
+      <td>0.002789</td>
+      <td>0.002092</td>
+      <td>0.002814</td>
+      <td>0.002894</td>
+      <td>0.002158</td>
+      <td>0.002221</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>VOL60</td>
+      <td>0.003445</td>
+      <td>0.004382</td>
+      <td>0.003412</td>
+      <td>0.005434</td>
+      <td>0.003197</td>
+      <td>0.002944</td>
+      <td>0.003335</td>
+      <td>0.003423</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>operating_profit_growth_rate</td>
+      <td>0.003438</td>
+      <td>0.002742</td>
+      <td>0.003469</td>
+      <td>0.002749</td>
+      <td>0.002803</td>
+      <td>0.002592</td>
+      <td>0.002484</td>
+      <td>0.002740</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>macd_dif</td>
+      <td>0.003429</td>
+      <td>0.002708</td>
+      <td>0.002920</td>
+      <td>0.002975</td>
+      <td>0.002931</td>
+      <td>0.002185</td>
+      <td>0.002007</td>
+      <td>0.003468</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>Variance20</td>
+      <td>0.003419</td>
+      <td>0.002238</td>
+      <td>0.002532</td>
+      <td>0.001944</td>
+      <td>0.002399</td>
+      <td>0.003168</td>
+      <td>0.003188</td>
+      <td>0.002618</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>net_profit_margin</td>
+      <td>0.003415</td>
+      <td>0.002758</td>
+      <td>0.002884</td>
+      <td>0.002608</td>
+      <td>0.003379</td>
+      <td>0.002427</td>
+      <td>0.002557</td>
+      <td>0.002207</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>Kurtosis20</td>
+      <td>0.003408</td>
+      <td>0.002553</td>
+      <td>0.003427</td>
+      <td>0.003140</td>
+      <td>0.002603</td>
+      <td>0.002849</td>
+      <td>0.002379</td>
+      <td>0.002217</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>macd_dea</td>
+      <td>0.003400</td>
+      <td>0.003268</td>
+      <td>0.002938</td>
+      <td>0.002593</td>
+      <td>0.002910</td>
+      <td>0.002272</td>
+      <td>0.001926</td>
+      <td>0.002207</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>Variance120</td>
+      <td>0.002876</td>
+      <td>0.002736</td>
+      <td>0.003672</td>
+      <td>0.002747</td>
+      <td>0.002746</td>
+      <td>0.002456</td>
+      <td>0.002755</td>
+      <td>0.002601</td>
+    </tr>
+    <tr>
+      <th>61</th>
+      <td>MAWVAD</td>
+      <td>0.002872</td>
+      <td>0.002652</td>
+      <td>0.003256</td>
+      <td>0.002446</td>
+      <td>0.002242</td>
+      <td>0.002311</td>
+      <td>0.002992</td>
+      <td>0.002602</td>
+    </tr>
+    <tr>
+      <th>62</th>
+      <td>eps</td>
+      <td>0.002869</td>
+      <td>0.003258</td>
+      <td>0.002645</td>
+      <td>0.002204</td>
+      <td>0.003214</td>
+      <td>0.002196</td>
+      <td>0.002879</td>
+      <td>0.002895</td>
+    </tr>
+    <tr>
+      <th>63</th>
+      <td>VDIFF</td>
+      <td>0.002867</td>
+      <td>0.002592</td>
+      <td>0.002582</td>
+      <td>0.002945</td>
+      <td>0.002495</td>
+      <td>0.002694</td>
+      <td>0.002759</td>
+      <td>0.002421</td>
+    </tr>
+    <tr>
+      <th>64</th>
+      <td>net_operate_cashflow_growth_rate</td>
+      <td>0.002861</td>
+      <td>0.002561</td>
+      <td>0.002974</td>
+      <td>0.002578</td>
+      <td>0.001833</td>
+      <td>0.002108</td>
+      <td>0.003370</td>
+      <td>0.002359</td>
+    </tr>
+    <tr>
+      <th>65</th>
+      <td>roe</td>
+      <td>0.002772</td>
+      <td>0.002706</td>
+      <td>0.002264</td>
+      <td>0.002134</td>
+      <td>0.003289</td>
+      <td>0.002531</td>
+      <td>0.002728</td>
+      <td>0.002940</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>RSI</td>
+      <td>0.002731</td>
+      <td>0.003573</td>
+      <td>0.003108</td>
+      <td>0.002558</td>
+      <td>0.002692</td>
+      <td>0.002597</td>
+      <td>0.002805</td>
+      <td>0.001715</td>
+    </tr>
+    <tr>
+      <th>67</th>
+      <td>account_receivable_turnover_rate</td>
+      <td>0.002727</td>
+      <td>0.002879</td>
+      <td>0.002520</td>
+      <td>0.002259</td>
+      <td>0.003187</td>
+      <td>0.002919</td>
+      <td>0.002604</td>
+      <td>0.002253</td>
+    </tr>
+    <tr>
+      <th>68</th>
+      <td>Skewness120</td>
+      <td>0.002722</td>
+      <td>0.002329</td>
+      <td>0.002489</td>
+      <td>0.003740</td>
+      <td>0.002212</td>
+      <td>0.003072</td>
+      <td>0.002442</td>
+      <td>0.002423</td>
+    </tr>
+    <tr>
+      <th>69</th>
+      <td>BR1</td>
+      <td>0.002722</td>
+      <td>0.002306</td>
+      <td>0.003055</td>
+      <td>0.002763</td>
+      <td>0.002997</td>
+      <td>0.002434</td>
+      <td>0.002435</td>
+      <td>0.002632</td>
+    </tr>
+    <tr>
+      <th>70</th>
+      <td>Skewness20</td>
+      <td>0.002704</td>
+      <td>0.003248</td>
+      <td>0.003351</td>
+      <td>0.002726</td>
+      <td>0.003273</td>
+      <td>0.002201</td>
+      <td>0.002898</td>
+      <td>0.002423</td>
+    </tr>
+    <tr>
+      <th>71</th>
+      <td>VEMA26</td>
+      <td>0.002694</td>
+      <td>0.003054</td>
+      <td>0.003021</td>
+      <td>0.002531</td>
+      <td>0.002649</td>
+      <td>0.002424</td>
+      <td>0.002637</td>
+      <td>0.002578</td>
+    </tr>
+    <tr>
+      <th>72</th>
+      <td>accounts_payable_turnover_rate</td>
+      <td>0.002607</td>
+      <td>0.002921</td>
+      <td>0.002579</td>
+      <td>0.002695</td>
+      <td>0.002523</td>
+      <td>0.002277</td>
+      <td>0.002798</td>
+      <td>0.002838</td>
+    </tr>
+    <tr>
+      <th>73</th>
+      <td>operating_expense_to_total_revenue</td>
+      <td>0.002600</td>
+      <td>0.002519</td>
+      <td>0.003272</td>
+      <td>0.002325</td>
+      <td>0.003461</td>
+      <td>0.002042</td>
+      <td>0.002234</td>
+      <td>0.002403</td>
+    </tr>
+    <tr>
+      <th>74</th>
+      <td>net_profit_ratio</td>
+      <td>0.002599</td>
+      <td>0.002975</td>
+      <td>0.003044</td>
+      <td>0.002991</td>
+      <td>0.002871</td>
+      <td>0.002635</td>
+      <td>0.002653</td>
+      <td>0.002149</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>inc_total_revenue_year_on_year</td>
+      <td>0.002592</td>
+      <td>0.003480</td>
+      <td>0.003481</td>
+      <td>0.003024</td>
+      <td>0.003128</td>
+      <td>0.003455</td>
+      <td>0.002507</td>
+      <td>0.002522</td>
+    </tr>
+    <tr>
+      <th>76</th>
+      <td>VOSC</td>
+      <td>0.002540</td>
+      <td>0.002643</td>
+      <td>0.002787</td>
+      <td>0.002654</td>
+      <td>0.002761</td>
+      <td>0.002763</td>
+      <td>0.002403</td>
+      <td>0.002814</td>
+    </tr>
+    <tr>
+      <th>77</th>
+      <td>sharpe_ratio_60</td>
+      <td>0.002521</td>
+      <td>0.003748</td>
+      <td>0.002111</td>
+      <td>0.002734</td>
+      <td>0.003017</td>
+      <td>0.002273</td>
+      <td>0.003309</td>
+      <td>0.001985</td>
+    </tr>
+    <tr>
+      <th>78</th>
+      <td>roa_ttm</td>
+      <td>0.002475</td>
+      <td>0.003537</td>
+      <td>0.002195</td>
+      <td>0.002310</td>
+      <td>0.002040</td>
+      <td>0.002288</td>
+      <td>0.002433</td>
+      <td>0.002880</td>
+    </tr>
+    <tr>
+      <th>79</th>
+      <td>net_profit_growth_rate</td>
+      <td>0.002443</td>
+      <td>0.002511</td>
+      <td>0.002768</td>
+      <td>0.002981</td>
+      <td>0.002387</td>
+      <td>0.002421</td>
+      <td>0.003119</td>
+      <td>0.003048</td>
+    </tr>
+    <tr>
+      <th>80</th>
+      <td>roa</td>
+      <td>0.002343</td>
+      <td>0.002610</td>
+      <td>0.002578</td>
+      <td>0.002428</td>
+      <td>0.002607</td>
+      <td>0.002280</td>
+      <td>0.002878</td>
+      <td>0.002097</td>
+    </tr>
+    <tr>
+      <th>81</th>
+      <td>operating_profit_ratio</td>
+      <td>0.002304</td>
+      <td>0.002773</td>
+      <td>0.002716</td>
+      <td>0.002300</td>
+      <td>0.002865</td>
+      <td>0.002920</td>
+      <td>0.002583</td>
+      <td>0.002520</td>
+    </tr>
+    <tr>
+      <th>82</th>
+      <td>VR</td>
+      <td>0.002212</td>
+      <td>0.002783</td>
+      <td>0.002601</td>
+      <td>0.002729</td>
+      <td>0.003086</td>
+      <td>0.003356</td>
+      <td>0.002529</td>
+      <td>0.003139</td>
+    </tr>
+    <tr>
+      <th>83</th>
+      <td>expense_to_total_revenue</td>
+      <td>0.002124</td>
+      <td>0.003212</td>
+      <td>0.003284</td>
+      <td>0.003223</td>
+      <td>0.002626</td>
+      <td>0.002537</td>
+      <td>0.003134</td>
+      <td>0.002232</td>
+    </tr>
+    <tr>
+      <th>84</th>
+      <td>VOL120</td>
+      <td>0.002084</td>
+      <td>0.003345</td>
+      <td>0.003025</td>
+      <td>0.002707</td>
+      <td>0.002448</td>
+      <td>0.002940</td>
+      <td>0.002355</td>
+      <td>0.002440</td>
+    </tr>
+    <tr>
+      <th>85</th>
+      <td>VSTD20</td>
+      <td>0.002067</td>
+      <td>0.003571</td>
+      <td>0.003242</td>
+      <td>0.002867</td>
+      <td>0.002633</td>
+      <td>0.002347</td>
+      <td>0.002692</td>
+      <td>0.002864</td>
+    </tr>
+    <tr>
+      <th>86</th>
+      <td>BR</td>
+      <td>0.001963</td>
+      <td>0.003575</td>
+      <td>0.002919</td>
+      <td>0.003044</td>
+      <td>0.002730</td>
+      <td>0.002352</td>
+      <td>0.001836</td>
+      <td>0.001775</td>
+    </tr>
+    <tr>
+      <th>87</th>
+      <td>operating_revenue_growth_rate</td>
+      <td>0.001846</td>
+      <td>0.003541</td>
+      <td>0.002374</td>
+      <td>0.003382</td>
+      <td>0.003180</td>
+      <td>0.002379</td>
+      <td>0.002839</td>
+      <td>0.002943</td>
+    </tr>
+    <tr>
+      <th>88</th>
+      <td>ps_ratio</td>
+      <td>0.001652</td>
+      <td>0.002018</td>
+      <td>0.002707</td>
+      <td>0.002765</td>
+      <td>0.002557</td>
+      <td>0.003585</td>
+      <td>0.001790</td>
+      <td>0.002555</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>adjusted_profit_to_profit</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.008400</td>
+      <td>0.023708</td>
+      <td>0.028325</td>
+      <td>0.028444</td>
+      <td>0.034657</td>
+    </tr>
+  </tbody>
+</table>
+<p>90 rows × 9 columns</p>
+</div>
+
+
+
+
+```python
+factor_importance.columns = ['features']+range(2011,2019)
+factor_importance
+```
+
+
+
+
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>features</th>
+      <th>2011</th>
+      <th>2012</th>
+      <th>2013</th>
+      <th>2014</th>
+      <th>2015</th>
+      <th>2016</th>
+      <th>2017</th>
+      <th>2018</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>turnover_volatility</td>
+      <td>0.085290</td>
+      <td>0.070940</td>
+      <td>0.063438</td>
+      <td>0.060765</td>
+      <td>0.054880</td>
+      <td>0.056762</td>
+      <td>0.055559</td>
+      <td>0.058241</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>quick_ratio</td>
+      <td>0.080541</td>
+      <td>0.078048</td>
+      <td>0.078836</td>
+      <td>0.082299</td>
+      <td>0.066128</td>
+      <td>0.061665</td>
+      <td>0.063301</td>
+      <td>0.065500</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>VMACD</td>
+      <td>0.079592</td>
+      <td>0.073785</td>
+      <td>0.074901</td>
+      <td>0.071236</td>
+      <td>0.086967</td>
+      <td>0.086361</td>
+      <td>0.082764</td>
+      <td>0.077204</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>total_profit_growth_rate</td>
+      <td>0.074588</td>
+      <td>0.071198</td>
+      <td>0.074967</td>
+      <td>0.074053</td>
+      <td>0.089616</td>
+      <td>0.089956</td>
+      <td>0.087829</td>
+      <td>0.084951</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>total_asset_growth_rate</td>
+      <td>0.074156</td>
+      <td>0.068602</td>
+      <td>0.070751</td>
+      <td>0.071566</td>
+      <td>0.065317</td>
+      <td>0.062932</td>
+      <td>0.061112</td>
+      <td>0.065447</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>sharpe_ratio_20</td>
+      <td>0.073172</td>
+      <td>0.078520</td>
+      <td>0.072455</td>
+      <td>0.070199</td>
+      <td>0.065867</td>
+      <td>0.068128</td>
+      <td>0.071411</td>
+      <td>0.073998</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>AR</td>
+      <td>0.069965</td>
+      <td>0.077588</td>
+      <td>0.080356</td>
+      <td>0.089524</td>
+      <td>0.082555</td>
+      <td>0.075638</td>
+      <td>0.073560</td>
+      <td>0.067520</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>ACCA</td>
+      <td>0.058606</td>
+      <td>0.060009</td>
+      <td>0.057979</td>
+      <td>0.057339</td>
+      <td>0.053839</td>
+      <td>0.056908</td>
+      <td>0.056895</td>
+      <td>0.058328</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>net_asset_per_share</td>
+      <td>0.057264</td>
+      <td>0.059393</td>
+      <td>0.060932</td>
+      <td>0.056911</td>
+      <td>0.055650</td>
+      <td>0.058687</td>
+      <td>0.060041</td>
+      <td>0.063181</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>DAVOL20</td>
+      <td>0.055162</td>
+      <td>0.056412</td>
+      <td>0.055093</td>
+      <td>0.060552</td>
+      <td>0.056986</td>
+      <td>0.065627</td>
+      <td>0.077496</td>
+      <td>0.075411</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>WVAD</td>
+      <td>0.054794</td>
+      <td>0.059070</td>
+      <td>0.065648</td>
+      <td>0.064613</td>
+      <td>0.067596</td>
+      <td>0.071261</td>
+      <td>0.066566</td>
+      <td>0.063420</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>ocf_to_operating_profit</td>
+      <td>0.005169</td>
+      <td>0.008875</td>
+      <td>0.007189</td>
+      <td>0.006166</td>
+      <td>0.006301</td>
+      <td>0.006058</td>
+      <td>0.008223</td>
+      <td>0.007676</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>market_cap</td>
+      <td>0.004201</td>
+      <td>0.005158</td>
+      <td>0.006412</td>
+      <td>0.004656</td>
+      <td>0.005585</td>
+      <td>0.005569</td>
+      <td>0.004950</td>
+      <td>0.006358</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>pcf_ratio</td>
+      <td>0.004132</td>
+      <td>0.004365</td>
+      <td>0.003435</td>
+      <td>0.003133</td>
+      <td>0.003354</td>
+      <td>0.002892</td>
+      <td>0.003402</td>
+      <td>0.003481</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>pe_ratio_lyr</td>
+      <td>0.004000</td>
+      <td>0.002750</td>
+      <td>0.003271</td>
+      <td>0.003652</td>
+      <td>0.003199</td>
+      <td>0.002932</td>
+      <td>0.002802</td>
+      <td>0.002381</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Skewness60</td>
+      <td>0.003794</td>
+      <td>0.002698</td>
+      <td>0.002795</td>
+      <td>0.002840</td>
+      <td>0.002915</td>
+      <td>0.002152</td>
+      <td>0.002464</td>
+      <td>0.002355</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Kurtosis120</td>
+      <td>0.003760</td>
+      <td>0.002702</td>
+      <td>0.003176</td>
+      <td>0.002217</td>
+      <td>0.003039</td>
+      <td>0.002630</td>
+      <td>0.001842</td>
+      <td>0.001894</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>AR1</td>
+      <td>0.003692</td>
+      <td>0.004269</td>
+      <td>0.003722</td>
+      <td>0.002837</td>
+      <td>0.002903</td>
+      <td>0.003140</td>
+      <td>0.002957</td>
+      <td>0.002812</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>VOL20</td>
+      <td>0.003623</td>
+      <td>0.003058</td>
+      <td>0.002721</td>
+      <td>0.001964</td>
+      <td>0.002580</td>
+      <td>0.002921</td>
+      <td>0.002510</td>
+      <td>0.002612</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>AROON_XG2</td>
+      <td>0.003606</td>
+      <td>0.004343</td>
+      <td>0.002776</td>
+      <td>0.003067</td>
+      <td>0.002634</td>
+      <td>0.002366</td>
+      <td>0.002559</td>
+      <td>0.003905</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>net_asset_growth_rate</td>
+      <td>0.003587</td>
+      <td>0.002296</td>
+      <td>0.002526</td>
+      <td>0.003019</td>
+      <td>0.003617</td>
+      <td>0.002715</td>
+      <td>0.002124</td>
+      <td>0.001671</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>VDEA</td>
+      <td>0.003586</td>
+      <td>0.003024</td>
+      <td>0.002566</td>
+      <td>0.002793</td>
+      <td>0.002569</td>
+      <td>0.002817</td>
+      <td>0.002632</td>
+      <td>0.002326</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>total_profit_to_cost_ratio</td>
+      <td>0.003450</td>
+      <td>0.002984</td>
+      <td>0.002789</td>
+      <td>0.002092</td>
+      <td>0.002814</td>
+      <td>0.002894</td>
+      <td>0.002158</td>
+      <td>0.002221</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>VOL60</td>
+      <td>0.003445</td>
+      <td>0.004382</td>
+      <td>0.003412</td>
+      <td>0.005434</td>
+      <td>0.003197</td>
+      <td>0.002944</td>
+      <td>0.003335</td>
+      <td>0.003423</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>operating_profit_growth_rate</td>
+      <td>0.003438</td>
+      <td>0.002742</td>
+      <td>0.003469</td>
+      <td>0.002749</td>
+      <td>0.002803</td>
+      <td>0.002592</td>
+      <td>0.002484</td>
+      <td>0.002740</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>macd_dif</td>
+      <td>0.003429</td>
+      <td>0.002708</td>
+      <td>0.002920</td>
+      <td>0.002975</td>
+      <td>0.002931</td>
+      <td>0.002185</td>
+      <td>0.002007</td>
+      <td>0.003468</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>Variance20</td>
+      <td>0.003419</td>
+      <td>0.002238</td>
+      <td>0.002532</td>
+      <td>0.001944</td>
+      <td>0.002399</td>
+      <td>0.003168</td>
+      <td>0.003188</td>
+      <td>0.002618</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>net_profit_margin</td>
+      <td>0.003415</td>
+      <td>0.002758</td>
+      <td>0.002884</td>
+      <td>0.002608</td>
+      <td>0.003379</td>
+      <td>0.002427</td>
+      <td>0.002557</td>
+      <td>0.002207</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>Kurtosis20</td>
+      <td>0.003408</td>
+      <td>0.002553</td>
+      <td>0.003427</td>
+      <td>0.003140</td>
+      <td>0.002603</td>
+      <td>0.002849</td>
+      <td>0.002379</td>
+      <td>0.002217</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>macd_dea</td>
+      <td>0.003400</td>
+      <td>0.003268</td>
+      <td>0.002938</td>
+      <td>0.002593</td>
+      <td>0.002910</td>
+      <td>0.002272</td>
+      <td>0.001926</td>
+      <td>0.002207</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>Variance120</td>
+      <td>0.002876</td>
+      <td>0.002736</td>
+      <td>0.003672</td>
+      <td>0.002747</td>
+      <td>0.002746</td>
+      <td>0.002456</td>
+      <td>0.002755</td>
+      <td>0.002601</td>
+    </tr>
+    <tr>
+      <th>61</th>
+      <td>MAWVAD</td>
+      <td>0.002872</td>
+      <td>0.002652</td>
+      <td>0.003256</td>
+      <td>0.002446</td>
+      <td>0.002242</td>
+      <td>0.002311</td>
+      <td>0.002992</td>
+      <td>0.002602</td>
+    </tr>
+    <tr>
+      <th>62</th>
+      <td>eps</td>
+      <td>0.002869</td>
+      <td>0.003258</td>
+      <td>0.002645</td>
+      <td>0.002204</td>
+      <td>0.003214</td>
+      <td>0.002196</td>
+      <td>0.002879</td>
+      <td>0.002895</td>
+    </tr>
+    <tr>
+      <th>63</th>
+      <td>VDIFF</td>
+      <td>0.002867</td>
+      <td>0.002592</td>
+      <td>0.002582</td>
+      <td>0.002945</td>
+      <td>0.002495</td>
+      <td>0.002694</td>
+      <td>0.002759</td>
+      <td>0.002421</td>
+    </tr>
+    <tr>
+      <th>64</th>
+      <td>net_operate_cashflow_growth_rate</td>
+      <td>0.002861</td>
+      <td>0.002561</td>
+      <td>0.002974</td>
+      <td>0.002578</td>
+      <td>0.001833</td>
+      <td>0.002108</td>
+      <td>0.003370</td>
+      <td>0.002359</td>
+    </tr>
+    <tr>
+      <th>65</th>
+      <td>roe</td>
+      <td>0.002772</td>
+      <td>0.002706</td>
+      <td>0.002264</td>
+      <td>0.002134</td>
+      <td>0.003289</td>
+      <td>0.002531</td>
+      <td>0.002728</td>
+      <td>0.002940</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>RSI</td>
+      <td>0.002731</td>
+      <td>0.003573</td>
+      <td>0.003108</td>
+      <td>0.002558</td>
+      <td>0.002692</td>
+      <td>0.002597</td>
+      <td>0.002805</td>
+      <td>0.001715</td>
+    </tr>
+    <tr>
+      <th>67</th>
+      <td>account_receivable_turnover_rate</td>
+      <td>0.002727</td>
+      <td>0.002879</td>
+      <td>0.002520</td>
+      <td>0.002259</td>
+      <td>0.003187</td>
+      <td>0.002919</td>
+      <td>0.002604</td>
+      <td>0.002253</td>
+    </tr>
+    <tr>
+      <th>68</th>
+      <td>Skewness120</td>
+      <td>0.002722</td>
+      <td>0.002329</td>
+      <td>0.002489</td>
+      <td>0.003740</td>
+      <td>0.002212</td>
+      <td>0.003072</td>
+      <td>0.002442</td>
+      <td>0.002423</td>
+    </tr>
+    <tr>
+      <th>69</th>
+      <td>BR1</td>
+      <td>0.002722</td>
+      <td>0.002306</td>
+      <td>0.003055</td>
+      <td>0.002763</td>
+      <td>0.002997</td>
+      <td>0.002434</td>
+      <td>0.002435</td>
+      <td>0.002632</td>
+    </tr>
+    <tr>
+      <th>70</th>
+      <td>Skewness20</td>
+      <td>0.002704</td>
+      <td>0.003248</td>
+      <td>0.003351</td>
+      <td>0.002726</td>
+      <td>0.003273</td>
+      <td>0.002201</td>
+      <td>0.002898</td>
+      <td>0.002423</td>
+    </tr>
+    <tr>
+      <th>71</th>
+      <td>VEMA26</td>
+      <td>0.002694</td>
+      <td>0.003054</td>
+      <td>0.003021</td>
+      <td>0.002531</td>
+      <td>0.002649</td>
+      <td>0.002424</td>
+      <td>0.002637</td>
+      <td>0.002578</td>
+    </tr>
+    <tr>
+      <th>72</th>
+      <td>accounts_payable_turnover_rate</td>
+      <td>0.002607</td>
+      <td>0.002921</td>
+      <td>0.002579</td>
+      <td>0.002695</td>
+      <td>0.002523</td>
+      <td>0.002277</td>
+      <td>0.002798</td>
+      <td>0.002838</td>
+    </tr>
+    <tr>
+      <th>73</th>
+      <td>operating_expense_to_total_revenue</td>
+      <td>0.002600</td>
+      <td>0.002519</td>
+      <td>0.003272</td>
+      <td>0.002325</td>
+      <td>0.003461</td>
+      <td>0.002042</td>
+      <td>0.002234</td>
+      <td>0.002403</td>
+    </tr>
+    <tr>
+      <th>74</th>
+      <td>net_profit_ratio</td>
+      <td>0.002599</td>
+      <td>0.002975</td>
+      <td>0.003044</td>
+      <td>0.002991</td>
+      <td>0.002871</td>
+      <td>0.002635</td>
+      <td>0.002653</td>
+      <td>0.002149</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>inc_total_revenue_year_on_year</td>
+      <td>0.002592</td>
+      <td>0.003480</td>
+      <td>0.003481</td>
+      <td>0.003024</td>
+      <td>0.003128</td>
+      <td>0.003455</td>
+      <td>0.002507</td>
+      <td>0.002522</td>
+    </tr>
+    <tr>
+      <th>76</th>
+      <td>VOSC</td>
+      <td>0.002540</td>
+      <td>0.002643</td>
+      <td>0.002787</td>
+      <td>0.002654</td>
+      <td>0.002761</td>
+      <td>0.002763</td>
+      <td>0.002403</td>
+      <td>0.002814</td>
+    </tr>
+    <tr>
+      <th>77</th>
+      <td>sharpe_ratio_60</td>
+      <td>0.002521</td>
+      <td>0.003748</td>
+      <td>0.002111</td>
+      <td>0.002734</td>
+      <td>0.003017</td>
+      <td>0.002273</td>
+      <td>0.003309</td>
+      <td>0.001985</td>
+    </tr>
+    <tr>
+      <th>78</th>
+      <td>roa_ttm</td>
+      <td>0.002475</td>
+      <td>0.003537</td>
+      <td>0.002195</td>
+      <td>0.002310</td>
+      <td>0.002040</td>
+      <td>0.002288</td>
+      <td>0.002433</td>
+      <td>0.002880</td>
+    </tr>
+    <tr>
+      <th>79</th>
+      <td>net_profit_growth_rate</td>
+      <td>0.002443</td>
+      <td>0.002511</td>
+      <td>0.002768</td>
+      <td>0.002981</td>
+      <td>0.002387</td>
+      <td>0.002421</td>
+      <td>0.003119</td>
+      <td>0.003048</td>
+    </tr>
+    <tr>
+      <th>80</th>
+      <td>roa</td>
+      <td>0.002343</td>
+      <td>0.002610</td>
+      <td>0.002578</td>
+      <td>0.002428</td>
+      <td>0.002607</td>
+      <td>0.002280</td>
+      <td>0.002878</td>
+      <td>0.002097</td>
+    </tr>
+    <tr>
+      <th>81</th>
+      <td>operating_profit_ratio</td>
+      <td>0.002304</td>
+      <td>0.002773</td>
+      <td>0.002716</td>
+      <td>0.002300</td>
+      <td>0.002865</td>
+      <td>0.002920</td>
+      <td>0.002583</td>
+      <td>0.002520</td>
+    </tr>
+    <tr>
+      <th>82</th>
+      <td>VR</td>
+      <td>0.002212</td>
+      <td>0.002783</td>
+      <td>0.002601</td>
+      <td>0.002729</td>
+      <td>0.003086</td>
+      <td>0.003356</td>
+      <td>0.002529</td>
+      <td>0.003139</td>
+    </tr>
+    <tr>
+      <th>83</th>
+      <td>expense_to_total_revenue</td>
+      <td>0.002124</td>
+      <td>0.003212</td>
+      <td>0.003284</td>
+      <td>0.003223</td>
+      <td>0.002626</td>
+      <td>0.002537</td>
+      <td>0.003134</td>
+      <td>0.002232</td>
+    </tr>
+    <tr>
+      <th>84</th>
+      <td>VOL120</td>
+      <td>0.002084</td>
+      <td>0.003345</td>
+      <td>0.003025</td>
+      <td>0.002707</td>
+      <td>0.002448</td>
+      <td>0.002940</td>
+      <td>0.002355</td>
+      <td>0.002440</td>
+    </tr>
+    <tr>
+      <th>85</th>
+      <td>VSTD20</td>
+      <td>0.002067</td>
+      <td>0.003571</td>
+      <td>0.003242</td>
+      <td>0.002867</td>
+      <td>0.002633</td>
+      <td>0.002347</td>
+      <td>0.002692</td>
+      <td>0.002864</td>
+    </tr>
+    <tr>
+      <th>86</th>
+      <td>BR</td>
+      <td>0.001963</td>
+      <td>0.003575</td>
+      <td>0.002919</td>
+      <td>0.003044</td>
+      <td>0.002730</td>
+      <td>0.002352</td>
+      <td>0.001836</td>
+      <td>0.001775</td>
+    </tr>
+    <tr>
+      <th>87</th>
+      <td>operating_revenue_growth_rate</td>
+      <td>0.001846</td>
+      <td>0.003541</td>
+      <td>0.002374</td>
+      <td>0.003382</td>
+      <td>0.003180</td>
+      <td>0.002379</td>
+      <td>0.002839</td>
+      <td>0.002943</td>
+    </tr>
+    <tr>
+      <th>88</th>
+      <td>ps_ratio</td>
+      <td>0.001652</td>
+      <td>0.002018</td>
+      <td>0.002707</td>
+      <td>0.002765</td>
+      <td>0.002557</td>
+      <td>0.003585</td>
+      <td>0.001790</td>
+      <td>0.002555</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>adjusted_profit_to_profit</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.008400</td>
+      <td>0.023708</td>
+      <td>0.028325</td>
+      <td>0.028444</td>
+      <td>0.034657</td>
+    </tr>
+  </tbody>
+</table>
+<p>90 rows × 9 columns</p>
+</div>
+
+
+
+
+```python
+average(auc_test_list)
+average(precision_test_list)
+average(accuracy_test_list)
+average(recall_test_list)
+```
+
+
+
+
+    0.52902307309989738
+
+
+
+
+
+
+    0.52722596200396266
+
+
+
+
+
+
+    0.5272712720966195
+
+
+
+
+
+
+    0.50976269590833212
+
+
+
+
+```python
+draw(accuracy_test_list,'Accuracy','b')
+draw(precision_test_list,'Precision','g')
+draw(auc_test_list,'AUC','r')
+draw(recall_test_list,'Recall','c')
+```
+
+<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200617/output_7_0.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200617/output_7_1.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200617/output_7_2.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200617/output_7_3.png'/></div>

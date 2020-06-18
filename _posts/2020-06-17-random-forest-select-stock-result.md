@@ -13,7 +13,7 @@ mathjax: False
 ---
 
 这个结果已经很久没改动了。
-# <center><font color=#6600ff> 随机森林模型part3(滚动回测各项指标) </font><center>
+#  随机森林模型part3(滚动回测各项指标)
 
 
 

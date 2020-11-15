@@ -1,0 +1,571 @@
+I"o�<p>这是应用随机森林的一个金融案例，更多深入研究根据研究会考虑公开。</p>
+
+<h1 id="数据准备">数据准备</h1>
+
+<h2 id="1数据获取">1.数据获取</h2>
+
+<p>a) 股票池：沪深300 成份股/中证500 成份股/全A 股。剔除ST 股票，剔除每个截
+面期下一交易日停牌的股票，剔除上市3 个月内的股票，每只股票视作一个样本。</p>
+
+<p>b) 回测区间：2011-01-31 至 2018-07-31</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="c1">#导入需要用到的库
+</span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">jqlib.technical_analysis</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">jqfactor</span> <span class="kn">import</span> <span class="n">get_factor_values</span>
+<span class="kn">from</span> <span class="nn">jqfactor</span> <span class="kn">import</span> <span class="n">neutralize</span>
+<span class="kn">from</span> <span class="nn">jqfactor</span> <span class="kn">import</span> <span class="n">winsorize_med</span>
+<span class="kn">from</span> <span class="nn">jqfactor</span> <span class="kn">import</span> <span class="n">standardlize</span>
+<span class="kn">from</span> <span class="nn">jqfactor</span> <span class="kn">import</span> <span class="n">winsorize</span>
+<span class="kn">from</span> <span class="nn">IPython.core.interactiveshell</span> <span class="kn">import</span> <span class="n">InteractiveShell</span>
+<span class="n">InteractiveShell</span><span class="p">.</span><span class="n">ast_node_interactivity</span> <span class="o">=</span> <span class="s">"all"</span>
+<span class="kn">import</span> <span class="nn">time</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#获取沪深300股票池
+</span><span class="n">stocklist</span> <span class="o">=</span> <span class="n">get_index_stocks</span><span class="p">(</span><span class="s">'000300.XSHG'</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+</pre></td><td class="rouge-code"><pre><span class="c1">#计算超额收益率,返回超额收益列表
+</span><span class="k">def</span> <span class="nf">excessreturn</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">stocklist</span><span class="p">):</span>
+    <span class="n">returns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1">#沪深300指数
+</span>    <span class="n">df_a</span> <span class="o">=</span> <span class="n">get_price</span><span class="p">(</span><span class="s">'000300.XSHG'</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span> <span class="n">start</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                 <span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s">'close'</span><span class="p">]).</span><span class="n">close</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">df_a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">df_a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stocklist</span><span class="p">:</span>
+        <span class="n">df_onestock</span> <span class="o">=</span> <span class="n">get_price</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span> <span class="n">start</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                 <span class="n">frequency</span><span class="o">=</span><span class="s">'daily'</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s">'close'</span><span class="p">]).</span><span class="n">close</span><span class="p">.</span><span class="n">values</span>
+        <span class="n">onestock</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">df_onestock</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_onestock</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">df_onestock</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">excessreturn</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">onestock</span> <span class="o">-</span> <span class="n">A</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">returns</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">excessreturn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">returns</span>
+
+
+<span class="k">def</span> <span class="nf">aroon</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">SG2</span><span class="p">,</span><span class="n">XG2</span> <span class="o">=</span> <span class="n">AROON</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span> <span class="n">check_date</span> <span class="o">=</span> <span class="n">end</span> <span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">SG2</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'AROON_SG2'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span>   
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">XG2</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>   
+    <span class="n">bb</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'AROON_XG2'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span>  
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span><span class="n">bb</span><span class="p">,</span><span class="n">left_on</span>  <span class="o">=</span> <span class="s">'code'</span><span class="p">,</span><span class="n">right_on</span> <span class="o">=</span> <span class="s">'code'</span><span class="p">)</span>
+    <span class="n">cc</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">cc</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">cc</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cc</span>
+
+
+<span class="k">def</span> <span class="nf">macd</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">macd_dif</span><span class="p">,</span> <span class="n">macd_dea</span><span class="p">,</span> <span class="n">macd_macd</span> <span class="o">=</span> <span class="n">MACD</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">check_date</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">SHORT</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="n">LONG</span> <span class="o">=</span> <span class="mi">26</span><span class="p">,</span> <span class="n">MID</span> <span class="o">=</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">macd_dif</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'macd_dif'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span> 
+    
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">macd_dea</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        
+    <span class="n">bb</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'macd_dea'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span> 
+    
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">macd_macd</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'macd'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span> 
+    
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span><span class="n">bb</span><span class="p">,</span><span class="n">left_on</span>  <span class="o">=</span> <span class="s">'code'</span><span class="p">,</span><span class="n">right_on</span> <span class="o">=</span> <span class="s">'code'</span><span class="p">)</span>
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span><span class="n">dd</span><span class="p">,</span><span class="n">left_on</span>  <span class="o">=</span> <span class="s">'code'</span><span class="p">,</span><span class="n">right_on</span> <span class="o">=</span> <span class="s">'code'</span><span class="p">)</span>
+    <span class="n">dd</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">dd</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">dd</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+   
+    <span class="k">return</span> <span class="n">dd</span>
+
+<span class="k">def</span> <span class="nf">psy</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">PSY1</span> <span class="o">=</span> <span class="n">PSY</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">check_date</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">timeperiod</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">PSY1</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'PSY'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span> 
+    <span class="n">aa</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">stocklist</span>
+    <span class="n">aa</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">aa</span>
+     
+
+<span class="k">def</span> <span class="nf">sgpf</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">PF2</span> <span class="o">=</span> <span class="n">SG_PF</span><span class="p">(</span><span class="s">'000003.XSHG'</span><span class="p">,</span> <span class="n">stocklist</span><span class="p">,</span> <span class="n">check_date</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">PF2</span> <span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'sgpf'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span> 
+    <span class="n">aa</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">stocklist</span>
+    <span class="n">aa</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">aa</span>
+
+
+<span class="k">def</span> <span class="nf">rsi</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">RSI1</span> <span class="o">=</span> <span class="n">RSI</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span> <span class="n">check_date</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">N1</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">RSI1</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'RSI'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span> 
+    <span class="n">aa</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">stocklist</span>
+    <span class="n">aa</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aa</span>
+
+
+
+<span class="k">def</span> <span class="nf">bias</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">BIAS1</span><span class="p">,</span> <span class="n">BIASMA1</span> <span class="o">=</span> <span class="n">BIAS_QL</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span> <span class="n">check_date</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="mi">21</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">BIAS1</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'IAS1'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span>   
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">BIASMA1</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>   
+    <span class="n">bb</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'BIASMA1'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span>  
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span><span class="n">bb</span><span class="p">,</span><span class="n">left_on</span>  <span class="o">=</span> <span class="s">'code'</span><span class="p">,</span><span class="n">right_on</span> <span class="o">=</span> <span class="s">'code'</span><span class="p">)</span>
+    <span class="n">cc</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">cc</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">cc</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cc</span>
+
+
+<span class="k">def</span> <span class="nf">cyf</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="n">CYF1</span> <span class="o">=</span> <span class="n">CYF</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span> <span class="n">check_date</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">21</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">CYF1</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'CYF'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span> 
+    <span class="n">aa</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">stocklist</span>
+    <span class="n">aa</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aa</span>
+
+
+<span class="k">def</span> <span class="nf">brar</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">BR1</span><span class="p">,</span><span class="n">AR1</span> <span class="o">=</span> <span class="n">BRAR</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span> <span class="n">check_date</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">26</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">BR1</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'BR1'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span>   
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">AR1</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>   
+    <span class="n">bb</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'code'</span><span class="p">:</span><span class="n">a</span><span class="p">,</span><span class="s">'AR1'</span><span class="p">:</span><span class="n">b</span><span class="p">})</span>  
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span><span class="n">bb</span><span class="p">,</span><span class="n">left_on</span>  <span class="o">=</span> <span class="s">'code'</span><span class="p">,</span><span class="n">right_on</span> <span class="o">=</span> <span class="s">'code'</span><span class="p">)</span>
+    <span class="n">cc</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">cc</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">cc</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cc</span>
+
+
+<span class="k">def</span> <span class="nf">joinquant_factor</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="p">[</span><span class="s">'net_profit_ratio'</span><span class="p">,</span><span class="s">'ACCA'</span><span class="p">,</span><span class="s">'quick_ratio'</span><span class="p">,</span><span class="s">'operating_profit_growth_rate'</span><span class="p">,</span><span class="s">'current_ratio'</span><span class="p">,</span>
+          <span class="s">'operating_profit_ratio'</span><span class="p">,</span><span class="s">'roa_ttm'</span><span class="p">,</span><span class="s">'roe_ttm'</span><span class="p">,</span><span class="s">'accounts_payable_turnover_rate'</span><span class="p">,</span><span class="s">'gross_income_ratio'</span><span class="p">,</span>
+<span class="s">'account_receivable_turnover_rate'</span><span class="p">,</span><span class="s">'equity_turnover_rate'</span><span class="p">,</span><span class="s">'total_profit_to_cost_ratio'</span><span class="p">,</span>
+<span class="s">'operating_cost_to_operating_revenue_ratio'</span><span class="p">,</span><span class="s">'VR'</span><span class="p">,</span><span class="s">'BR'</span><span class="p">,</span><span class="s">'TVMA20'</span><span class="p">,</span>
+<span class="s">'VDIFF'</span><span class="p">,</span><span class="s">'WVAD'</span><span class="p">,</span><span class="s">'MAWVAD'</span><span class="p">,</span><span class="s">'VDEA'</span><span class="p">,</span><span class="s">'VSTD20'</span><span class="p">,</span><span class="s">'VOL20'</span><span class="p">,</span><span class="s">'DAVOL20'</span><span class="p">,</span><span class="s">'VMACD'</span><span class="p">,</span><span class="s">'AR'</span><span class="p">,</span><span class="s">'VOL60'</span><span class="p">,</span><span class="s">'VOL120'</span><span class="p">,</span>
+<span class="s">'turnover_volatility'</span><span class="p">,</span><span class="s">'TVSTD20'</span><span class="p">,</span><span class="s">'ARBR'</span><span class="p">,</span><span class="s">'money_flow_20'</span><span class="p">,</span><span class="s">'VEMA26'</span><span class="p">,</span><span class="s">'VOSC'</span><span class="p">,</span>
+<span class="s">'operating_revenue_growth_rate'</span><span class="p">,</span><span class="s">'total_asset_growth_rate'</span><span class="p">,</span><span class="s">'net_operate_cashflow_growth_rate'</span><span class="p">,</span>
+<span class="s">'total_profit_growth_rate'</span><span class="p">,</span><span class="s">'net_profit_growth_rate'</span><span class="p">,</span><span class="s">'net_asset_growth_rate'</span><span class="p">,</span><span class="s">'Variance20'</span><span class="p">,</span><span class="s">'Skewness20'</span><span class="p">,</span>
+<span class="s">'Kurtosis20'</span><span class="p">,</span><span class="s">'sharpe_ratio_20'</span><span class="p">,</span><span class="s">'Variance60'</span><span class="p">,</span><span class="s">'Skewness60'</span><span class="p">,</span><span class="s">'Kurtosis60'</span><span class="p">,</span><span class="s">'sharpe_ratio_60'</span><span class="p">,</span>
+<span class="s">'Variance120'</span><span class="p">,</span><span class="s">'Skewness120'</span><span class="p">,</span><span class="s">'Kurtosis120'</span><span class="p">,</span><span class="s">'net_asset_per_share'</span><span class="p">,</span><span class="s">'eps_ttm'</span><span class="p">]</span>
+    <span class="n">factor_data</span> <span class="o">=</span> <span class="n">get_factor_values</span><span class="p">(</span><span class="n">securities</span><span class="o">=</span> <span class="n">stocklist</span><span class="p">,</span> <span class="n">factors</span> <span class="o">=</span> <span class="n">factor</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">,</span> <span class="n">end_date</span> <span class="o">=</span> <span class="n">end</span><span class="p">)</span>
+
+    <span class="n">values</span> <span class="o">=</span> <span class="n">factor_data</span><span class="p">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">([</span><span class="n">a</span><span class="p">,</span><span class="n">i</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">a</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">factor</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span> <span class="nf">financial_factor</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">get_fundamentals</span><span class="p">(</span><span class="n">query</span><span class="p">(</span>
+        <span class="n">valuation</span><span class="p">,</span> <span class="n">income</span><span class="p">,</span><span class="n">indicator</span><span class="p">,</span> <span class="n">balance</span>
+    <span class="p">).</span><span class="nb">filter</span><span class="p">(</span>
+        <span class="c1"># 这里不能使用 in 操作, 要使用in_()函数
+</span>        <span class="n">valuation</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">in_</span><span class="p">(</span><span class="n">stocklist</span><span class="p">)</span>
+    <span class="p">),</span> <span class="n">date</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+
+    <span class="n">ddf</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s">'code'</span><span class="p">,</span><span class="s">'pe_ratio'</span><span class="p">,</span><span class="s">'pb_ratio'</span><span class="p">,</span><span class="s">'market_cap'</span><span class="p">,</span><span class="s">'ps_ratio'</span><span class="p">,</span><span class="s">'roe'</span><span class="p">,</span><span class="s">'roa'</span><span class="p">,</span><span class="s">'eps'</span><span class="p">,</span>
+          <span class="s">'pcf_ratio'</span><span class="p">,</span><span class="s">'net_profit_margin'</span><span class="p">,</span><span class="s">'inc_return'</span><span class="p">,</span><span class="s">'gross_profit_margin'</span><span class="p">,</span>
+          <span class="s">"circulating_market_cap"</span><span class="p">,</span><span class="s">'pe_ratio_lyr'</span><span class="p">,</span><span class="s">'expense_to_total_revenue'</span><span class="p">,</span>
+          <span class="s">'operation_profit_to_total_revenue'</span><span class="p">,</span><span class="s">'net_profit_to_total_revenue'</span><span class="p">,</span>
+          <span class="s">'operating_expense_to_total_revenue'</span><span class="p">,</span><span class="s">'inc_total_revenue_year_on_year'</span><span class="p">,</span>
+          <span class="s">'inc_revenue_year_on_year'</span><span class="p">,</span><span class="s">'inc_net_profit_year_on_year'</span><span class="p">,</span>
+         <span class="s">'inc_net_profit_annual'</span><span class="p">,</span><span class="s">'adjusted_profit_to_profit'</span><span class="p">,</span><span class="s">'ocf_to_operating_profit'</span><span class="p">,</span>
+         <span class="s">'ocf_to_revenue'</span><span class="p">]]</span>
+
+    <span class="n">ddf</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">ddf</span><span class="p">.</span><span class="n">code</span><span class="p">.</span><span class="n">values</span>
+    <span class="n">ddf</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'code'</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ddf</span>
+
+<span class="k">def</span> <span class="nf">merge_raw_data</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">joinquant_factor</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">),</span><span class="n">macd</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">),</span><span class="n">psy</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">),</span><span class="n">sgpf</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">),</span>
+            <span class="n">rsi</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">),</span><span class="n">bias</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">),</span><span class="n">cyf</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span><span class="n">brar</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">),</span>
+            <span class="n">financial_factor</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">)]</span>
+    <span class="n">data_first</span> <span class="o">=</span> <span class="n">aroon</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">data_first</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data_first</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">left_index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_first</span>
+
+<span class="k">def</span> <span class="nf">merge_alldata</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">next_end</span><span class="p">):</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">merge_raw_data</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">end</span><span class="p">)</span>
+    
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">winsorize_med</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inf2nan</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span><span class="p">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">raw</span><span class="p">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span><span class="p">.</span><span class="n">T</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">neutralize</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="p">[</span><span class="s">'jq_l1'</span><span class="p">,</span> <span class="s">'market_cap'</span><span class="p">],</span> <span class="n">date</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">standardlize</span><span class="p">(</span><span class="n">raw</span> <span class="p">,</span> <span class="n">inf2nan</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">).</span><span class="n">T</span>
+    <span class="n">excess</span> <span class="o">=</span> <span class="n">excessreturn</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">next_end</span><span class="p">,</span> <span class="n">raw</span><span class="p">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span><span class="p">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">raw</span><span class="p">[</span><span class="s">'label'</span><span class="p">]</span> <span class="o">=</span> <span class="n">excess</span>
+    
+    <span class="n">result5</span> <span class="o">=</span> <span class="n">raw</span>
+    <span class="n">result5_plus</span> <span class="o">=</span> <span class="n">result5</span><span class="p">[</span><span class="n">result5</span><span class="p">[</span><span class="s">'label'</span><span class="p">]</span> <span class="o">&gt;=</span><span class="n">result5</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">describe</span><span class="p">()[</span><span class="s">'75%'</span><span class="p">]]</span>
+    <span class="n">result5_minus</span> <span class="o">=</span> <span class="n">result5</span><span class="p">[</span><span class="n">result5</span><span class="p">[</span><span class="s">'label'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">result5</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">describe</span><span class="p">()[</span><span class="s">'25%'</span><span class="p">]]</span>
+    <span class="n">result5_minus</span><span class="p">[</span><span class="s">'label'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">result5_minus</span><span class="p">.</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">result5_plus</span><span class="p">[</span><span class="s">'label'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">result5_plus</span><span class="p">.</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">frame5</span> <span class="o">=</span> <span class="p">[</span><span class="n">result5_plus</span><span class="p">,</span><span class="n">result5_minus</span><span class="p">]</span>
+    <span class="n">raw_data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frame5</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">raw_data</span>
+    
+    
+<span class="c1">#将过去的训练时间区间的每个月样本合并，构成训练集
+#样本内数据获取函数
+</span><span class="k">def</span> <span class="nf">data_merge_func</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span> <span class="n">month_end</span><span class="p">,</span> <span class="n">next_month_end</span><span class="p">):</span>
+    <span class="n">data_merge</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">month_end</span><span class="p">,</span> <span class="n">next_month_end</span><span class="p">):</span>
+        <span class="n">data_merge</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">merge_alldata</span><span class="p">(</span><span class="n">stocklist</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">))</span>
+    <span class="n">data_merge</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data_merge</span><span class="p">)</span>
+    <span class="n">data_merge</span><span class="p">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">data_merge</span><span class="p">.</span><span class="n">mean</span><span class="p">(),</span><span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_merge</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="c1">#2007-2010 2011
+</span><span class="n">start_all</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">train_time_1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">pd</span><span class="p">.</span><span class="n">date_range</span><span class="p">(</span><span class="s">'2007-01-01'</span><span class="p">,</span> <span class="s">'2010-12-31'</span><span class="p">,</span><span class="n">freq</span> <span class="o">=</span> <span class="s">'MS'</span><span class="p">))</span>
+<span class="n">train_next_time_1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">pd</span><span class="p">.</span><span class="n">date_range</span><span class="p">(</span><span class="s">'2007-01-01'</span><span class="p">,</span> <span class="s">'2010-12-31'</span><span class="p">,</span><span class="n">freq</span> <span class="o">=</span> <span class="s">'BM'</span><span class="p">))</span>
+<span class="n">train_next_time_1</span>
+
+<span class="n">out_sample_time_1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">pd</span><span class="p">.</span><span class="n">date_range</span><span class="p">(</span><span class="s">'2011-01-01'</span><span class="p">,</span> <span class="s">'2011-12-31'</span><span class="p">,</span><span class="n">freq</span> <span class="o">=</span> <span class="s">'MS'</span><span class="p">))</span>
+<span class="n">out_sample_next_time_1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">pd</span><span class="p">.</span><span class="n">date_range</span><span class="p">(</span><span class="s">'2011-01-01'</span><span class="p">,</span> <span class="s">'2011-12-31'</span><span class="p">,</span><span class="n">freq</span> <span class="o">=</span> <span class="s">'BM'</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+:ET

@@ -1,3 +1,15 @@
+---
+layout: post
+title:  '代码复用技术-学习面向对象编程'
+subtitle: '随着我们写的代码越来越长，最终导致了越来越难以维护。为了可维护代码，分模块的代码编写是必要的'
+date:   2020-11-14
+author: "YU"
+header-style: text
+tags:
+  - python
+mathjax: False
+---
+
 
 到目前为止，其实我们写的python代码都是基于对象的，我们在脚本中传递对象，在表达式中使用对象和调用对象的方法等等，但是要让代码真正称得上是面向对象的（Object-Oriented),那么对象一般需要参与到所谓的继承的层次中。
 

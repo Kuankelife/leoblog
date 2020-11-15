@@ -10,7 +10,7 @@ tags:
 mathjax: False
 ---
 
-
+![2401](http://up.desktx.net/pic/c9/3b/ef/c93bef6133d4348f9d9f1d9316865835.jpg)
 
 到目前为止，其实我们写的python代码都是基于对象的，我们在脚本中传递对象，在表达式中使用对象和调用对象的方法等等，但是要让代码真正称得上是面向对象的（Object-Oriented),那么对象一般需要参与到所谓的继承的层次中。
 
@@ -1569,52 +1569,18 @@ df_returns.head()
 #输入:策略收益和基准收益，series格式
 obj.plot_accumulated_returns(df_returns,benchmark_returns)
 ```
-
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f369639b748>
-
-
-
-
-![png](output_146_1.png)
-
-
-
+<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_146_1.png'/>
 ```python
 #输入:策略收益，series格式
 obj.plot_monthly_returns_heatmap(df_returns)
 ```
-
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f367076d400>
-
-
-
-
-![png](output_147_1.png)
-
-
+<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_147_1.png'/>
 
 ```python
 #输入:策略收益，series格式
 obj.plot_drawdown_underwater(df_returns)
 ```
-
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f3670f32438>
-
-
-
-
-![png](output_148_1.png)
-
-
+<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_148_1.png'/>
 ### 模块化
 
 随着我们代码越写越多，文件中代码越来越长，最终导致越来越难以维护。为了编写可维护代码，我们可以把很多函数分组，分别放到不同文件里。在Python中，一个 .py 文件就称为一个模块（module）。为避免模块名冲突，Python引入了按目录来组织模块的方法，称为包（package）。
@@ -1653,47 +1619,17 @@ obj.plot_accumulated_returns(df_returns,benchmark_returns)
 
 
 
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f3670f536a0>
-
-
-
-
-![png](output_155_1.png)
-
-
-
 ```python
 #输入:策略收益，series格式
 obj.plot_monthly_returns_heatmap(df_returns)
 ```
-
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f366fd372e8>
-
-
-
-
-![png](output_156_1.png)
-
-
-
+<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_155_1.png'/>
 ```python
 #输入:策略收益，series格式
 obj.plot_drawdown_underwater(df_returns)
 ```
 
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f366c40d9e8>
-
-
-
-
-![png](output_157_1.png)
+<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_157_1.png'/>
 
 
 ## Next

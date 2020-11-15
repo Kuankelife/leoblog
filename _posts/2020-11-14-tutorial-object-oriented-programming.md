@@ -6,7 +6,8 @@ date:   2020-11-14
 author: "YU"
 header-style: text
 tags:
-  - python
+  - Python
+  - 量化投资
 mathjax: False
 ---
 ![2401](http://5b0988e595225.cdn.sohucs.com/images/20171004/4406f28d143d47779a40ef53b3ea9171.jpeg)

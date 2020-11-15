@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  '“李约瑟问题”的多角度思考'
-subtitle: '中国自然科学发展反思'
+title:  '代码复用技术-学习面向对象编程'
+subtitle: '随着我们写的代码越来越长，最终导致了越来越难以维护。为了可维护代码，分模块的代码编写是必要的'
 date:   2020-06-21
 author: "YU"
 header-style: text
 tags:
-  - 人文
-mathjax: True
+  - python
+mathjax: False
 ---
 
 

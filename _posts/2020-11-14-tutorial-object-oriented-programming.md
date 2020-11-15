@@ -9,7 +9,7 @@ tags:
   - python
 mathjax: False
 ---
-![avatar](https://github.com/Kuankelife/Kuankelife.github.io/tree/master/img/home-img/home16.jpg)
+![2401](http://5b0988e595225.cdn.sohucs.com/images/20171004/4406f28d143d47779a40ef53b3ea9171.jpeg)
 
 
 到目前为止，其实我们写的python代码都是基于对象的，我们在脚本中传递对象，在表达式中使用对象和调用对象的方法等等，但是要让代码真正称得上是面向对象的（Object-Oriented),那么对象一般需要参与到所谓的继承的层次中。

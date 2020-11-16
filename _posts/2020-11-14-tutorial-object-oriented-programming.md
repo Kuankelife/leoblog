@@ -1624,13 +1624,13 @@ obj.plot_accumulated_returns(df_returns,benchmark_returns)
 #输入:策略收益，series格式
 obj.plot_monthly_returns_heatmap(df_returns)
 ```
-<img src='https://syy.freep.cn/627139/bgpc/20201114/output_155_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20201114/output_147_1.png'/>
 ```python
 #输入:策略收益，series格式
 obj.plot_drawdown_underwater(df_returns)
 ```
 
-<img src='https://syy.freep.cn/627139/bgpc/20201114/output_157_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20201114/output_148_1.png'/>
 
 
 ## Next

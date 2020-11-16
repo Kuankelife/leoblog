@@ -1673,4 +1673,4 @@ draw(auc_test_list,'AUC','r')
 draw(recall_test_list,'Recall','c')
 ```
 
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200617/output_7_0.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200617/output_7_1.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200617/output_7_2.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200617/output_7_3.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200617/output_7_0.png'/></div><div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200617/output_7_1.png'/></div><div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200617/output_7_2.png'/></div><div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200617/output_7_3.png'/></div>

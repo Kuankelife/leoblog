@@ -2153,7 +2153,7 @@ print('涨跌',report.data_return.loc[time_choose,stock_choose])
     总额 1424889228.07
     涨跌 -0.014319809069212487
     
-<div align = 'center'> <img src='http://kan.027cgb.com/627139/bgpc/20200605/1.png'/></div>
+<div align = 'center'> <img src='https://syy.freep.cn/627139/bgpc/20200605/1.png'/></div>
 
 
 ### 对比下，本地数据还是可信的
@@ -4385,7 +4385,7 @@ print('模型的评估报告：\n',classification_report(y_test, pred))
        macro avg       0.64      0.64      0.64       389
     weighted avg       0.65      0.65      0.65       389
     
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_73_1-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_73_1-min.png'/></div>
 #### ROC曲线
 
 
@@ -4411,7 +4411,7 @@ plt.ylabel('Sensitivity')
 plt.show()
 ```
 
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_75_0-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_75_0-min.png'/></div>
 
 #### 保存模型
 
@@ -4864,7 +4864,7 @@ model_timing = report.timing_model('000001.XSHG','2010-01-01','2018-01-01','2018
     绘制曲线...
     
 
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_95_1-min.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_95_2-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_95_1-min.png'/></div><div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_95_2-min.png'/></div>
 
 
     ------------------------------------------------------------
@@ -5118,7 +5118,7 @@ plt.ylabel('Prediction rate')
 plt.axis('tight')
 plt.show()
 ```
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_114_0-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_114_0-min.png'/></div>
 
 ### 交叉验证调参
 
@@ -5528,7 +5528,7 @@ plt.xlabel('date')
 plt.ylabel("test AUC")
 plt.show()
 ```
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_129_0-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_129_0-min.png'/></div>
 
 ```python
 
@@ -5545,7 +5545,7 @@ plt.xlabel('date')
 plt.ylabel("test accuracy")
 plt.show()
 ```
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_130_0-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_130_0-min.png'/></div>
 
 ```python
 
@@ -5564,7 +5564,7 @@ sns.lineplot(data=data, palette="tab10", linewidth=2.5)
     <matplotlib.axes._subplots.AxesSubplot at 0x264b0823c88>
 
 
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_131_1-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_131_1-min.png'/></div>
 下面特征重要度是这类算法的独有分析部分，不兼容其类机器学习算法
 
 ### 特征重要度
@@ -5605,7 +5605,7 @@ plt.ylabel("Feature")
 
     Text(0, 0.5, 'Feature')
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200605/output_135_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200605/output_135_1.png'/>
 
 集成，添加，调用，前面的单元格代码都可删掉
 
@@ -5651,7 +5651,7 @@ report.multifactor_model(index_code,start_date,end_date,out_start,out_end,model_
     绘制曲线...
     
 
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_140_1-min.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_140_2-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_140_1-min.png'/></div><div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_140_2-min.png'/></div>
 
     ------------------------------------------------------------
     输出评估报告...
@@ -5789,7 +5789,7 @@ report.multifactor_model(index_code,start_date,end_date,out_start,out_end,model_
     
 
 
-<div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_140_4-min.png'/></div><div align="center"><img src='http://kan.027cgb.com/627139/bgpc/20200605/output_140_5-min.png'/></div>
+<div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_140_4-min.png'/></div><div align="center"><img src='https://syy.freep.cn/627139/bgpc/20200605/output_140_5-min.png'/></div>
 
 
 
@@ -5805,7 +5805,7 @@ report.multifactor_model(index_code,start_date,end_date,out_start,out_end,model_
 
 
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200605/output_140_7-min.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200605/output_140_7-min.png'/>
 
 
 ```python

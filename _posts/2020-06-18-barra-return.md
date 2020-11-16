@@ -42,7 +42,7 @@ mathjax: True
 
 多因子模型的基础理论认为：股票的收益是由一些共同的因子来驱动的，不能被这些因子解释的部分被称为股票的“特质收益率”， 而每支股票的特质收益率之间是互不相关的。那关于这些共同的因子，和股票收益的关系，可以参考下面的内容
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200618/1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200618/1.png'/>
 
 **结构化因子风险模型的作用**
 
@@ -95,7 +95,7 @@ $$\begin{array}{c}
 基于研报中对 Barra 模型框架构建及求解过程的介绍， 我们参考并构建多因子风险收益归因模型， 并将其运用到 A 股市场上， 从截距项、行业收益、风格收益三方面验证模型正确性， 观察市场风格的变化及投资组合的风险收益来源。
 
 这里我们选取的风格因子可以通过聚宽因子库，风格因子获取，具体字段及说明如下
-<img src='http://kan.027cgb.com/627139/bgpc/20200618/2.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200618/2.png'/>
 
 风格因子获取地址：
 https://www.joinquant.com/help/api/help?name=factor_values#%E9%A3%8E%E6%A0%BC%E5%9B%A0%E5%AD%90
@@ -1004,7 +1004,7 @@ factor_f_df.head(3)
 
 
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200618/output_17_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200618/output_17_1.png'/>
 
 
 ```python
@@ -1019,7 +1019,7 @@ factor_f_df.head(3)
 
 
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200618/output_18_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200618/output_18_1.png'/>
 
 
 
@@ -1035,7 +1035,7 @@ factor_f_df.head(3)
 
 
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200618/output_19_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200618/output_19_1.png'/>
 
 **组合收益归因**
 
@@ -1456,7 +1456,7 @@ y_df_.plot(x='pct_', y='p_pct_', kind='scatter',figsize=(12,8))
 
 
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200618/output_23_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200618/output_23_1.png'/>
 
 
 
@@ -1473,7 +1473,7 @@ d4['mid'].plot()
 plt.show()
 ```
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200618/output_24_0.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200618/output_24_0.png'/>
 
 
 
@@ -1488,4 +1488,4 @@ y_df.plot(figsize=(12,8))
 
 
 
-<img src='http://kan.027cgb.com/627139/bgpc/20200618/output_25_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20200618/output_25_1.png'/>

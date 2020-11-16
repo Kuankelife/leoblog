@@ -1570,18 +1570,18 @@ df_returns.head()
 #输入:策略收益和基准收益，series格式
 obj.plot_accumulated_returns(df_returns,benchmark_returns)
 ```
-<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_146_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20201114/output_146_1.png'/>
 ```python
 #输入:策略收益，series格式
 obj.plot_monthly_returns_heatmap(df_returns)
 ```
-<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_147_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20201114/output_147_1.png'/>
 
 ```python
 #输入:策略收益，series格式
 obj.plot_drawdown_underwater(df_returns)
 ```
-<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_148_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20201114/output_148_1.png'/>
 ### 模块化
 
 随着我们代码越写越多，文件中代码越来越长，最终导致越来越难以维护。为了编写可维护代码，我们可以把很多函数分组，分别放到不同文件里。在Python中，一个 .py 文件就称为一个模块（module）。为避免模块名冲突，Python引入了按目录来组织模块的方法，称为包（package）。
@@ -1617,20 +1617,20 @@ obj = tsa.TsAnalyze()
 #输入:策略收益和基准收益，series格式
 obj.plot_accumulated_returns(df_returns,benchmark_returns)
 ```
-
+<img src='https://syy.freep.cn/627139/bgpc/20201114/output_146_1.png'/>
 
 
 ```python
 #输入:策略收益，series格式
 obj.plot_monthly_returns_heatmap(df_returns)
 ```
-<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_155_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20201114/output_155_1.png'/>
 ```python
 #输入:策略收益，series格式
 obj.plot_drawdown_underwater(df_returns)
 ```
 
-<img src='http://mk.027cgb.cn/627139/bgpc/20201114/output_157_1.png'/>
+<img src='https://syy.freep.cn/627139/bgpc/20201114/output_157_1.png'/>
 
 
 ## Next

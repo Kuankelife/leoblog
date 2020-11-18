@@ -3,7 +3,7 @@ layout: post
 title:  "Barra因子初探"
 subtitle: ''
 date:   2020-06-18
-author: "YU"
+author: "blues"
 header-img: "img/yu-img/post-img/u=3455037329,48387545&fm=27&gp=0.jpg"
 tags:
   - 量价分析
